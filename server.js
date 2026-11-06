@@ -1,331 +1,690 @@
+/**
+ * ============================================================================
+ * STOCK SHORT & EXCESS RETURN BALANCING SYSTEM (v2.0 PRO)
+ * Render 24/7 Ready + /health Cronjob API + Multi-Layer State Persistence
+ * ============================================================================
+ */
+
 const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
+const zlib = require('zlib');
+const https = require('https');
+const http = require('http');
+const multer = require('multer');
+const xlsx = require('xlsx');
+
+let google = null;
+try {
+  google = require('googleapis').google;
+} catch (e) {
+  // googleapis is optional; falls back to local + browser auto-sync
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DB_FILE = path.join(__dirname, 'db.json');
+const SERVER_START_TIME = Date.now();
+
+// Persistence paths (supports Render Persistent Disk if DATA_DIR is set)
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : __dirname;
+const DB_FILE = path.join(DATA_DIR, 'database.json');
+const SEED_DB_FILE = path.join(__dirname, 'database.json');
+const UPLOAD_DIR = path.join(__dirname, 'uploads');
+
+// Optional Google Sheet ID for automatic Cloud State Backup across Render restarts
+const GOOGLE_SHEET_ID = (process.env.GOOGLE_SHEET_ID || '1dhezenCZ_rpejBX50DAvlXbHEjV9o9hxOGHR8U-Id9Y').trim();
+const CLOUD_STATE_TAB = '_App_State';
+
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 app.use(cors());
-app.use(express.json({ limit: '25mb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initial fallback seed data (71 items from Excel)
-const INITIAL_PRODUCTS = [{"code": "N53", "name": "ALGIN 50MG TABS 10X10'S", "sysStock": 8697, "phyStock": 8694, "short": 2, "excess": 0, "price": 747.85}, {"code": "229", "name": "ALGIN 5MG INJ 2ML 1X5'S", "sysStock": 4456, "phyStock": 4460, "short": 0, "excess": 0, "price": 154.03}, {"code": "N64", "name": "ARBECIN 1ML IV INJ 1X1'S", "sysStock": 1875, "phyStock": 1885, "short": 0, "excess": 4, "price": 132.0}, {"code": "983", "name": "BISOREN 2.5MG TAB 3X10'S", "sysStock": 4419, "phyStock": 4420, "short": 0, "excess": 0, "price": 184.91}, {"code": "875", "name": "BREDICON TAB 28'S", "sysStock": 3644, "phyStock": 3649, "short": 0, "excess": 0, "price": 52.08}, {"code": "934", "name": "CALCIN-D TAB 6X10'S", "sysStock": 371, "phyStock": 373, "short": 0, "excess": 0, "price": 422.64}, {"code": "S63", "name": "CILMA 10MG TAB 3X10'S", "sysStock": 182, "phyStock": 184, "short": 0, "excess": 0, "price": 237.74}, {"code": "S65", "name": "CILMA 5MG TAB 3X10'S", "sysStock": 119, "phyStock": 117, "short": 0, "excess": 0, "price": 184.91}, {"code": "N4M", "name": "CORALCIN-DX FC TAB 5X8'S", "sysStock": 589, "phyStock": 588, "short": 0, "excess": 0, "price": 527.84}, {"code": "612", "name": "DANZOL 100MG CAPS. 3X10'S", "sysStock": 163, "phyStock": 161, "short": 2, "excess": 0, "price": 527.96}, {"code": "613", "name": "DANZOL 200MG CAPS. 2X10'S", "sysStock": 25, "phyStock": 27, "short": 0, "excess": 2, "price": 668.95}, {"code": "073", "name": "DELENTIN SUSPENSION 10ML 1'S", "sysStock": 5531, "phyStock": 5535, "short": 0, "excess": 0, "price": 14.12}, {"code": "990", "name": "DOMIREN SUSPENSION 100ML 1X1'S", "sysStock": 5434, "phyStock": 5436, "short": 0, "excess": 0, "price": 33.45}, {"code": "S18", "name": "EAZY JELLY 50GM TUBE 1'S", "sysStock": 682, "phyStock": 681, "short": 0, "excess": 0, "price": 154.01}, {"code": "185", "name": "FENADIN FC 180MG TAB 2X10'S", "sysStock": 11588, "phyStock": 11590, "short": 0, "excess": 0, "price": 176.1}, {"code": "188", "name": "FENADIN FC 60MG TAB 3X10'S", "sysStock": 3859, "phyStock": 3857, "short": 0, "excess": 0, "price": 105.66}, {"code": "C25", "name": "FERIX-V CAP 6X10'S", "sysStock": 1154, "phyStock": 1155, "short": 0, "excess": 0, "price": 237.39}, {"code": "607", "name": "FLUSTAR 500MG CAP 7X4'S", "sysStock": 18, "phyStock": 3, "short": 15, "excess": 0, "price": 246.54}, {"code": "S72", "name": "FUROCEF DS SUSPENSION 50ML 1X1'S", "sysStock": 740, "phyStock": 765, "short": 0, "excess": 25, "price": 220.02}, {"code": "102", "name": "FUROCEF FC SUSPENSION 70ML 1X1'S", "sysStock": 3432, "phyStock": 3407, "short": 25, "excess": 0, "price": 198.02}, {"code": "N77", "name": "FUROCLAV 250MG TAB 2X7'S", "sysStock": 1699, "phyStock": 1702, "short": 0, "excess": 3, "price": 431.27}, {"code": "N78", "name": "FUROCLAV 500MG TAB 2X7'S", "sysStock": 2843, "phyStock": 2842, "short": 1, "excess": 0, "price": 739.28}, {"code": "CY7", "name": "HYDROGEST DS 2ML (500MG/2ML) INJ 1X1'S", "sysStock": 1085, "phyStock": 1084, "short": 1, "excess": 0, "price": 572.04}, {"code": "N8V", "name": "LETROL 2.5MG TAB 3X5'S", "sysStock": 2616, "phyStock": 2617, "short": 0, "excess": 0, "price": 543.0}, {"code": "112", "name": "LUCAN-R SUSP. 35ML", "sysStock": 3561, "phyStock": 3563, "short": 0, "excess": 0, "price": 68.91}, {"code": "C81", "name": "MAXPRO 20MG CAP 10X14'S", "sysStock": 8031, "phyStock": 8032, "short": 0, "excess": 0, "price": 862.89}, {"code": "C39", "name": "MAXPRO EC 40MG TAB 6X10'S", "sysStock": 2462, "phyStock": 2463, "short": 0, "excess": 0, "price": 475.47}, {"code": "C8Y", "name": "MAXPRO MUPS 20MG TAB 5X14'S", "sysStock": 5783, "phyStock": 5782, "short": 1, "excess": 0, "price": 616.35}, {"code": "251", "name": "MEROPEN IV 1GM INJ", "sysStock": 2577, "phyStock": 2575, "short": 2, "excess": 0, "price": 1144.07}, {"code": "275", "name": "MEROPEN IV 500MG INJ", "sysStock": 4170, "phyStock": 4172, "short": 0, "excess": 2, "price": 616.05}, {"code": "N2J", "name": "MYOSIT PLUS FC TAB 5X6'S", "sysStock": 845, "phyStock": 844, "short": 0, "excess": 0, "price": 1293.1}, {"code": "S74", "name": "NOVELON LITE FC TAB 1X28'S", "sysStock": 2383, "phyStock": 2382, "short": 0, "excess": 0, "price": 366.38}, {"code": "S73", "name": "NOVELON-28 FC TAB 1X28'S", "sysStock": 372, "phyStock": 373, "short": 0, "excess": 0, "price": 343.98}, {"code": "911", "name": "ORCEF 200MG CAP 2X8'S", "sysStock": 2960, "phyStock": 2950, "short": 10, "excess": 0, "price": 492.9}, {"code": "298", "name": "ORCEF 200MG TAB 2X6'S", "sysStock": 558, "phyStock": 568, "short": 0, "excess": 10, "price": 369.67}, {"code": "221", "name": "ORCEF DPS 50ML", "sysStock": 4352, "phyStock": 4349, "short": 0, "excess": 0, "price": 184.82}, {"code": "C2X", "name": "PROLIFIC 5000 IU INJ 1X1'S", "sysStock": 527, "phyStock": 526, "short": 0, "excess": 0, "price": 1939.5}, {"code": "926", "name": "RENXIT FC TAB 10X10'S", "sysStock": 5793, "phyStock": 5792, "short": 0, "excess": 0, "price": 440.25}, {"code": "C2N", "name": "REPHASTON 10MG TAB 3X10'S", "sysStock": 3106, "phyStock": 3105, "short": 0, "excess": 0, "price": 924.14}, {"code": "S56", "name": "ROLAC 30MG INJ 1ML 1'S", "sysStock": 6838, "phyStock": 6899, "short": 0, "excess": 61, "price": 48.59}, {"code": "S57", "name": "ROLAC 60MG INJ 2ML 1'S", "sysStock": 4704, "phyStock": 4644, "short": 60, "excess": 0, "price": 83.92}, {"code": "N8B", "name": "ROLIP EZ 10/10MG TAB 3X10'S", "sysStock": 334, "phyStock": 336, "short": 0, "excess": 0, "price": 686.45}, {"code": "CP6", "name": "SALBUREN HFA 100MCG MDI(200PUFF) 1'S", "sysStock": 324, "phyStock": 323, "short": 0, "excess": 0, "price": 220.02}, {"code": "CQ5", "name": "SALBUREN HFA 100MCG REFILL(200PUFF) 1'S", "sysStock": 166, "phyStock": 167, "short": 0, "excess": 0, "price": 193.62}, {"code": "170", "name": "SERONEX 25MG TAB 5X10'S", "sysStock": 11, "phyStock": 10, "short": 0, "excess": 0, "price": 132.08}, {"code": "N5D", "name": "SUBAZOL 65MG CAP 5X6'S", "sysStock": 1134, "phyStock": 1133, "short": 0, "excess": 0, "price": 527.96}, {"code": "C8G", "name": "SUPADOPA TR 195MG CAP 3X6'S", "sysStock": 28, "phyStock": 30, "short": 0, "excess": 0, "price": 792.04}, {"code": "C1W", "name": "TAVEN EZ 10/10MG TAB 2X10'S", "sysStock": 51, "phyStock": 49, "short": 0, "excess": 0, "price": 246.31}, {"code": "N9C", "name": "TELPRO FC 80MG TAB 3X10'S", "sysStock": 172, "phyStock": 173, "short": 0, "excess": 0, "price": 527.96}, {"code": "C9Q", "name": "TELPRO FC 80MG TAB 3X6'S", "sysStock": 80, "phyStock": 79, "short": 0, "excess": 0, "price": 316.77}, {"code": "N1F", "name": "TELPRO MAX FC 40MG TAB 3X10'S", "sysStock": 319, "phyStock": 318, "short": 0, "excess": 0, "price": 330.02}, {"code": "N8Q", "name": "THYROX 100MCG TAB 3X30'S", "sysStock": 1241, "phyStock": 1242, "short": 0, "excess": 0, "price": 245.25}, {"code": "N5A", "name": "THYROX 25MCG TAB 3X30'S", "sysStock": 4249, "phyStock": 4248, "short": 0, "excess": 0, "price": 87.66}, {"code": "955", "name": "THYROX 50MCG 3X30'S", "sysStock": 15000, "phyStock": 14998, "short": 0, "excess": 1, "price": 174.29}, {"code": "C4P", "name": "ULFIX 200ML (1G/5ML) SUSP 1X1'S", "sysStock": 663, "phyStock": 664, "short": 0, "excess": 0, "price": 352.02}, {"code": "CS5", "name": "VILTICA RENACAP 25/200MCG DPI CAP 3X10'S", "sysStock": 58, "phyStock": 59, "short": 0, "excess": 0, "price": 792.05}, {"code": "N61", "name": "ZITHRIN 250MG TAB 3X5'S", "sysStock": 19, "phyStock": 18, "short": 0, "excess": 0, "price": 330.02}, {"code": "N27", "name": "ZITHRIN FC 500MG TAB 3X5'S", "sysStock": 2958, "phyStock": 2959, "short": 0, "excess": 1, "price": 528.11}, {"code": "RG1", "name": "ANDRO-REN 10G PWDR", "sysStock": 4364, "phyStock": 4363, "short": 0, "excess": 0, "price": 40.0}, {"code": "538", "name": "CATOPHOS INJ 30ML", "sysStock": 1250, "phyStock": 1249, "short": 0, "excess": 0, "price": 132.51}, {"code": "550", "name": "DOXIVET POWDER 100GM SACHET", "sysStock": 4326, "phyStock": 4325, "short": 0, "excess": 0, "price": 176.02}, {"code": "R08", "name": "FEVENIL INJ 10ML 1'S", "sysStock": 1153, "phyStock": 1155, "short": 0, "excess": 0, "price": 89.76}, {"code": "RO2", "name": "HEPAREN 500ML SLUSN 1X1'S", "sysStock": 817, "phyStock": 813, "short": 2, "excess": 0, "price": 450.0}, {"code": "555", "name": "MICRONID POWDER 10GM SACHET", "sysStock": 16650, "phyStock": 16662, "short": 0, "excess": 0, "price": 35.83}, {"code": "R30", "name": "MYCO-OUT POWDER 100GM SACHET", "sysStock": 510, "phyStock": 505, "short": 0, "excess": 0, "price": 321.22}, {"code": "RP7", "name": "RE-CHARGE 500ML SLUSN 1X1'S", "sysStock": 354, "phyStock": 358, "short": 0, "excess": 2, "price": 400.0}, {"code": "759", "name": "RENA CAL-P 1LITER", "sysStock": 502, "phyStock": 516, "short": 0, "excess": 0, "price": 300.0}, {"code": "L02", "name": "RENA CAL-P 5LITER", "sysStock": 264, "phyStock": 266, "short": 0, "excess": 0, "price": 1350.0}, {"code": "782", "name": "RENAVIT DB PLUS 1KG", "sysStock": 599, "phyStock": 607, "short": 0, "excess": 0, "price": 336.0}, {"code": "814", "name": "RENAVIT-DB 1000GM (CUSTOM)", "sysStock": 39, "phyStock": 31, "short": 0, "excess": 0, "price": 240.0}, {"code": "L25", "name": "RUMEN-E 100GM", "sysStock": 4052, "phyStock": 4055, "short": 0, "excess": 0, "price": 100.0}];
+const upload = multer({ dest: UPLOAD_DIR });
 
-function formatDateBanglaStyle(dateObj = new Date()) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const d = String(dateObj.getDate()).padStart(2, '0');
-  const m = months[dateObj.getMonth()];
-  const y = dateObj.getFullYear();
-  let hr = dateObj.getHours();
-  const min = String(dateObj.getMinutes()).padStart(2, '0');
-  const ampm = hr >= 12 ? 'PM' : 'AM';
-  hr = hr % 12 || 12;
-  return `${d}-${m}-${y} ${String(hr).padStart(2, '0')}:${min} ${ampm}`;
-}
+// ============================================================================
+// IN-MEMORY + ATOMIC DISK + CLOUD BACKUP STATE ENGINE
+// ============================================================================
+let dbState = null;
+let googleSheetsClient = null;
+let cloudSyncStatus = { enabled: false, lastSynced: null, error: null };
 
-function readDB() {
+function loadInitialDbFromDisk() {
   try {
-    if (!fs.existsSync(DB_FILE)) {
-      const initData = {
-        products: INITIAL_PRODUCTS,
-        history: [],
-        lastUpdated: formatDateBanglaStyle()
+    if (fs.existsSync(DB_FILE)) {
+      const raw = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      if (raw && Array.isArray(raw.products)) {
+        return {
+          rev: Number(raw.rev) || 1,
+          lastModified: raw.lastModified || new Date().toISOString(),
+          priceMode: raw.priceMode || 'TOTAL',
+          products: raw.products,
+          history: Array.isArray(raw.history) ? raw.history : []
+        };
+      }
+    }
+    if (fs.existsSync(SEED_DB_FILE) && SEED_DB_FILE !== DB_FILE) {
+      const seed = JSON.parse(fs.readFileSync(SEED_DB_FILE, 'utf8'));
+      return {
+        rev: Number(seed.rev) || 1,
+        lastModified: seed.lastModified || new Date().toISOString(),
+        priceMode: seed.priceMode || 'TOTAL',
+        products: Array.isArray(seed.products) ? seed.products : [],
+        history: Array.isArray(seed.history) ? seed.history : []
       };
-      fs.writeFileSync(DB_FILE, JSON.stringify(initData, null, 2), 'utf8');
-      return initData;
     }
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
-    if (!parsed.products || !Array.isArray(parsed.products)) {
-      parsed.products = INITIAL_PRODUCTS;
-    }
-    if (!parsed.history || !Array.isArray(parsed.history)) {
-      parsed.history = [];
-    }
-    return parsed;
   } catch (err) {
-    console.error('Error reading db.json:', err);
-    return { products: INITIAL_PRODUCTS, history: [], lastUpdated: formatDateBanglaStyle() };
+    console.error('Error reading DB_FILE:', err.message);
+  }
+  return { rev: 1, lastModified: new Date().toISOString(), priceMode: 'TOTAL', products: [], history: [] };
+}
+
+dbState = loadInitialDbFromDisk();
+
+function saveDbToDisk(bumpRev = true) {
+  if (bumpRev) {
+    dbState.rev = (Number(dbState.rev) || 1) + 1;
+    dbState.lastModified = new Date().toISOString();
+  }
+  try {
+    const tmpFile = DB_FILE + '.tmp';
+    fs.writeFileSync(tmpFile, JSON.stringify(dbState, null, 2), 'utf8');
+    fs.renameSync(tmpFile, DB_FILE);
+  } catch (err) {
+    console.error('Error saving database.json:', err.message);
+  }
+  scheduleCloudBackup();
+}
+
+// Optional Google Sheets Cloud Persistence (prevents data loss on Render restart)
+async function initGoogleSheets() {
+  if (!google) return false;
+  try {
+    const rawEnv = process.env.GOOGLE_CREDENTIALS_JSON || process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    let credentials = null;
+    if (rawEnv) {
+      const trimmed = rawEnv.trim();
+      credentials = trimmed.startsWith('{')
+        ? JSON.parse(trimmed)
+        : JSON.parse(Buffer.from(trimmed, 'base64').toString('utf8'));
+    } else if (fs.existsSync(path.join(__dirname, 'credentials.json'))) {
+      credentials = JSON.parse(fs.readFileSync(path.join(__dirname, 'credentials.json'), 'utf8'));
+    }
+    if (!credentials) return false;
+    if (credentials.private_key) {
+      credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+    }
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    });
+    googleSheetsClient = google.sheets({ version: 'v4', auth });
+    cloudSyncStatus.enabled = true;
+    await restoreFromCloudIfNewer();
+    return true;
+  } catch (err) {
+    cloudSyncStatus.error = err.message;
+    return false;
   }
 }
 
-function writeDB(data) {
-  data.lastUpdated = formatDateBanglaStyle();
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+async function restoreFromCloudIfNewer() {
+  if (!googleSheetsClient || !GOOGLE_SHEET_ID) return;
+  try {
+    const res = await googleSheetsClient.spreadsheets.values.get({
+      spreadsheetId: GOOGLE_SHEET_ID,
+      range: `${CLOUD_STATE_TAB}!A1:B2`
+    });
+    const rows = (res.data && res.data.values) || [];
+    if (rows.length > 0 && rows[0][0] === 'STATE_GZIP_B64' && rows[0][1]) {
+      const jsonStr = zlib.gunzipSync(Buffer.from(rows[0][1], 'base64')).toString('utf8');
+      const cloudData = JSON.parse(jsonStr);
+      if (cloudData && (Number(cloudData.rev) || 0) > (Number(dbState.rev) || 0)) {
+        mergeClientOrCloudState(cloudData);
+        saveDbToDisk(false);
+        console.log('Restored newer database state from Google Sheets cloud backup! Rev:', dbState.rev);
+      }
+    }
+  } catch (e) {
+    // Cloud tab may not exist yet
+  }
 }
 
-// Get full database state
-app.get('/api/data', (req, res) => {
-  const db = readDB();
-  res.json(db);
-});
-
-// Confirm a Return Adjustment (Short & Excess Balancing)
-app.post('/api/adjust', (req, res) => {
-  try {
-    const { shortCode, shortQty, excessItems, note } = req.body;
-    const db = readDB();
-
-    const shortProd = db.products.find(p => p.code.toLowerCase() === String(shortCode).toLowerCase());
-    if (!shortProd) {
-      return res.status(404).json({ error: 'Short product-ti database-e pawa jayni!' });
-    }
-    const sQty = parseInt(shortQty, 10) || 0;
-    if (sQty <= 0 || sQty > shortProd.short) {
-      return res.status(400).json({ error: `Invalid Short Qty! Current short ache ${shortProd.short} pcs.` });
-    }
-    if (!Array.isArray(excessItems) || excessItems.length === 0) {
-      return res.status(400).json({ error: 'Kono Excess product select kora hoyni!' });
-    }
-
-    // Validate all excess items first
-    const validatedExcess = [];
-    for (const item of excessItems) {
-      const exProd = db.products.find(p => p.code.toLowerCase() === String(item.code).toLowerCase());
-      const eQty = parseInt(item.qty, 10) || 0;
-      if (!exProd) {
-        return res.status(404).json({ error: `Excess product (${item.code}) pawa jayni!` });
-      }
-      if (eQty <= 0 || eQty > exProd.excess) {
-        return res.status(400).json({ error: `${exProd.name}-er excess ache ${exProd.excess} pcs, kintu dewa hoyeche ${eQty} pcs.` });
-      }
-      validatedExcess.push({ prod: exProd, qty: eQty });
-    }
-
-    // Apply adjustments
-    shortProd.short -= sQty;
-    shortProd.phyStock += sQty;
-
-    const historyExcessDetails = [];
-    let totalExcessValue = 0;
-
-    for (const v of validatedExcess) {
-      v.prod.excess -= v.qty;
-      v.prod.phyStock -= v.qty;
-      const lineVal = Number((v.qty * v.prod.price).toFixed(2));
-      totalExcessValue += lineVal;
-      historyExcessDetails.push({
-        code: v.prod.code,
-        name: v.prod.name,
-        qty: v.qty,
-        price: v.prod.price,
-        amount: lineVal
+let cloudBackupTimer = null;
+function scheduleCloudBackup() {
+  if (!googleSheetsClient || !GOOGLE_SHEET_ID) return;
+  if (cloudBackupTimer) clearTimeout(cloudBackupTimer);
+  cloudBackupTimer = setTimeout(async () => {
+    try {
+      // Save only modified products (short_qty > 0 or excess_qty > 0 or custom) + full history to keep payload tiny
+      const compactState = {
+        rev: dbState.rev,
+        lastModified: dbState.lastModified,
+        priceMode: dbState.priceMode,
+        activeProducts: dbState.products.filter(p => (p.short_qty || 0) > 0 || (p.excess_qty || 0) > 0 || p.customUpdated),
+        history: dbState.history
+      };
+      const compressed = zlib.gzipSync(Buffer.from(JSON.stringify(compactState), 'utf8')).toString('base64');
+      await googleSheetsClient.spreadsheets.values.update({
+        spreadsheetId: GOOGLE_SHEET_ID,
+        range: `${CLOUD_STATE_TAB}!A1:B1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: [['STATE_GZIP_B64', compressed]] }
       });
+      cloudSyncStatus.lastSynced = new Date().toISOString();
+    } catch (e) {
+      cloudSyncStatus.error = e.message;
     }
+  }, 1500);
+}
 
-    const shortValue = Number((sQty * shortProd.price).toFixed(2));
-    totalExcessValue = Number(totalExcessValue.toFixed(2));
+// Merge incoming state (from Browser Auto-Heal or Cloud Backup) into dbState
+function mergeClientOrCloudState(incoming) {
+  if (!incoming || typeof incoming !== 'object') return false;
+  let changed = false;
 
-    const record = {
-      id: 'ADJ-' + Date.now(),
-      timestamp: formatDateBanglaStyle(),
-      status: 'CONFIRMED',
-      shortItem: {
-        code: shortProd.code,
-        name: shortProd.name,
-        qty: sQty,
-        price: shortProd.price,
-        amount: shortValue
-      },
-      excessItems: historyExcessDetails,
-      totalShortVal: shortValue,
-      totalExcessVal: totalExcessValue,
-      diffVal: Number((totalExcessValue - shortValue).toFixed(2)),
-      note: note || '',
-      message: `Apnr stock a ${shortProd.name} (${shortProd.code}) - ${sQty} Pcs (৳${shortValue.toFixed(2)}) short chilo apni prodct ta boje peyechen jar binimoy a ${historyExcessDetails.map(x => `${x.name} [${x.qty} Pcs = ৳${x.amount.toFixed(2)}]`).join(' + ')} retrent dekhaite cacchen.`
-    };
-
-    db.history.unshift(record);
-    writeDB(db);
-
-    res.json({ ok: true, record, db });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Adjustment save korte somossa hoyeche.' });
-  }
-});
-
-// Cancel / Undo an Adjustment from History
-app.post('/api/cancel-adjust', (req, res) => {
-  try {
-    const { id } = req.body;
-    const db = readDB();
-    const record = db.history.find(h => h.id === id);
-
-    if (!record) {
-      return res.status(404).json({ error: 'History record pawa jayni!' });
-    }
-    if (record.status === 'CANCELLED') {
-      return res.status(400).json({ error: 'Ei adjustment-ti agei cancel kora hoyeche!' });
-    }
-
-    // Restore Short product
-    const shortProd = db.products.find(p => p.code.toLowerCase() === record.shortItem.code.toLowerCase());
-    if (shortProd) {
-      shortProd.short += record.shortItem.qty;
-      shortProd.phyStock = Math.max(0, shortProd.phyStock - record.shortItem.qty);
-    }
-
-    // Restore Excess products
-    for (const ex of record.excessItems) {
-      const exProd = db.products.find(p => p.code.toLowerCase() === ex.code.toLowerCase());
-      if (exProd) {
-        exProd.excess += ex.qty;
-        exProd.phyStock += ex.qty;
-      }
-    }
-
-    record.status = 'CANCELLED';
-    record.cancelledAt = formatDateBanglaStyle();
-    writeDB(db);
-
-    res.json({ ok: true, record, db });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Cancel korte somossa hoyeche.' });
-  }
-});
-
-// Add or Update Single Product (Edit Price, Short, Excess, Name, Code)
-app.post('/api/product/save', (req, res) => {
-  try {
-    const { originalCode, code, name, sysStock, phyStock, short, excess, price } = req.body;
-    if (!code || !name) {
-      return res.status(400).json({ error: 'Product Code ebong Name obosshoi dite hobe!' });
-    }
-    const db = readDB();
-    const cleanCode = String(code).trim();
-    const cleanName = String(name).trim();
-    const itemObj = {
-      code: cleanCode,
-      name: cleanName,
-      sysStock: parseInt(sysStock, 10) || 0,
-      phyStock: parseInt(phyStock, 10) || 0,
-      short: Math.max(0, parseInt(short, 10) || 0),
-      excess: Math.max(0, parseInt(excess, 10) || 0),
-      price: Math.max(0, Number(parseFloat(price || 0).toFixed(2)))
-    };
-
-    if (originalCode) {
-      const idx = db.products.findIndex(p => p.code.toLowerCase() === String(originalCode).toLowerCase());
-      if (idx !== -1) {
-        db.products[idx] = itemObj;
+  if (Array.isArray(incoming.products) && incoming.products.length > 0) {
+    const map = new Map(dbState.products.map(p => [String(p.code).toUpperCase(), p]));
+    incoming.products.forEach(ip => {
+      if (!ip || !ip.code) return;
+      const key = String(ip.code).trim().toUpperCase();
+      const existing = map.get(key);
+      if (existing) {
+        existing.name = ip.name || existing.name;
+        existing.tp = Number(ip.tp) >= 0 ? Number(ip.tp) : existing.tp;
+        existing.vat = Number(ip.vat) >= 0 ? Number(ip.vat) : existing.vat;
+        existing.price = Number(ip.price) > 0 ? Number(ip.price) : existing.price;
+        existing.short_qty = Math.max(0, parseInt(ip.short_qty, 10) || 0);
+        existing.excess_qty = Math.max(0, parseInt(ip.excess_qty, 10) || 0);
+        if (ip.customUpdated) existing.customUpdated = true;
       } else {
-        db.products.push(itemObj);
+        const newProd = {
+          code: String(ip.code).trim(),
+          name: String(ip.name || '').trim(),
+          tp: Number(ip.tp) || 0,
+          vat: Number(ip.vat) || 0,
+          price: Number(ip.price) || Number(ip.tp) || 0,
+          short_qty: Math.max(0, parseInt(ip.short_qty, 10) || 0),
+          excess_qty: Math.max(0, parseInt(ip.excess_qty, 10) || 0),
+          customUpdated: true,
+          updated_at: ip.updated_at || new Date().toISOString()
+        };
+        dbState.products.push(newProd);
+        map.set(key, newProd);
       }
-    } else {
-      const existingIdx = db.products.findIndex(p => p.code.toLowerCase() === cleanCode.toLowerCase());
-      if (existingIdx !== -1) {
-        db.products[existingIdx] = itemObj;
+    });
+    changed = true;
+  } else if (Array.isArray(incoming.activeProducts)) {
+    const map = new Map(dbState.products.map(p => [String(p.code).toUpperCase(), p]));
+    // First reset short_qty and excess_qty before applying snapshot's activeProducts
+    dbState.products.forEach(p => { p.short_qty = 0; p.excess_qty = 0; });
+    incoming.activeProducts.forEach(ip => {
+      if (!ip || !ip.code) return;
+      const key = String(ip.code).trim().toUpperCase();
+      const existing = map.get(key);
+      if (existing) {
+        existing.name = ip.name || existing.name;
+        if (Number(ip.tp) > 0) existing.tp = Number(ip.tp);
+        if (Number(ip.vat) >= 0) existing.vat = Number(ip.vat);
+        if (Number(ip.price) > 0) existing.price = Number(ip.price);
+        existing.short_qty = Math.max(0, parseInt(ip.short_qty, 10) || 0);
+        existing.excess_qty = Math.max(0, parseInt(ip.excess_qty, 10) || 0);
+        existing.customUpdated = true;
       } else {
-        db.products.unshift(itemObj);
+        const newProd = {
+          code: String(ip.code).trim(),
+          name: String(ip.name || '').trim(),
+          tp: Number(ip.tp) || 0,
+          vat: Number(ip.vat) || 0,
+          price: Number(ip.price) || Number(ip.tp) || 0,
+          short_qty: Math.max(0, parseInt(ip.short_qty, 10) || 0),
+          excess_qty: Math.max(0, parseInt(ip.excess_qty, 10) || 0),
+          customUpdated: true,
+          updated_at: new Date().toISOString()
+        };
+        dbState.products.push(newProd);
+        map.set(key, newProd);
       }
-    }
-
-    writeDB(db);
-    res.json({ ok: true, db });
-  } catch (err) {
-    res.status(500).json({ error: 'Product save korte somossa hoyeche.' });
+    });
+    changed = true;
   }
+
+  if (Array.isArray(incoming.history)) {
+    const existingIds = new Set(dbState.history.map(h => h.id));
+    incoming.history.forEach(h => {
+      if (!h || !h.id) return;
+      if (!existingIds.has(h.id)) {
+        dbState.history.push(h);
+        existingIds.add(h.id);
+      } else {
+        const idx = dbState.history.findIndex(x => x.id === h.id);
+        if (idx >= 0) dbState.history[idx] = h;
+      }
+    });
+    dbState.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    changed = true;
+  }
+
+  if (incoming.priceMode) dbState.priceMode = incoming.priceMode;
+  if (Number(incoming.rev) > Number(dbState.rev)) {
+    dbState.rev = Number(incoming.rev);
+  }
+  if (incoming.lastModified) {
+    dbState.lastModified = incoming.lastModified;
+  }
+  return changed;
+}
+
+// ============================================================================
+// 1. CRONJOB & HEALTH CHECK ENDPOINTS (/health, /api/health, /ping)
+// ============================================================================
+function healthHandler(req, res) {
+  const shortItems = dbState.products.filter(p => (p.short_qty || 0) > 0).length;
+  const excessItems = dbState.products.filter(p => (p.excess_qty || 0) > 0).length;
+  res.status(200).json({
+    status: 'ok',
+    online: true,
+    service: 'Stock Short & Excess Return Balancing System',
+    uptimeSeconds: Math.floor((Date.now() - SERVER_START_TIME) / 1000),
+    timestamp: new Date().toISOString(),
+    dbRevision: dbState.rev,
+    lastModified: dbState.lastModified,
+    totalProducts: dbState.products.length,
+    shortProductsCount: shortItems,
+    excessProductsCount: excessItems,
+    historyCount: dbState.history.length,
+    cloudSync: cloudSyncStatus
+  });
+}
+
+app.get('/health', healthHandler);
+app.head('/health', (req, res) => res.status(200).end());
+app.get('/api/health', healthHandler);
+app.get('/ping', (req, res) => res.status(200).send('pong'));
+
+// ============================================================================
+// 2. STATE & AUTO-HEAL SYNC API (Fixes Render Server Restart Data Loss!)
+// ============================================================================
+app.get('/api/state', (req, res) => {
+  res.json({
+    rev: dbState.rev,
+    lastModified: dbState.lastModified,
+    priceMode: dbState.priceMode,
+    products: dbState.products,
+    history: dbState.history
+  });
 });
 
-// Delete a Product
-app.post('/api/product/delete', (req, res) => {
-  try {
-    const { code } = req.body;
-    const db = readDB();
-    db.products = db.products.filter(p => p.code.toLowerCase() !== String(code).toLowerCase());
-    writeDB(db);
-    res.json({ ok: true, db });
-  } catch (err) {
-    res.status(500).json({ error: 'Product delete korte somossa hoyeche.' });
+app.post('/api/sync-state', (req, res) => {
+  const clientRev = Number(req.body.rev) || 0;
+  const serverRev = Number(dbState.rev) || 1;
+  const clientHistoryLen = Array.isArray(req.body.history) ? req.body.history.length : 0;
+  const serverHistoryLen = dbState.history.length;
+
+  // If Render server restarted and reset to rev 1 (or has fewer history records than the client browser),
+  // automatically recover the client's saved work into the server database!
+  if (clientRev > serverRev || (serverRev <= 1 && clientHistoryLen > serverHistoryLen)) {
+    mergeClientOrCloudState(req.body);
+    saveDbToDisk(false);
+    return res.json({
+      success: true,
+      action: 'RESTORED_FROM_CLIENT',
+      rev: dbState.rev,
+      lastModified: dbState.lastModified,
+      products: dbState.products,
+      history: dbState.history
+    });
   }
+
+  res.json({
+    success: true,
+    action: 'SERVER_UP_TO_DATE',
+    rev: dbState.rev,
+    lastModified: dbState.lastModified,
+    products: dbState.products,
+    history: dbState.history
+  });
 });
 
-// Bulk Import / Replace or Merge from Excel/JSON Upload
-app.post('/api/import', (req, res) => {
-  try {
-    const { products, mode, history } = req.body;
-    if (!Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({ error: 'Valid product list pawa jayni!' });
-    }
-    const db = readDB();
+// ============================================================================
+// 3. PRODUCTS & HISTORY CRUD API
+// ============================================================================
+app.get('/api/products', (req, res) => {
+  res.json(dbState.products || []);
+});
 
-    if (mode === 'merge') {
-      const map = new Map();
-      db.products.forEach(p => map.set(p.code.toUpperCase(), p));
-      products.forEach(p => {
-        if (p.code && p.name) {
-          map.set(String(p.code).trim().toUpperCase(), {
-            code: String(p.code).trim(),
-            name: String(p.name).trim(),
-            sysStock: parseInt(p.sysStock, 10) || 0,
-            phyStock: parseInt(p.phyStock, 10) || 0,
-            short: Math.max(0, parseInt(p.short, 10) || 0),
-            excess: Math.max(0, parseInt(p.excess, 10) || 0),
-            price: Math.max(0, Number(parseFloat(p.price || 0).toFixed(2)))
+app.get('/api/history', (req, res) => {
+  res.json(dbState.history || []);
+});
+
+app.post('/api/products', (req, res) => {
+  const { code, name, tp, vat, price, short_qty, excess_qty } = req.body;
+  if (!code || !name) {
+    return res.status(400).json({ error: 'Product Code and Name are required.' });
+  }
+
+  const cleanCode = String(code).trim();
+  const existingIndex = dbState.products.findIndex(
+    p => String(p.code).toLowerCase() === cleanCode.toLowerCase()
+  );
+
+  const parsedTp = parseFloat(tp) || parseFloat(price) || 0;
+  const parsedVat = parseFloat(vat) || 0;
+  const parsedPrice = parseFloat(price) || Number((parsedTp + parsedVat).toFixed(2));
+
+  const item = {
+    code: cleanCode,
+    name: String(name).trim(),
+    tp: parsedTp,
+    vat: parsedVat,
+    price: parsedPrice,
+    short_qty: Math.max(0, parseInt(short_qty, 10) || 0),
+    excess_qty: Math.max(0, parseInt(excess_qty, 10) || 0),
+    customUpdated: true,
+    updated_at: new Date().toISOString()
+  };
+
+  if (existingIndex >= 0) {
+    dbState.products[existingIndex] = { ...dbState.products[existingIndex], ...item };
+  } else {
+    dbState.products.unshift(item);
+  }
+
+  saveDbToDisk(true);
+  res.json({ success: true, product: item, rev: dbState.rev, lastModified: dbState.lastModified });
+});
+
+app.delete('/api/products/:code', (req, res) => {
+  const code = String(req.params.code || '').trim().toLowerCase();
+  dbState.products = dbState.products.filter(p => String(p.code).toLowerCase() !== code);
+  saveDbToDisk(true);
+  res.json({ success: true, rev: dbState.rev, lastModified: dbState.lastModified });
+});
+
+// ============================================================================
+// 4. CONFIRM BALANCING ADJUSTMENT API (/api/adjust)
+// ============================================================================
+app.post('/api/adjust', (req, res) => {
+  const { shortCode, shortName, shortQty, targetValue, returnItems, note, priceMode } = req.body;
+
+  if (!shortCode || !Array.isArray(returnItems) || returnItems.length === 0) {
+    return res.status(400).json({ error: 'অনুগ্রহ করে শর্ট প্রোডাক্ট এবং কমপক্ষে ১টি এক্সেস প্রোডাক্ট সিলেক্ট করুন।' });
+  }
+
+  const cleanShortCode = String(shortCode).trim();
+  let shortProduct = dbState.products.find(
+    p => String(p.code).toLowerCase() === cleanShortCode.toLowerCase()
+  );
+
+  const sQty = Math.max(1, parseInt(shortQty, 10) || 1);
+  const useTpOnly = (priceMode || dbState.priceMode) === 'TP';
+  const getUnitPrice = (prod) => {
+    if (!prod) return 0;
+    if (useTpOnly && prod.tp > 0) return Number(prod.tp);
+    return Number(prod.price || prod.tp || 0);
+  };
+
+  if (!shortProduct) {
+    const unitP = Number(targetValue) > 0 ? Number((Number(targetValue) / sQty).toFixed(2)) : 0;
+    shortProduct = {
+      code: cleanShortCode,
+      name: shortName || cleanShortCode,
+      tp: unitP,
+      vat: 0,
+      price: unitP,
+      short_qty: sQty,
+      excess_qty: 0,
+      customUpdated: true,
+      updated_at: new Date().toISOString()
+    };
+    dbState.products.unshift(shortProduct);
+  }
+
+  const priorShortQty = Number(shortProduct.short_qty) || 0;
+  const unitShortPrice = getUnitPrice(shortProduct);
+  const computedShortVal = Number(targetValue) > 0
+    ? Number(Number(targetValue).toFixed(2))
+    : Number((unitShortPrice * sQty).toFixed(2));
+
+  let totalReturnValue = 0;
+  const adjustedExcessList = [];
+
+  for (const item of returnItems) {
+    const rCode = String(item.code || '').trim();
+    const rQty = Math.max(1, parseInt(item.qty, 10) || 1);
+    let prod = dbState.products.find(p => String(p.code).toLowerCase() === rCode.toLowerCase());
+
+    const itemUnitPrice = Number(item.unitPrice || item.price || item.tp) || getUnitPrice(prod) || 0;
+    const priorExcessQty = prod ? (Number(prod.excess_qty) || 0) : 0;
+
+    if (prod) {
+      prod.excess_qty = Math.max(0, priorExcessQty - rQty);
+      prod.customUpdated = true;
+      prod.updated_at = new Date().toISOString();
+    }
+
+    const subtotal = Number((itemUnitPrice * rQty).toFixed(2));
+    totalReturnValue += subtotal;
+
+    adjustedExcessList.push({
+      code: prod ? prod.code : rCode,
+      name: prod ? prod.name : (item.name || rCode),
+      qty: rQty,
+      tp: itemUnitPrice,
+      unitPrice: itemUnitPrice,
+      subtotal,
+      priorExcessQty,
+      deductedExcessQty: prod ? (priorExcessQty - prod.excess_qty) : 0
+    });
+  }
+
+  // Deduct short stock cleanly
+  shortProduct.short_qty = Math.max(0, priorShortQty - sQty);
+  shortProduct.customUpdated = true;
+  shortProduct.updated_at = new Date().toISOString();
+
+  totalReturnValue = Number(totalReturnValue.toFixed(2));
+  const adjustmentId = 'ADJ-' + Date.now();
+  const auditRecord = {
+    id: adjustmentId,
+    timestamp: new Date().toISOString(),
+    shortProduct: {
+      code: shortProduct.code,
+      name: shortProduct.name,
+      qty: sQty,
+      tp: unitShortPrice,
+      totalValue: computedShortVal,
+      priorShortQty,
+      deductedShortQty: priorShortQty - shortProduct.short_qty
+    },
+    returnedProducts: adjustedExcessList,
+    totalShortValue: computedShortVal,
+    totalReturnValue,
+    difference: Number((totalReturnValue - computedShortVal).toFixed(2)),
+    remainingTaka: Number((computedShortVal - totalReturnValue).toFixed(2)),
+    note: String(note || '').trim(),
+    status: 'CONFIRMED'
+  };
+
+  dbState.history.unshift(auditRecord);
+  saveDbToDisk(true);
+
+  res.json({
+    success: true,
+    message: 'স্টক ব্যালেন্স সফলভাবে কনফার্ম ও সেভ হয়েছে!',
+    auditRecord,
+    rev: dbState.rev,
+    lastModified: dbState.lastModified
+  });
+});
+
+// ============================================================================
+// 5. CANCEL / UNDO ADJUSTMENT API (/api/history/cancel/:id)
+// ============================================================================
+app.post('/api/history/cancel/:id', (req, res) => {
+  const { id } = req.params;
+  const record = dbState.history.find(h => h.id === id);
+
+  if (!record) {
+    return res.status(404).json({ error: 'অ্যাডজাস্টমেন্ট রেকর্ড পাওয়া যায়নি।' });
+  }
+  if (record.status === 'CANCELLED') {
+    return res.status(400).json({ error: 'এই অ্যাডজাস্টমেন্ট আগেই ক্যান্সেল করা হয়েছে।' });
+  }
+
+  const shortProd = dbState.products.find(
+    p => String(p.code).toLowerCase() === String(record.shortProduct.code).toLowerCase()
+  );
+  if (shortProd) {
+    const restoreShort = typeof record.shortProduct.deductedShortQty === 'number'
+      ? record.shortProduct.deductedShortQty
+      : (record.shortProduct.qty || 0);
+    shortProd.short_qty = (Number(shortProd.short_qty) || 0) + restoreShort;
+    shortProd.customUpdated = true;
+    shortProd.updated_at = new Date().toISOString();
+  }
+
+  for (const ret of (record.returnedProducts || [])) {
+    const excessProd = dbState.products.find(
+      p => String(p.code).toLowerCase() === String(ret.code).toLowerCase()
+    );
+    if (excessProd) {
+      const restoreExcess = typeof ret.deductedExcessQty === 'number'
+        ? ret.deductedExcessQty
+        : (ret.qty || 0);
+      excessProd.excess_qty = (Number(excessProd.excess_qty) || 0) + restoreExcess;
+      excessProd.customUpdated = true;
+      excessProd.updated_at = new Date().toISOString();
+    }
+  }
+
+  record.status = 'CANCELLED';
+  record.cancelled_at = new Date().toISOString();
+
+  saveDbToDisk(true);
+  res.json({
+    success: true,
+    message: 'অ্যাডজাস্টমেন্ট ক্যান্সেল করা হয়েছে এবং স্টক আগের অবস্থায় ফিরিয়ে নেয়া হয়েছে।',
+    rev: dbState.rev,
+    lastModified: dbState.lastModified
+  });
+});
+
+// ============================================================================
+// 6. EXCEL UPLOAD API (/api/upload-excel) — NO RESTORE OPTIONS
+// ============================================================================
+app.post('/api/upload-excel', upload.single('excelFile'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'কোনো Excel ফাইল সিলেক্ট করা হয়নি।' });
+  }
+
+  try {
+    const workbook = xlsx.readFile(req.file.path);
+    let updatedCount = 0;
+    let addedCount = 0;
+
+    workbook.SheetNames.forEach(sheetName => {
+      const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
+      sheetData.forEach(row => {
+        // Flexible column matching
+        const normRow = {};
+        Object.keys(row).forEach(k => {
+          normRow[String(k).trim().toLowerCase().replace(/\s+/g, ' ')] = row[k];
+        });
+
+        const rawCode = String(
+          normRow['code'] || normRow['p.code'] || normRow['product code'] || normRow['item code'] || ''
+        ).trim();
+        const name = String(
+          normRow['product name'] || normRow['name'] || normRow['item name'] || ''
+        ).trim();
+
+        if (!rawCode && !name) return;
+        if (name.toUpperCase().includes('PAGE -') || name.toUpperCase() === 'VACANT') return;
+
+        const code = rawCode.replace(/^0+(?=\d)/, '') || rawCode || ('ITEM-' + Date.now());
+        const tpVal = parseFloat(normRow['tp'] || normRow['trade price'] || normRow['price'] || 0);
+        const vatVal = parseFloat(normRow['vat'] || 0);
+        const shortVal = parseInt(normRow['short'] || normRow['short qty'] || normRow['short_qty'] || 0, 10);
+        const excessVal = parseInt(normRow['excess'] || normRow['excess qty'] || normRow['excess_qty'] || 0, 10);
+
+        const idx = dbState.products.findIndex(
+          p => (code && String(p.code).toLowerCase() === code.toLowerCase()) ||
+               (name && String(p.name).toLowerCase() === name.toLowerCase())
+        );
+
+        if (idx >= 0) {
+          const ex = dbState.products[idx];
+          if (name) ex.name = name;
+          if (!isNaN(tpVal) && tpVal > 0) {
+            ex.tp = tpVal;
+            ex.vat = !isNaN(vatVal) ? vatVal : (ex.vat || 0);
+            ex.price = Number((ex.tp + ex.vat).toFixed(2));
+          }
+          if (!isNaN(shortVal) && (normRow['short'] !== '' || normRow['short qty'] !== '' || normRow['short_qty'] !== '')) {
+            ex.short_qty = Math.max(0, shortVal);
+          }
+          if (!isNaN(excessVal) && (normRow['excess'] !== '' || normRow['excess qty'] !== '' || normRow['excess_qty'] !== '')) {
+            ex.excess_qty = Math.max(0, excessVal);
+          }
+          ex.customUpdated = true;
+          ex.updated_at = new Date().toISOString();
+          updatedCount++;
+        } else if (name) {
+          const tp = !isNaN(tpVal) && tpVal > 0 ? tpVal : 0;
+          const vat = !isNaN(vatVal) && vatVal > 0 ? vatVal : 0;
+          dbState.products.push({
+            code,
+            name,
+            tp,
+            vat,
+            price: Number((tp + vat).toFixed(2)),
+            short_qty: !isNaN(shortVal) ? Math.max(0, shortVal) : 0,
+            excess_qty: !isNaN(excessVal) ? Math.max(0, excessVal) : 0,
+            customUpdated: true,
+            updated_at: new Date().toISOString()
           });
+          addedCount++;
         }
       });
-      db.products = Array.from(map.values());
-    } else {
-      // Replace mode
-      db.products = products.map(p => ({
-        code: String(p.code).trim(),
-        name: String(p.name).trim(),
-        sysStock: parseInt(p.sysStock, 10) || 0,
-        phyStock: parseInt(p.phyStock, 10) || 0,
-        short: Math.max(0, parseInt(p.short, 10) || 0),
-        excess: Math.max(0, parseInt(p.excess, 10) || 0),
-        price: Math.max(0, Number(parseFloat(p.price || 0).toFixed(2)))
-      }));
-      if (Array.isArray(history)) {
-        db.history = history;
-      }
-    }
+    });
 
-    writeDB(db);
-    res.json({ ok: true, count: db.products.length, db });
+    saveDbToDisk(true);
+    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+
+    res.json({
+      success: true,
+      message: `Excel সফলভাবে আপলোড হয়েছে! (${updatedCount}টি আপডেট, ${addedCount}টি নতুন প্রোডাক্ট যোগ হয়েছে)`,
+      updatedCount,
+      addedCount,
+      rev: dbState.rev,
+      lastModified: dbState.lastModified
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database update korte somossa hoyeche.' });
+    if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+    res.status(500).json({ error: 'Excel প্রসেস করতে সমস্যা হয়েছে: ' + err.message });
   }
 });
 
-// Clear History or Reset DB to Initial Excel State
-app.post('/api/reset', (req, res) => {
-  try {
-    const { type } = req.body;
-    const db = readDB();
-    if (type === 'history') {
-      db.history = [];
-    } else if (type === 'factory') {
-      db.products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
-      db.history = [];
-    }
-    writeDB(db);
-    res.json({ ok: true, db });
-  } catch (err) {
-    res.status(500).json({ error: 'Reset korte somossa hoyeche.' });
-  }
-});
+// Automatic Self-Ping Keep-Alive when RENDER_EXTERNAL_URL is set
+const RENDER_EXTERNAL_URL = (process.env.RENDER_EXTERNAL_URL || '').trim();
+if (RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    try {
+      const targetUrl = RENDER_EXTERNAL_URL.replace(/\/$/, '') + '/health';
+      const client = targetUrl.startsWith('https') ? https : http;
+      client.get(targetUrl, (res) => { res.resume(); }).on('error', () => {});
+    } catch (e) {}
+  }, 10 * 60 * 1000); // Every 10 minutes
+}
 
-// Download raw db.json backup
-app.get('/api/backup', (req, res) => {
-  const db = readDB();
-  res.setHeader('Content-Disposition', 'attachment; filename="db.json"');
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(db, null, 2));
-});
-
-// Fallback to index.html for SPA
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Stock Short & Excess Balancing Server running on port ${PORT}`);
+initGoogleSheets().finally(() => {
+  app.listen(PORT, () => {
+    console.log(`Stock Short & Excess Balancing Server v2.0 running on port ${PORT}`);
+    console.log(`Health check endpoint ready at: http://localhost:${PORT}/health`);
+  });
 });
