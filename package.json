@@ -1,19 +1,16 @@
 {
-  "name": "renata-stock-short-excess-balancer",
+  "name": "stock-short-excess-alter-pro",
   "version": "2.0.0",
-  "description": "Stock Short & Excess Return Balancing System with Custom Excess Product Selector, Auto-Persistence & Cronjob Health API",
+  "description": "Neo-Brutalism Stock Short & Excess Balancing System with JSON File Database for Render",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "googleapis": "^140.0.0",
-    "multer": "^1.4.5-lts.1",
-    "xlsx": "^0.18.5"
-  },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
   }
 }
