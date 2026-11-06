@@ -1,0 +1,645 @@
+{
+  "products": [
+    {
+      "code": "N53",
+      "name": "ALGIN 50MG TABS 10X10'S",
+      "sysStock": 8697,
+      "phyStock": 8694,
+      "short": 2,
+      "excess": 0,
+      "price": 747.85
+    },
+    {
+      "code": "229",
+      "name": "ALGIN 5MG INJ 2ML 1X5'S",
+      "sysStock": 4456,
+      "phyStock": 4460,
+      "short": 0,
+      "excess": 0,
+      "price": 154.03
+    },
+    {
+      "code": "N64",
+      "name": "ARBECIN 1ML IV INJ 1X1'S",
+      "sysStock": 1875,
+      "phyStock": 1885,
+      "short": 0,
+      "excess": 4,
+      "price": 132.0
+    },
+    {
+      "code": "983",
+      "name": "BISOREN 2.5MG TAB 3X10'S",
+      "sysStock": 4419,
+      "phyStock": 4420,
+      "short": 0,
+      "excess": 0,
+      "price": 184.91
+    },
+    {
+      "code": "875",
+      "name": "BREDICON TAB 28'S",
+      "sysStock": 3644,
+      "phyStock": 3649,
+      "short": 0,
+      "excess": 0,
+      "price": 52.08
+    },
+    {
+      "code": "934",
+      "name": "CALCIN-D TAB 6X10'S",
+      "sysStock": 371,
+      "phyStock": 373,
+      "short": 0,
+      "excess": 0,
+      "price": 422.64
+    },
+    {
+      "code": "S63",
+      "name": "CILMA 10MG TAB 3X10'S",
+      "sysStock": 182,
+      "phyStock": 184,
+      "short": 0,
+      "excess": 0,
+      "price": 237.74
+    },
+    {
+      "code": "S65",
+      "name": "CILMA 5MG TAB 3X10'S",
+      "sysStock": 119,
+      "phyStock": 117,
+      "short": 0,
+      "excess": 0,
+      "price": 184.91
+    },
+    {
+      "code": "N4M",
+      "name": "CORALCIN-DX FC TAB 5X8'S",
+      "sysStock": 589,
+      "phyStock": 588,
+      "short": 0,
+      "excess": 0,
+      "price": 527.84
+    },
+    {
+      "code": "612",
+      "name": "DANZOL 100MG CAPS. 3X10'S",
+      "sysStock": 163,
+      "phyStock": 161,
+      "short": 2,
+      "excess": 0,
+      "price": 527.96
+    },
+    {
+      "code": "613",
+      "name": "DANZOL 200MG CAPS. 2X10'S",
+      "sysStock": 25,
+      "phyStock": 27,
+      "short": 0,
+      "excess": 2,
+      "price": 668.95
+    },
+    {
+      "code": "073",
+      "name": "DELENTIN SUSPENSION 10ML 1'S",
+      "sysStock": 5531,
+      "phyStock": 5535,
+      "short": 0,
+      "excess": 0,
+      "price": 14.12
+    },
+    {
+      "code": "990",
+      "name": "DOMIREN SUSPENSION 100ML 1X1'S",
+      "sysStock": 5434,
+      "phyStock": 5436,
+      "short": 0,
+      "excess": 0,
+      "price": 33.45
+    },
+    {
+      "code": "S18",
+      "name": "EAZY JELLY 50GM TUBE 1'S",
+      "sysStock": 682,
+      "phyStock": 681,
+      "short": 0,
+      "excess": 0,
+      "price": 154.01
+    },
+    {
+      "code": "185",
+      "name": "FENADIN FC 180MG TAB 2X10'S",
+      "sysStock": 11588,
+      "phyStock": 11590,
+      "short": 0,
+      "excess": 0,
+      "price": 176.1
+    },
+    {
+      "code": "188",
+      "name": "FENADIN FC 60MG TAB 3X10'S",
+      "sysStock": 3859,
+      "phyStock": 3857,
+      "short": 0,
+      "excess": 0,
+      "price": 105.66
+    },
+    {
+      "code": "C25",
+      "name": "FERIX-V CAP 6X10'S",
+      "sysStock": 1154,
+      "phyStock": 1155,
+      "short": 0,
+      "excess": 0,
+      "price": 237.39
+    },
+    {
+      "code": "607",
+      "name": "FLUSTAR 500MG CAP 7X4'S",
+      "sysStock": 18,
+      "phyStock": 3,
+      "short": 15,
+      "excess": 0,
+      "price": 246.54
+    },
+    {
+      "code": "S72",
+      "name": "FUROCEF DS SUSPENSION 50ML 1X1'S",
+      "sysStock": 740,
+      "phyStock": 765,
+      "short": 0,
+      "excess": 25,
+      "price": 220.02
+    },
+    {
+      "code": "102",
+      "name": "FUROCEF FC SUSPENSION 70ML 1X1'S",
+      "sysStock": 3432,
+      "phyStock": 3407,
+      "short": 25,
+      "excess": 0,
+      "price": 198.02
+    },
+    {
+      "code": "N77",
+      "name": "FUROCLAV 250MG TAB 2X7'S",
+      "sysStock": 1699,
+      "phyStock": 1702,
+      "short": 0,
+      "excess": 3,
+      "price": 431.27
+    },
+    {
+      "code": "N78",
+      "name": "FUROCLAV 500MG TAB 2X7'S",
+      "sysStock": 2843,
+      "phyStock": 2842,
+      "short": 1,
+      "excess": 0,
+      "price": 739.28
+    },
+    {
+      "code": "CY7",
+      "name": "HYDROGEST DS 2ML (500MG/2ML) INJ 1X1'S",
+      "sysStock": 1085,
+      "phyStock": 1084,
+      "short": 1,
+      "excess": 0,
+      "price": 572.04
+    },
+    {
+      "code": "N8V",
+      "name": "LETROL 2.5MG TAB 3X5'S",
+      "sysStock": 2616,
+      "phyStock": 2617,
+      "short": 0,
+      "excess": 0,
+      "price": 543.0
+    },
+    {
+      "code": "112",
+      "name": "LUCAN-R SUSP. 35ML",
+      "sysStock": 3561,
+      "phyStock": 3563,
+      "short": 0,
+      "excess": 0,
+      "price": 68.91
+    },
+    {
+      "code": "C81",
+      "name": "MAXPRO 20MG CAP 10X14'S",
+      "sysStock": 8031,
+      "phyStock": 8032,
+      "short": 0,
+      "excess": 0,
+      "price": 862.89
+    },
+    {
+      "code": "C39",
+      "name": "MAXPRO EC 40MG TAB 6X10'S",
+      "sysStock": 2462,
+      "phyStock": 2463,
+      "short": 0,
+      "excess": 0,
+      "price": 475.47
+    },
+    {
+      "code": "C8Y",
+      "name": "MAXPRO MUPS 20MG TAB 5X14'S",
+      "sysStock": 5783,
+      "phyStock": 5782,
+      "short": 1,
+      "excess": 0,
+      "price": 616.35
+    },
+    {
+      "code": "251",
+      "name": "MEROPEN IV 1GM INJ",
+      "sysStock": 2577,
+      "phyStock": 2575,
+      "short": 2,
+      "excess": 0,
+      "price": 1144.07
+    },
+    {
+      "code": "275",
+      "name": "MEROPEN IV 500MG INJ",
+      "sysStock": 4170,
+      "phyStock": 4172,
+      "short": 0,
+      "excess": 2,
+      "price": 616.05
+    },
+    {
+      "code": "N2J",
+      "name": "MYOSIT PLUS FC TAB 5X6'S",
+      "sysStock": 845,
+      "phyStock": 844,
+      "short": 0,
+      "excess": 0,
+      "price": 1293.1
+    },
+    {
+      "code": "S74",
+      "name": "NOVELON LITE FC TAB 1X28'S",
+      "sysStock": 2383,
+      "phyStock": 2382,
+      "short": 0,
+      "excess": 0,
+      "price": 366.38
+    },
+    {
+      "code": "S73",
+      "name": "NOVELON-28 FC TAB 1X28'S",
+      "sysStock": 372,
+      "phyStock": 373,
+      "short": 0,
+      "excess": 0,
+      "price": 343.98
+    },
+    {
+      "code": "911",
+      "name": "ORCEF 200MG CAP 2X8'S",
+      "sysStock": 2960,
+      "phyStock": 2950,
+      "short": 10,
+      "excess": 0,
+      "price": 492.9
+    },
+    {
+      "code": "298",
+      "name": "ORCEF 200MG TAB 2X6'S",
+      "sysStock": 558,
+      "phyStock": 568,
+      "short": 0,
+      "excess": 10,
+      "price": 369.67
+    },
+    {
+      "code": "221",
+      "name": "ORCEF DPS 50ML",
+      "sysStock": 4352,
+      "phyStock": 4349,
+      "short": 0,
+      "excess": 0,
+      "price": 184.82
+    },
+    {
+      "code": "C2X",
+      "name": "PROLIFIC 5000 IU INJ 1X1'S",
+      "sysStock": 527,
+      "phyStock": 526,
+      "short": 0,
+      "excess": 0,
+      "price": 1939.5
+    },
+    {
+      "code": "926",
+      "name": "RENXIT FC TAB 10X10'S",
+      "sysStock": 5793,
+      "phyStock": 5792,
+      "short": 0,
+      "excess": 0,
+      "price": 440.25
+    },
+    {
+      "code": "C2N",
+      "name": "REPHASTON 10MG TAB 3X10'S",
+      "sysStock": 3106,
+      "phyStock": 3105,
+      "short": 0,
+      "excess": 0,
+      "price": 924.14
+    },
+    {
+      "code": "S56",
+      "name": "ROLAC 30MG INJ 1ML 1'S",
+      "sysStock": 6838,
+      "phyStock": 6899,
+      "short": 0,
+      "excess": 61,
+      "price": 48.59
+    },
+    {
+      "code": "S57",
+      "name": "ROLAC 60MG INJ 2ML 1'S",
+      "sysStock": 4704,
+      "phyStock": 4644,
+      "short": 60,
+      "excess": 0,
+      "price": 83.92
+    },
+    {
+      "code": "N8B",
+      "name": "ROLIP EZ 10/10MG TAB 3X10'S",
+      "sysStock": 334,
+      "phyStock": 336,
+      "short": 0,
+      "excess": 0,
+      "price": 686.45
+    },
+    {
+      "code": "CP6",
+      "name": "SALBUREN HFA 100MCG MDI(200PUFF) 1'S",
+      "sysStock": 324,
+      "phyStock": 323,
+      "short": 0,
+      "excess": 0,
+      "price": 220.02
+    },
+    {
+      "code": "CQ5",
+      "name": "SALBUREN HFA 100MCG REFILL(200PUFF) 1'S",
+      "sysStock": 166,
+      "phyStock": 167,
+      "short": 0,
+      "excess": 0,
+      "price": 193.62
+    },
+    {
+      "code": "170",
+      "name": "SERONEX 25MG TAB 5X10'S",
+      "sysStock": 11,
+      "phyStock": 10,
+      "short": 0,
+      "excess": 0,
+      "price": 132.08
+    },
+    {
+      "code": "N5D",
+      "name": "SUBAZOL 65MG CAP 5X6'S",
+      "sysStock": 1134,
+      "phyStock": 1133,
+      "short": 0,
+      "excess": 0,
+      "price": 527.96
+    },
+    {
+      "code": "C8G",
+      "name": "SUPADOPA TR 195MG CAP 3X6'S",
+      "sysStock": 28,
+      "phyStock": 30,
+      "short": 0,
+      "excess": 0,
+      "price": 792.04
+    },
+    {
+      "code": "C1W",
+      "name": "TAVEN EZ 10/10MG TAB 2X10'S",
+      "sysStock": 51,
+      "phyStock": 49,
+      "short": 0,
+      "excess": 0,
+      "price": 246.31
+    },
+    {
+      "code": "N9C",
+      "name": "TELPRO FC 80MG TAB 3X10'S",
+      "sysStock": 172,
+      "phyStock": 173,
+      "short": 0,
+      "excess": 0,
+      "price": 527.96
+    },
+    {
+      "code": "C9Q",
+      "name": "TELPRO FC 80MG TAB 3X6'S",
+      "sysStock": 80,
+      "phyStock": 79,
+      "short": 0,
+      "excess": 0,
+      "price": 316.77
+    },
+    {
+      "code": "N1F",
+      "name": "TELPRO MAX FC 40MG TAB 3X10'S",
+      "sysStock": 319,
+      "phyStock": 318,
+      "short": 0,
+      "excess": 0,
+      "price": 330.02
+    },
+    {
+      "code": "N8Q",
+      "name": "THYROX 100MCG TAB 3X30'S",
+      "sysStock": 1241,
+      "phyStock": 1242,
+      "short": 0,
+      "excess": 0,
+      "price": 245.25
+    },
+    {
+      "code": "N5A",
+      "name": "THYROX 25MCG TAB 3X30'S",
+      "sysStock": 4249,
+      "phyStock": 4248,
+      "short": 0,
+      "excess": 0,
+      "price": 87.66
+    },
+    {
+      "code": "955",
+      "name": "THYROX 50MCG 3X30'S",
+      "sysStock": 15000,
+      "phyStock": 14998,
+      "short": 0,
+      "excess": 1,
+      "price": 174.29
+    },
+    {
+      "code": "C4P",
+      "name": "ULFIX 200ML (1G/5ML) SUSP 1X1'S",
+      "sysStock": 663,
+      "phyStock": 664,
+      "short": 0,
+      "excess": 0,
+      "price": 352.02
+    },
+    {
+      "code": "CS5",
+      "name": "VILTICA RENACAP 25/200MCG DPI CAP 3X10'S",
+      "sysStock": 58,
+      "phyStock": 59,
+      "short": 0,
+      "excess": 0,
+      "price": 792.05
+    },
+    {
+      "code": "N61",
+      "name": "ZITHRIN 250MG TAB 3X5'S",
+      "sysStock": 19,
+      "phyStock": 18,
+      "short": 0,
+      "excess": 0,
+      "price": 330.02
+    },
+    {
+      "code": "N27",
+      "name": "ZITHRIN FC 500MG TAB 3X5'S",
+      "sysStock": 2958,
+      "phyStock": 2959,
+      "short": 0,
+      "excess": 1,
+      "price": 528.11
+    },
+    {
+      "code": "RG1",
+      "name": "ANDRO-REN 10G PWDR",
+      "sysStock": 4364,
+      "phyStock": 4363,
+      "short": 0,
+      "excess": 0,
+      "price": 40.0
+    },
+    {
+      "code": "538",
+      "name": "CATOPHOS INJ 30ML",
+      "sysStock": 1250,
+      "phyStock": 1249,
+      "short": 0,
+      "excess": 0,
+      "price": 132.51
+    },
+    {
+      "code": "550",
+      "name": "DOXIVET POWDER 100GM SACHET",
+      "sysStock": 4326,
+      "phyStock": 4325,
+      "short": 0,
+      "excess": 0,
+      "price": 176.02
+    },
+    {
+      "code": "R08",
+      "name": "FEVENIL INJ 10ML 1'S",
+      "sysStock": 1153,
+      "phyStock": 1155,
+      "short": 0,
+      "excess": 0,
+      "price": 89.76
+    },
+    {
+      "code": "RO2",
+      "name": "HEPAREN 500ML SLUSN 1X1'S",
+      "sysStock": 817,
+      "phyStock": 813,
+      "short": 2,
+      "excess": 0,
+      "price": 450.0
+    },
+    {
+      "code": "555",
+      "name": "MICRONID POWDER 10GM SACHET",
+      "sysStock": 16650,
+      "phyStock": 16662,
+      "short": 0,
+      "excess": 0,
+      "price": 35.83
+    },
+    {
+      "code": "R30",
+      "name": "MYCO-OUT POWDER 100GM SACHET",
+      "sysStock": 510,
+      "phyStock": 505,
+      "short": 0,
+      "excess": 0,
+      "price": 321.22
+    },
+    {
+      "code": "RP7",
+      "name": "RE-CHARGE 500ML SLUSN 1X1'S",
+      "sysStock": 354,
+      "phyStock": 358,
+      "short": 0,
+      "excess": 2,
+      "price": 400.0
+    },
+    {
+      "code": "759",
+      "name": "RENA CAL-P 1LITER",
+      "sysStock": 502,
+      "phyStock": 516,
+      "short": 0,
+      "excess": 0,
+      "price": 300.0
+    },
+    {
+      "code": "L02",
+      "name": "RENA CAL-P 5LITER",
+      "sysStock": 264,
+      "phyStock": 266,
+      "short": 0,
+      "excess": 0,
+      "price": 1350.0
+    },
+    {
+      "code": "782",
+      "name": "RENAVIT DB PLUS 1KG",
+      "sysStock": 599,
+      "phyStock": 607,
+      "short": 0,
+      "excess": 0,
+      "price": 336.0
+    },
+    {
+      "code": "814",
+      "name": "RENAVIT-DB 1000GM (CUSTOM)",
+      "sysStock": 39,
+      "phyStock": 31,
+      "short": 0,
+      "excess": 0,
+      "price": 240.0
+    },
+    {
+      "code": "L25",
+      "name": "RUMEN-E 100GM",
+      "sysStock": 4052,
+      "phyStock": 4055,
+      "short": 0,
+      "excess": 0,
+      "price": 100.0
+    }
+  ],
+  "history": [],
+  "lastUpdated": "05-Nov-2026"
+}
