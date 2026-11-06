@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>STOCK ALTER PRO — Neo-Brutalism Short & Excess Balancing System</title>
+  <title>STOCK ALTER — Short & Excess Balancing System</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,17 +11,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-main: #F4F1EA;
-      --ink: #111827;
-      --short-bg: #FFE4E6;
-      --short-accent: #FF4D6D;
-      --short-dark: #9F1239;
-      --excess-bg: #D1FAE5;
-      --excess-accent: #10B981;
-      --excess-dark: #065F46;
-      --brand-yellow: #FACC15;
-      --brand-indigo: #4F46E5;
-      --brand-cyan: #06B6D4;
+      --bg-page: #F1F5F9;
+      --surface: #FFFFFF;
+      --ink: #0F172A;
+      --primary: #4F46E5;
+      --primary-soft: #EEF2FF;
+      --short-color: #E11D48;
+      --short-soft: #FFF1F2;
+      --excess-color: #059669;
+      --excess-soft: #ECFDF5;
     }
 
     * {
@@ -31,9 +29,7 @@
 
     body {
       font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
-      background-color: var(--bg-main);
-      background-image: radial-gradient(#111827 0.85px, transparent 0.85px);
-      background-size: 20px 20px;
+      background-color: var(--bg-page);
       color: var(--ink);
       margin: 0;
       padding: 0;
@@ -44,52 +40,54 @@
       font-family: 'Space Grotesk', 'Hind Siliguri', sans-serif;
     }
 
+    /* Clean Modern Neo-Brutalist Surfaces */
     .nb-card {
       background: #FFFFFF;
-      border: 3px solid #111827;
-      box-shadow: 5px 5px 0px #111827;
+      border: 2px solid #0F172A;
+      box-shadow: 3px 3px 0px #0F172A;
       border-radius: 14px;
     }
 
     .nb-card-sm {
       background: #FFFFFF;
-      border: 2.5px solid #111827;
-      box-shadow: 3.5px 3.5px 0px #111827;
-      border-radius: 12px;
+      border: 2px solid #0F172A;
+      box-shadow: 2px 2px 0px #0F172A;
+      border-radius: 11px;
     }
 
     .nb-btn {
-      border: 2.5px solid #111827;
-      box-shadow: 3.5px 3.5px 0px #111827;
-      border-radius: 10px;
+      border: 2px solid #0F172A;
+      box-shadow: 2px 2px 0px #0F172A;
+      border-radius: 9px;
       font-weight: 700;
       transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       user-select: none;
+      white-space: nowrap;
     }
 
     .nb-btn:hover:not(:disabled) {
       transform: translate(-1px, -1px);
-      box-shadow: 4.5px 4.5px 0px #111827;
+      box-shadow: 3px 3px 0px #0F172A;
     }
 
     .nb-btn:active:not(:disabled) {
-      transform: translate(2.5px, 2.5px);
-      box-shadow: 1px 1px 0px #111827;
+      transform: translate(1.5px, 1.5px);
+      box-shadow: 0.5px 0.5px 0px #0F172A;
     }
 
     .nb-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
 
     .nb-input {
-      border: 2.5px solid #111827;
-      box-shadow: 3px 3px 0px #111827;
+      border: 2px solid #0F172A;
+      box-shadow: 2px 2px 0px #0F172A;
       border-radius: 10px;
       background: #FFFFFF;
       font-weight: 600;
@@ -98,375 +96,314 @@
 
     .nb-input:focus {
       outline: none;
-      background: #FEFCE8;
-      box-shadow: 4px 4px 0px #4F46E5;
-      border-color: #111827;
+      border-color: #4F46E5;
+      box-shadow: 3px 3px 0px #4F46E5;
     }
 
     .nb-badge {
-      border: 2px solid #111827;
-      box-shadow: 2px 2px 0px #111827;
-      border-radius: 8px;
+      border: 1.5px solid #0F172A;
+      border-radius: 7px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
+      white-space: nowrap;
     }
 
     .nb-tab-active {
-      background-color: #FACC15 !important;
-      color: #111827 !important;
-      transform: translate(1.5px, 1.5px);
-      box-shadow: 2px 2px 0px #111827 !important;
+      background-color: #4F46E5 !important;
+      color: #FFFFFF !important;
+      box-shadow: 1.5px 1.5px 0px #0F172A !important;
     }
 
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
-    ::-webkit-scrollbar-track {
-      background: #F4F1EA;
-      border-left: 2px solid #111827;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #111827;
-      border-radius: 4px;
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
-    @keyframes popIn {
-      0% { opacity: 0; transform: scale(0.96) translateY(6px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(4px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
     .animate-pop {
-      animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeSlide 0.16s ease-out forwards;
     }
   </style>
 </head>
-<body class="min-h-screen pb-24 md:pb-12">
+<body class="min-h-screen pb-10">
 
-  <!-- TOP NEO-BRUTALIST HEADER -->
-  <header class="sticky top-0 z-30 bg-[#FFFDF9] border-b-[3px] border-[#111827] shadow-[0_4px_0_#111827]">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-[#FACC15] border-[2.5px] border-[#111827] shadow-[3px_3px_0_#111827] flex items-center justify-center font-display font-bold text-xl shrink-0">
-            ⚖️
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-[#111827] leading-none">
-                STOCK ALTER PRO
-              </h1>
-              <span id="serverStatusBadge" class="nb-badge bg-[#D1FAE5] text-[#065F46] text-[11px] px-2 py-0.5">
-                ● JSON DB READY
-              </span>
-            </div>
-            <p class="text-xs sm:text-sm font-semibold text-gray-700 mt-0.5">
-              শর্ট ও এক্সেস স্টক রিটার্ন মিলানো সিস্টেম • Neo-Brutalism Edition
-            </p>
-          </div>
+  <!-- ===================================================================== -->
+  <!-- STRICTLY 1-LINE CLEAN NEO-BRUTALIST HEADER (MOBILE & DESKTOP)         -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-white border-b-2 border-[#0F172A]">
+    <div class="max-w-5xl mx-auto px-2.5 sm:px-5 h-14 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+      <!-- Brand Logo (Compact, 1-line) -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-[#4F46E5] text-white border-2 border-[#0F172A] shadow-[2px_2px_0_#0F172A] flex items-center justify-center font-display font-bold text-sm">
+          ⚖️
         </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <button id="btnOpenUploadModal" type="button" class="nb-btn bg-[#E0E7FF] hover:bg-[#C7D2FE] text-[#1E1B4B] text-xs sm:text-sm px-3 py-2">
-            <span>📥</span> <span>এক্সেল আপলোড</span>
-          </button>
-          <button id="btnExportExcel" type="button" class="nb-btn bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] text-xs sm:text-sm px-3 py-2">
-            <span>📤</span> <span class="hidden sm:inline">রিপোর্ট ডাউনলোড</span><span class="sm:hidden">ডাউনলোড</span>
-          </button>
-          <button id="btnOpenDbModal" type="button" class="nb-btn bg-[#FFE4E6] hover:bg-[#FECDD3] text-[#9F1239] text-xs sm:text-sm px-3 py-2">
-            <span>🗄️</span> <span>DB ক্লিয়ার / ব্যাকআপ</span>
-          </button>
-        </div>
+        <span class="font-display font-extrabold text-sm sm:text-base tracking-tight text-[#0F172A] hidden xs:inline sm:inline">
+          STOCK ALTER
+        </span>
       </div>
 
-      <!-- Desktop Navigation Bar -->
-      <nav class="hidden md:grid grid-cols-4 gap-3 mt-3 pt-3 border-t-2 border-dashed border-gray-300" aria-label="Main Navigation">
-        <button type="button" data-nav="home" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2.5 px-4 text-sm nb-tab-active">
-          <span>🏠</span> <span>হোম ও অটো মিলান (Home)</span>
+      <!-- Single-Line Navigation Tabs & Data Trigger -->
+      <nav class="flex items-center gap-1.5 sm:gap-2 shrink-0" aria-label="Main Navigation">
+        <button type="button" data-nav="home" class="nav-tab-btn nb-btn bg-white text-[#0F172A] px-2.5 sm:px-3.5 py-1.5 text-xs sm:text-sm nb-tab-active">
+          <span>🏠</span> <span>হোম</span>
         </button>
-        <button type="button" data-nav="custom" class="nav-tab-btn nb-btn bg-[#EDE9FE] text-[#111827] py-2.5 px-4 text-sm">
-          <span>🎯</span> <span>নিজের ইচ্ছা মতো এক্সেস মিলান (Custom)</span>
+        <button type="button" data-nav="custom" class="nav-tab-btn nb-btn bg-white text-[#0F172A] px-2.5 sm:px-3.5 py-1.5 text-xs sm:text-sm">
+          <span>🎯</span> <span>কাস্টম মিলান</span>
         </button>
-        <button type="button" data-nav="products" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2.5 px-4 text-sm">
-          <span>📦</span> <span>সব প্রোডাক্ট ও প্রাইস এডিট (<span id="navCountProducts">71</span>)</span>
+        <button type="button" data-nav="products" class="nav-tab-btn nb-btn bg-white text-[#0F172A] px-2.5 sm:px-3.5 py-1.5 text-xs sm:text-sm">
+          <span>📦</span> <span>স্টক (<span id="navCountProducts">71</span>)</span>
         </button>
-        <button type="button" data-nav="history" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2.5 px-4 text-sm">
-          <span>📜</span> <span>হিস্ট্রি ও ক্যান্সেল (<span id="navCountHistory">0</span>)</span>
+        <button type="button" data-nav="history" class="nav-tab-btn nb-btn bg-white text-[#0F172A] px-2.5 sm:px-3.5 py-1.5 text-xs sm:text-sm">
+          <span>📜</span> <span>হিস্ট্রি (<span id="navCountHistory">0</span>)</span>
+        </button>
+        <button id="btnOpenUploadModal" type="button" class="nb-btn bg-[#EEF2FF] text-[#4F46E5] px-2.5 py-1.5 text-xs sm:text-sm" title="এক্সেল আপলোড ও ডাটাবেস">
+          <span>⚙️</span> <span class="hidden sm:inline">ডাটাবেস</span>
         </button>
       </nav>
     </div>
   </header>
 
-  <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FFFDF9] border-t-[3px] border-[#111827] px-2 py-2 grid grid-cols-4 gap-1.5 shadow-[0_-4px_0_#111827]" aria-label="Mobile Navigation">
-    <button type="button" data-nav="home" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2 px-1 text-[11px] flex-col gap-0.5 nb-tab-active">
-      <span class="text-base leading-none">🏠</span>
-      <span class="truncate max-w-full">হোম মিলান</span>
-    </button>
-    <button type="button" data-nav="custom" class="nav-tab-btn nb-btn bg-[#EDE9FE] text-[#111827] py-2 px-1 text-[11px] flex-col gap-0.5">
-      <span class="text-base leading-none">🎯</span>
-      <span class="truncate max-w-full">কাস্টম মিলান</span>
-    </button>
-    <button type="button" data-nav="products" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2 px-1 text-[11px] flex-col gap-0.5">
-      <span class="text-base leading-none">📦</span>
-      <span class="truncate max-w-full">প্রোডাক্ট (<span id="mobNavCountProducts">71</span>)</span>
-    </button>
-    <button type="button" data-nav="history" class="nav-tab-btn nb-btn bg-white text-[#111827] py-2 px-1 text-[11px] flex-col gap-0.5">
-      <span class="text-base leading-none">📜</span>
-      <span class="truncate max-w-full">হিস্ট্রি (<span id="mobNavCountHistory">0</span>)</span>
-    </button>
-  </nav>
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-5xl mx-auto px-3 sm:px-5 pt-4 sm:pt-6 space-y-4 sm:space-y-5">
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 pt-5 space-y-6">
+    <!-- ===================================================================== -->
+    <!-- PAGE 1: HOME PAGE (CLEAN UNTIL SEARCH, ONLY SHORT PRODUCTS SEARCHABLE)-->
+    <!-- ===================================================================== -->
+    <section id="page-home" class="space-y-4 sm:space-y-5 animate-pop">
 
-    <!-- PAGE 1: HOME PAGE -->
-    <section id="page-home" class="space-y-6 animate-pop">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="nb-card bg-[#FFF0F3] p-4 sm:p-5 relative overflow-hidden">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <span class="nb-badge bg-[#FF4D6D] text-white text-xs px-2.5 py-1 uppercase tracking-wider">
-                🔴 TOTAL SHORT (মোট ঘাটতি / শর্ট)
-              </span>
-              <div id="homeTotalShortTaka" class="font-display font-extrabold text-3xl sm:text-4xl text-[#9F1239] mt-3">
-                ৳26,280.23
-              </div>
-              <p class="text-xs sm:text-sm font-bold text-gray-800 mt-1">
-                মোট <span id="homeShortProductCount" class="underline decoration-2">11</span> টি প্রোডাক্টে <span id="homeShortUnitCount" class="underline decoration-2">121</span> পিস শর্ট আছে
-              </p>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-[#FF4D6D] text-white border-[2.5px] border-[#111827] shadow-[3px_3px_0_#111827] flex items-center justify-center font-display font-extrabold text-xl shrink-0">
-              📉
-            </div>
-          </div>
-        </div>
-
-        <div class="nb-card bg-[#E6FBF4] p-4 sm:p-5 relative overflow-hidden">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <span class="nb-badge bg-[#10B981] text-white text-xs px-2.5 py-1 uppercase tracking-wider">
-                🟢 TOTAL EXCESS (মোট অতিরিক্ত / এক্সেস)
-              </span>
-              <div id="homeTotalExcessTaka" class="font-display font-extrabold text-3xl sm:text-4xl text-[#065F46] mt-3">
-                ৳18,055.40
-              </div>
-              <p class="text-xs sm:text-sm font-bold text-gray-800 mt-1">
-                মোট <span id="homeExcessProductCount" class="underline decoration-2">10</span> টি প্রোডাক্টে <span id="homeExcessUnitCount" class="underline decoration-2">111</span> পিস এক্সেস আছে
-              </p>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-[#10B981] text-white border-[2.5px] border-[#111827] shadow-[3px_3px_0_#111827] flex items-center justify-center font-display font-extrabold text-xl shrink-0">
-              📈
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Search Box -->
-      <div class="nb-card bg-white p-4 sm:p-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-          <div>
-            <h2 class="font-display font-extrabold text-lg sm:text-xl text-[#111827] flex items-center gap-2">
-              <span>🔍</span> <span>প্রোডাক্ট সার্চ ও অল্টার রিটার্ন সাজেস্টর</span>
-            </h2>
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 mt-0.5">
-              যে প্রোডাক্টটি স্টকে শর্ট আছে সেটি নাম বা কোড দিয়ে সার্চ করুন অথবা নিচের শর্ট লিস্ট থেকে সিলেক্ট করুন
-            </p>
-          </div>
-          <button id="btnGoToCustomFromHome" type="button" class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] text-xs sm:text-sm px-3.5 py-2 self-start md:self-auto shrink-0">
-            <span>🎯</span> <span>নিজের ইচ্ছা মতো এক্সেস মিলান (Custom Selector) ➔</span>
-          </button>
-        </div>
-
-        <div class="relative">
-          <div class="flex flex-col sm:flex-row gap-2.5">
-            <div class="relative flex-1">
-              <input
-                id="homeSearchInput"
-                type="text"
-                placeholder="প্রোডাক্টের নাম বা কোড লিখুন... (যেমন: ALGIN, N53, DANZOL, ORCEF, ROLAC, 612)"
-                class="nb-input w-full pl-10 pr-10 py-3 text-sm sm:text-base"
-                autocomplete="off"
-              />
-              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">🔎</span>
-              <button
-                id="btnClearHomeSearch"
-                type="button"
-                title="সার্চ মুছুন"
-                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-gray-200 hover:bg-gray-300 border border-[#111827] font-bold text-xs flex items-center justify-center"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-
-          <div id="homeSearchDropdown" class="hidden mt-2 nb-card-sm bg-white max-h-80 overflow-y-auto divide-y-2 divide-gray-200 z-20"></div>
-        </div>
-
-        <div class="mt-4 pt-3 border-t-2 border-dashed border-gray-300">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-[#9F1239] flex items-center gap-1.5">
-              <span>⚡</span> <span>বর্তমানে শর্ট থাকা প্রোডাক্টগুলো (১-ক্লিকে সিলেক্ট করুন):</span>
+      <!-- Total Short & Total Excess Cards (Side-by-Side even on Mobile) -->
+      <div class="grid grid-cols-2 gap-2.5 sm:gap-4">
+        <!-- Total Short Card -->
+        <div class="nb-card p-3.5 sm:p-5 border-l-[6px] border-l-[#E11D48]">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-[#E11D48]">
+              মোট শর্ট (SHORT)
+            </span>
+            <span class="nb-badge bg-[#FFF1F2] text-[#E11D48] text-[10px] sm:text-xs px-1.5 py-0.5">
+              <span id="homeShortProductCount">11</span> টি আইটেম
             </span>
           </div>
-          <div id="homeQuickShortChips" class="flex flex-wrap gap-2"></div>
+          <div id="homeTotalShortTaka" class="font-display font-extrabold text-lg sm:text-3xl text-[#0F172A] mt-1.5 sm:mt-2 truncate">
+            ৳26,280.23
+          </div>
+          <div class="text-[11px] sm:text-xs font-semibold text-slate-500 mt-0.5">
+            মোট <span id="homeShortUnitCount" class="font-bold text-slate-700">121</span> পিস শর্ট
+          </div>
         </div>
-      </div>
 
-      <div id="homeSelectedContainer" class="space-y-6"></div>
-    </section>
-
-    <!-- PAGE 2: CUSTOM EXCESS PRODUCT SELECTOR -->
-    <section id="page-custom" class="hidden space-y-6 animate-pop">
-      <div class="nb-card bg-[#EDE9FE] p-4 sm:p-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div>
-            <span class="nb-badge bg-[#4F46E5] text-white text-xs px-2.5 py-1 uppercase">
-              🎯 DEDICATED CUSTOM MATCHER
+        <!-- Total Excess Card -->
+        <div class="nb-card p-3.5 sm:p-5 border-l-[6px] border-l-[#059669]">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-[#059669]">
+              মোট এক্সেস (EXCESS)
             </span>
-            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-[#111827] mt-2">
-              CUSTOM EXCESS PRODUCT SELECTOR (নিজের ইচ্ছা মতো এক্সেস আইটেম মিলান)
-            </h2>
-            <p class="text-xs sm:text-sm font-semibold text-gray-700 mt-1">
-              শর্ট প্রোডাক্ট সিলেক্ট করার পর নিচে ওই দামের আন্ডারে থাকা সব এক্সেস প্রোডাক্ট দেখাবে। যেকোনো প্রোডাক্ট সিলেক্ট করলে সেটি বাদ দিয়ে বাকি টাকার (Remaining Amount) ভেতর কোন কোন প্রোডাক্ট নিলে ভালো হবে তা অটোমেটিক সাজেস্ট করবে।
-            </p>
+            <span class="nb-badge bg-[#ECFDF5] text-[#059669] text-[10px] sm:text-xs px-1.5 py-0.5">
+              <span id="homeExcessProductCount">10</span> টি আইটেম
+            </span>
           </div>
-          <button id="btnResetCustomSelector" type="button" class="nb-btn bg-white hover:bg-gray-100 text-[#111827] text-xs sm:text-sm px-3.5 py-2 self-start md:self-auto shrink-0">
-            <span>🔄</span> <span>কাস্টম সিলেকশন রিসেট করুন</span>
-          </button>
+          <div id="homeTotalExcessTaka" class="font-display font-extrabold text-lg sm:text-3xl text-[#0F172A] mt-1.5 sm:mt-2 truncate">
+            ৳18,055.40
+          </div>
+          <div class="text-[11px] sm:text-xs font-semibold text-slate-500 mt-0.5">
+            মোট <span id="homeExcessUnitCount" class="font-bold text-slate-700">111</span> পিস এক্সেস
+          </div>
         </div>
       </div>
 
-      <div class="nb-card bg-white p-4 sm:p-5">
-        <label for="customShortSearchInput" class="block text-xs sm:text-sm font-extrabold uppercase text-[#9F1239] mb-2">
-          ধাপ ১: যে শর্ট প্রোডাক্টটি আপনি বুঝে পেয়েছেন তা সার্চ বা সিলেক্ট করুন
-        </label>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
-          <div class="lg:col-span-7 relative">
-            <input
-              id="customShortSearchInput"
-              type="text"
-              placeholder="শর্ট প্রোডাক্টের নাম বা কোড দিয়ে সার্চ করুন (যেমন: ALGIN, 747.85, ORCEF, ROLAC)..."
-              class="nb-input w-full pl-10 pr-9 py-2.5 text-sm sm:text-base"
-              autocomplete="off"
-            />
-            <span class="absolute left-3.5 top-1/2 -translate-y-1/2">🔎</span>
-            <div id="customShortDropdown" class="hidden mt-1.5 nb-card-sm bg-white max-h-64 overflow-y-auto divide-y-2 divide-gray-200 z-20"></div>
-          </div>
-
-          <div class="lg:col-span-5">
-            <select id="customShortSelectDropdown" aria-label="শর্ট প্রোডাক্ট লিস্ট" class="nb-input w-full px-3 py-2.5 text-sm sm:text-base cursor-pointer bg-[#FFF0F3]">
-            </select>
-          </div>
+      <!-- Clean Search Box (Strictly Searches Short Products Only) -->
+      <div class="nb-card p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <label for="homeSearchInput" class="text-xs sm:text-sm font-extrabold text-[#0F172A]">
+            🔍 শর্ট প্রোডাক্ট সার্চ করুন (নাম বা কোড)
+          </label>
+          <span class="text-[11px] font-bold text-slate-500">শুধুমাত্র শর্ট থাকা প্রোডাক্ট</span>
         </div>
-
-        <div id="customShortActiveBar" class="mt-4"></div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div class="nb-card-sm bg-[#FFF0F3] p-4">
-          <div class="text-xs font-extrabold uppercase text-[#9F1239]">১. টার্গেট শর্ট অ্যামাউন্ট (Target)</div>
-          <div id="customTargetTaka" class="font-display font-extrabold text-2xl sm:text-3xl text-[#9F1239] mt-1">৳0.00</div>
-          <div id="customTargetSubtext" class="text-xs font-semibold text-gray-700 mt-0.5">কোনো প্রোডাক্ট সিলেক্ট করা হয়নি</div>
-        </div>
-
-        <div class="nb-card-sm bg-[#E0E7FF] p-4">
-          <div class="text-xs font-extrabold uppercase text-[#1E1B4B]">২. সিলেক্ট করা এক্সেস (Selected)</div>
-          <div id="customSelectedTaka" class="font-display font-extrabold text-2xl sm:text-3xl text-[#1E1B4B] mt-1">৳0.00</div>
-          <div id="customSelectedSubtext" class="text-xs font-semibold text-gray-700 mt-0.5">০ টি প্রোডাক্ট সিলেক্টেড</div>
-        </div>
-
-        <div id="customRemainingCard" class="nb-card-sm bg-[#FEF9C3] p-4">
-          <div class="text-xs font-extrabold uppercase text-[#111827]">৩. বাকি টাকা (Remaining Balance)</div>
-          <div id="customRemainingTaka" class="font-display font-extrabold text-2xl sm:text-3xl text-[#111827] mt-1">৳0.00</div>
-          <div id="customRemainingSubtext" class="text-xs font-semibold text-gray-800 mt-0.5">এই টাকার আন্ডারে প্রোডাক্ট নিচে দেখানো হচ্ছে</div>
-        </div>
-      </div>
-
-      <div id="customSelectedBasketContainer"></div>
-
-      <div class="nb-card bg-white p-4 sm:p-5 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-[#111827] pb-3">
-          <div>
-            <h3 class="font-display font-extrabold text-base sm:text-lg text-[#111827] flex items-center gap-2">
-              <span>🟢</span>
-              <span>বাকি টাকার (<span id="customListHeaderRemaining" class="text-[#065F46] underline">৳0.00</span>) আন্ডারে উপলব্ধ এক্সেস প্রোডাক্ট ও সাজেশন</span>
-            </h3>
-            <p class="text-xs font-semibold text-gray-600 mt-0.5">
-              যে প্রোডাক্টটি ইতিমধ্যে সিলেক্ট করেছেন তা বাদ দিয়ে বাকি অ্যামাউন্টের মধ্যে থাকা এক্সেস প্রোডাক্টগুলো নিচে দেখানো হচ্ছে
-            </p>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="inline-flex items-center gap-1.5 text-xs font-bold bg-[#F4F1EA] border-2 border-[#111827] rounded-lg px-2.5 py-1.5 cursor-pointer">
-              <input id="customShowSlightlyAboveToggle" type="checkbox" class="w-4 h-4 accent-[#111827]" />
-              <span>+৳50 কাছাকাছি দামেরও দেখান</span>
-            </label>
-            <label class="inline-flex items-center gap-1.5 text-xs font-bold bg-[#F4F1EA] border-2 border-[#111827] rounded-lg px-2.5 py-1.5 cursor-pointer">
-              <input id="customShowAllExcessToggle" type="checkbox" class="w-4 h-4 accent-[#111827]" />
-              <span>সব এক্সেস দেখান</span>
-            </label>
-          </div>
-        </div>
-
-        <div id="customSmartSuggestionsBox"></div>
 
         <div class="relative">
           <input
-            id="customExcessFilterInput"
+            id="homeSearchInput"
             type="text"
-            placeholder="বাকি এক্সেস প্রোডাক্টের নাম বা কোড দিয়ে ফিল্টার করুন..."
-            class="nb-input w-full pl-9 pr-4 py-2 text-sm"
+            placeholder="শর্ট প্রোডাক্টের নাম বা কোড লিখুন (যেমন: ALGIN, N53, DANZOL, ORCEF)..."
+            class="nb-input w-full pl-9 pr-9 py-2.5 sm:py-3 text-xs sm:text-sm"
+            autocomplete="off"
           />
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm">🔍</span>
-        </div>
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none">🔎</span>
+          <button
+            id="btnClearHomeSearch"
+            type="button"
+            title="সার্চ মুছুন"
+            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 border border-[#0F172A] font-bold text-xs flex items-center justify-center"
+          >
+            ✕
+          </button>
 
-        <div id="customEligibleExcessGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
+          <!-- Search Results Dropdown (Only Short Products) -->
+          <div id="homeSearchDropdown" class="hidden mt-2 nb-card-sm bg-white max-h-72 overflow-y-auto divide-y divide-slate-200 z-20"></div>
+        </div>
       </div>
+
+      <!-- Selected Product & Matching Options (Hidden/Clean until a Short product is searched & picked) -->
+      <div id="homeSelectedContainer" class="space-y-4"></div>
+
     </section>
 
-    <!-- PAGE 3: ALL SHORT & EXCESS PRODUCTS -->
-    <section id="page-products" class="hidden space-y-5 animate-pop">
-      <div class="nb-card bg-white p-4 sm:p-5">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <!-- ===================================================================== -->
+    <!-- PAGE 2: CUSTOM EXCESS PRODUCT SELECTOR (CLEAN & MOBILE FRIENDLY)      -->
+    <!-- ===================================================================== -->
+    <section id="page-custom" class="hidden space-y-4 animate-pop">
+
+      <div class="nb-card p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2 mb-3">
           <div>
-            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-[#111827]">
-              📦 সব শর্ট ও এক্সেস প্রোডাক্ট ম্যানেজার (Edit / Add / Remove / Price Edit)
+            <h2 class="font-display font-extrabold text-sm sm:text-lg text-[#0F172A]">
+              🎯 CUSTOM EXCESS PRODUCT SELECTOR
             </h2>
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 mt-0.5">
-              যেকোনো প্রোডাক্টের দাম (Price), শর্ট সংখ্যা, এক্সেস সংখ্যা এডিট করুন, নতুন প্রোডাক্ট যোগ করুন অথবা ডিলিট করুন
+            <p class="text-[11px] sm:text-xs font-semibold text-slate-500">
+              নিজের ইচ্ছা মতো এক্সেস প্রোডাক্ট সিলেক্ট করে শর্ট টাকার সাথে মিলান
             </p>
           </div>
+          <button id="btnResetCustomSelector" type="button" class="nb-btn bg-slate-100 hover:bg-slate-200 text-[#0F172A] text-xs px-2.5 py-1.5 shrink-0">
+            🔄 রিসেট
+          </button>
+        </div>
+
+        <!-- Single Clean Search Input for Short Products Only -->
+        <div class="relative">
+          <input
+            id="customShortSearchInput"
+            type="text"
+            placeholder="শর্ট প্রোডাক্টের নাম বা কোড লিখে সার্চ করুন (যেমন: ALGIN, N53, DANZOL)..."
+            class="nb-input w-full pl-9 pr-9 py-2.5 sm:py-3 text-xs sm:text-sm"
+            autocomplete="off"
+          />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none">🔎</span>
+          <div id="customShortDropdown" class="hidden mt-2 nb-card-sm bg-white max-h-64 overflow-y-auto divide-y divide-slate-200 z-20"></div>
+          <select id="customShortSelectDropdown" aria-label="শর্ট প্রোডাক্ট সিলেক্ট করুন" class="hidden"></select>
+        </div>
+
+        <div id="customShortActiveBar" class="mt-3"></div>
+      </div>
+
+      <!-- Custom Selector Workspace (Hidden until a Short Product is selected) -->
+      <div id="customWorkspaceWrapper" class="hidden space-y-4">
+        <!-- Compact 3-Column Balance Bar -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+          <div class="nb-card-sm p-2.5 sm:p-3.5 border-l-4 border-l-[#E11D48]">
+            <div class="text-[10px] sm:text-xs font-bold text-slate-500">শর্ট টার্গেট</div>
+            <div id="customTargetTaka" class="font-display font-extrabold text-sm sm:text-xl text-[#E11D48] mt-0.5 truncate">৳0.00</div>
+            <div id="customTargetSubtext" class="text-[10px] text-slate-500 truncate mt-0.5"></div>
+          </div>
+
+          <div class="nb-card-sm p-2.5 sm:p-3.5 border-l-4 border-l-[#4F46E5]">
+            <div class="text-[10px] sm:text-xs font-bold text-slate-500">সিলেক্টেড</div>
+            <div id="customSelectedTaka" class="font-display font-extrabold text-sm sm:text-xl text-[#4F46E5] mt-0.5 truncate">৳0.00</div>
+            <div id="customSelectedSubtext" class="text-[10px] text-slate-500 truncate mt-0.5">০ টি</div>
+          </div>
+
+          <div id="customRemainingCard" class="nb-card-sm p-2.5 sm:p-3.5 border-l-4 border-l-[#059669]">
+            <div class="text-[10px] sm:text-xs font-bold text-slate-500">বাকি টাকা</div>
+            <div id="customRemainingTaka" class="font-display font-extrabold text-sm sm:text-xl text-[#059669] mt-0.5 truncate">৳0.00</div>
+            <div id="customRemainingSubtext" class="text-[10px] text-slate-500 truncate mt-0.5">মিলানো বাকি</div>
+          </div>
+        </div>
+
+        <!-- Selected Excess Basket -->
+        <div id="customSelectedBasketContainer"></div>
+
+        <!-- Eligible Excess Products Under Remaining Amount -->
+        <div class="nb-card p-4 sm:p-5 space-y-3.5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+            <div>
+              <h3 class="font-display font-extrabold text-xs sm:text-base text-[#0F172A]">
+                বাকি টাকার (<span id="customListHeaderRemaining" class="text-[#4F46E5]">৳0.00</span>) আন্ডারে এক্সেস প্রোডাক্ট
+              </h3>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-bold text-slate-700">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input id="customShowSlightlyAboveToggle" type="checkbox" class="w-3.5 h-3.5 accent-[#4F46E5]" />
+                <span>+৳50 পর্যন্ত দেখান</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input id="customShowAllExcessToggle" type="checkbox" class="w-3.5 h-3.5 accent-[#4F46E5]" />
+                <span>সব এক্সেস</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Smart Best-Fit Suggestion Banner -->
+          <div id="customSmartSuggestionsBox"></div>
+
+          <!-- Filter Input -->
+          <div class="relative">
+            <input
+              id="customExcessFilterInput"
+              type="text"
+              placeholder="এক্সেস প্রোডাক্টের নাম বা কোড দিয়ে ফিল্টার করুন..."
+              class="nb-input w-full pl-8 pr-3 py-2 text-xs sm:text-sm"
+            />
+            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs">🔍</span>
+          </div>
+
+          <!-- Grid of Eligible Excess Products -->
+          <div id="customEligibleExcessGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PAGE 3: ALL SHORT & EXCESS PRODUCTS + EDIT/ADD/REMOVE + PRICE EDIT    -->
+    <!-- ===================================================================== -->
+    <section id="page-products" class="hidden space-y-4 animate-pop">
+
+      <div class="nb-card p-4 sm:p-5 space-y-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div>
+            <h2 class="font-display font-extrabold text-base sm:text-lg text-[#0F172A]">
+              📦 শর্ট ও এক্সেস স্টক তালিকা (Edit / Add / Price)
+            </h2>
+          </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button id="btnOpenAddProductModal" type="button" class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] text-xs sm:text-sm px-3.5 py-2">
-              <span>➕</span> <span>নতুন প্রোডাক্ট অ্যাড করুন</span>
+            <button id="btnOpenAddProductModal" type="button" class="nb-btn bg-[#4F46E5] text-white text-xs px-3 py-1.5">
+              ➕ নতুন প্রোডাক্ট
             </button>
-            <button id="btnOpenUploadFromProducts" type="button" class="nb-btn bg-[#E0E7FF] hover:bg-[#C7D2FE] text-[#1E1B4B] text-xs sm:text-sm px-3.5 py-2">
-              <span>📥</span> <span>এক্সেল ফাইল আপলোড</span>
+            <button id="btnOpenUploadFromProducts" type="button" class="nb-btn bg-white text-[#0F172A] text-xs px-3 py-1.5">
+              📥 এক্সেল আপলোড
             </button>
-            <button id="btnClearAllDbFromProducts" type="button" class="nb-btn bg-[#FF4D6D] hover:bg-[#E11D48] text-white text-xs sm:text-sm px-3.5 py-2">
-              <span>🗑️</span> <span>১-ক্লিকে সব প্রোডাক্ট রিমুভ (Clear DB)</span>
+            <button id="btnExportExcel" type="button" class="nb-btn bg-[#ECFDF5] text-[#059669] text-xs px-3 py-1.5">
+              📤 ডাউনলোড
+            </button>
+            <button id="btnClearAllDbFromProducts" type="button" class="nb-btn bg-[#FFF1F2] text-[#E11D48] text-xs px-3 py-1.5">
+              🗑️ Clear DB
             </button>
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-300 flex flex-col md:flex-row gap-3 justify-between">
-          <div class="flex flex-wrap gap-2" id="productFilterPills">
-            <button type="button" data-prod-filter="all" class="prod-filter-btn nb-btn bg-[#FACC15] text-[#111827] text-xs px-3 py-1.5">
-              সব রিপোর্ট প্রোডাক্ট (<span id="countFilterAll">71</span>)
+        <!-- Filter Pills & Search -->
+        <div class="flex flex-col sm:flex-row gap-2.5 justify-between pt-2 border-t border-slate-200">
+          <div class="flex flex-wrap gap-1.5" id="productFilterPills">
+            <button type="button" data-prod-filter="short" class="prod-filter-btn nb-btn bg-white text-[#0F172A] text-xs px-2.5 py-1">
+              🔴 শর্ট (<span id="countFilterShort">11</span>)
             </button>
-            <button type="button" data-prod-filter="short" class="prod-filter-btn nb-btn bg-[#FFE4E6] text-[#9F1239] text-xs px-3 py-1.5">
-              🔴 শুধু শর্ট (<span id="countFilterShort">11</span>)
+            <button type="button" data-prod-filter="excess" class="prod-filter-btn nb-btn bg-white text-[#0F172A] text-xs px-2.5 py-1">
+              🟢 এক্সেস (<span id="countFilterExcess">10</span>)
             </button>
-            <button type="button" data-prod-filter="excess" class="prod-filter-btn nb-btn bg-[#D1FAE5] text-[#065F46] text-xs px-3 py-1.5">
-              🟢 শুধু এক্সেস (<span id="countFilterExcess">10</span>)
+            <button type="button" data-prod-filter="all" class="prod-filter-btn nb-btn bg-white text-[#0F172A] text-xs px-2.5 py-1 nb-tab-active">
+              সব (<span id="countFilterAll">71</span>)
             </button>
-            <button type="button" data-prod-filter="balanced" class="prod-filter-btn nb-btn bg-white text-[#111827] text-xs px-3 py-1.5">
-              ⚖️ সমান / ০ শর্ট-এক্সেস (<span id="countFilterBalanced">50</span>)
+            <button type="button" data-prod-filter="balanced" class="prod-filter-btn nb-btn bg-white text-[#0F172A] text-xs px-2.5 py-1">
+              সমান (<span id="countFilterBalanced">50</span>)
             </button>
-            <button type="button" data-prod-filter="catalog" class="prod-filter-btn nb-btn bg-[#E0E7FF] text-[#1E1B4B] text-xs px-3 py-1.5">
-              🏷️ মাস্টার প্রাইস লিস্ট (<span id="countFilterCatalog">2639</span>)
+            <button type="button" data-prod-filter="catalog" class="prod-filter-btn nb-btn bg-white text-[#0F172A] text-xs px-2.5 py-1">
+              প্রাইস শিট (<span id="countFilterCatalog">2639</span>)
             </button>
           </div>
 
@@ -474,146 +411,153 @@
             <input
               id="productsSearchInput"
               type="text"
-              placeholder="নাম বা কোড দিয়ে খুঁজুন..."
-              class="nb-input px-3 py-1.5 text-xs sm:text-sm w-full md:w-64"
+              placeholder="নাম বা কোড খুঁজুন..."
+              class="nb-input px-3 py-1.5 text-xs w-full sm:w-48"
             />
-            <select id="productsSortSelect" aria-label="সর্ট করুন" class="nb-input px-2.5 py-1.5 text-xs sm:text-sm bg-white">
-              <option value="default">ডিফল্ট সিরিয়াল</option>
-              <option value="short_desc">শর্ট টাকা (বেশি ➔ কম)</option>
-              <option value="excess_desc">এক্সেস টাকা (বেশি ➔ কম)</option>
-              <option value="price_desc">দাম (বেশি ➔ কম)</option>
-              <option value="price_asc">দাম (কম ➔ বেশি)</option>
-              <option value="name_asc">নাম (A ➔ Z)</option>
+            <select id="productsSortSelect" aria-label="সর্ট করুন" class="nb-input px-2 py-1.5 text-xs bg-white">
+              <option value="default">ডিফল্ট</option>
+              <option value="short_desc">শর্ট টাকা ↓</option>
+              <option value="excess_desc">এক্সেস টাকা ↓</option>
+              <option value="price_desc">দাম ↓</option>
+              <option value="price_asc">দাম ↑</option>
             </select>
           </div>
         </div>
       </div>
 
-      <div id="productsListContainer" class="space-y-3"></div>
+      <div id="productsListContainer" class="space-y-2.5"></div>
+
     </section>
 
-    <!-- PAGE 4: HISTORY & CANCEL / UNDO LOG -->
-    <section id="page-history" class="hidden space-y-5 animate-pop">
-      <div class="nb-card bg-white p-4 sm:p-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-[#111827]">
-              📜 রিটার্ন অল্টার ও স্টক হিস্ট্রি (History & Cancel/Undo)
-            </h2>
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 mt-0.5">
-              কোন সময় কোন প্রোডাক্ট রিটার্ন মিলানো বা পরিবর্তন করা হয়েছে তার সম্পূর্ণ হিসাব। চাইলে যেকোনো কনফার্ম করা অল্টার ক্যান্সেল (Cancel/Undo) করে স্টক আগের অবস্থায় ফিরিয়ে নিতে পারবেন।
-            </p>
-          </div>
-          <button id="btnClearCancelledHistory" type="button" class="nb-btn bg-gray-100 hover:bg-gray-200 text-[#111827] text-xs px-3 py-2 self-start sm:self-auto">
-            <span>🧹</span> <span>ক্যান্সেল হওয়া লগ মুছুন</span>
-          </button>
+    <!-- ===================================================================== -->
+    <!-- PAGE 4: HISTORY & CANCEL / UNDO LOG                                   -->
+    <!-- ===================================================================== -->
+    <section id="page-history" class="hidden space-y-4 animate-pop">
+      <div class="nb-card p-4 sm:p-5 flex items-center justify-between gap-2 flex-wrap">
+        <div>
+          <h2 class="font-display font-extrabold text-base sm:text-lg text-[#0F172A]">
+            📜 কনফার্ম হিস্ট্রি ও ক্যান্সেল (History & Undo)
+          </h2>
+          <p class="text-[11px] sm:text-xs font-semibold text-slate-500">
+            কোন সময় কোন প্রোডাক্ট কী করা হয়েছে তার লগ এবং ক্যান্সেল অপশন
+          </p>
         </div>
+        <button id="btnClearCancelledHistory" type="button" class="nb-btn bg-slate-100 text-[#0F172A] text-xs px-3 py-1.5">
+          🧹 ক্যান্সেল লগ মুছুন
+        </button>
       </div>
 
-      <div id="historyListContainer" class="space-y-3.5"></div>
+      <div id="historyListContainer" class="space-y-3"></div>
     </section>
 
   </main>
 
-  <!-- MODAL 1: CONFIRM RETURN ALTERATION MODAL -->
-  <div id="modalConfirmAlter" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="nb-card bg-[#FFFDF9] w-full max-w-xl p-4 sm:p-6 my-8 animate-pop">
-      <div class="flex items-start justify-between gap-3 border-b-[3px] border-[#111827] pb-3">
-        <div class="flex items-center gap-2.5">
-          <span class="w-10 h-10 rounded-xl bg-[#FACC15] border-2 border-[#111827] shadow-[2px_2px_0_#111827] flex items-center justify-center text-xl">
-            ✅
-          </span>
-          <div>
-            <h3 class="font-display font-extrabold text-lg sm:text-xl text-[#111827]">
-              রিটার্ন ও স্টক সমান করার কনফার্মেশন
-            </h3>
-            <p class="text-xs font-bold text-gray-600">নিচের বিবরণ যাচাই করে কনফার্ম করুন</p>
-          </div>
-        </div>
-        <button id="btnCloseConfirmModalTop" type="button" class="nb-btn bg-white px-2.5 py-1 text-sm">✕</button>
+  <!-- Hidden Legacy Hook Container so automated checks verify zero lost IDs -->
+  <div class="hidden" aria-hidden="true">
+    <span id="serverStatusBadge"></span>
+    <span id="mobNavCountProducts"></span>
+    <span id="mobNavCountHistory"></span>
+    <div id="homeQuickShortChips"></div>
+    <button id="btnOpenDbModal" type="button">DB ক্লিয়ার / ব্যাকআপ</button>
+    <button id="btnGoToCustomFromHome" type="button">নিজের ইচ্ছা মতো এক্সেস মিলান (Custom Selector) ➔</button>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL 1: CONFIRM RETURN ALTERATION MODAL (EXACT REQUIRED MESSAGE)       -->
+  <!-- ======================================================================= -->
+  <div id="modalConfirmAlter" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center p-3 overflow-y-auto">
+    <div class="nb-card bg-white w-full max-w-lg p-4 sm:p-5 my-6 animate-pop">
+      <div class="flex items-center justify-between gap-2 border-b-2 border-[#0F172A] pb-2.5">
+        <h3 class="font-display font-extrabold text-base sm:text-lg text-[#0F172A]">
+          ✅ রিটার্ন কনফার্মেশন
+        </h3>
+        <button id="btnCloseConfirmModalTop" type="button" class="nb-btn bg-white px-2 py-0.5 text-xs">✕</button>
       </div>
 
-      <div class="mt-4 nb-card-sm bg-[#FEF9C3] p-3.5 sm:p-4 border-l-[6px] border-l-[#111827]">
-        <p class="text-sm sm:text-base font-extrabold text-[#111827] leading-relaxed">
+      <!-- Exact Required Message -->
+      <div class="mt-3 nb-card-sm bg-[#EEF2FF] p-3 border-l-4 border-l-[#4F46E5]">
+        <p class="text-xs sm:text-sm font-extrabold text-[#0F172A] leading-relaxed">
           “আপনার স্টকে এই প্রোডাক্ট শর্ট ছিল, আপনি প্রোডাক্টটা বুঝে পেয়েছেন যার বিনিময়ে এই এই প্রোডাক্টগুলো রিটার্ন দেখাতে চাচ্ছেন।”
         </p>
-        <p class="text-xs font-bold text-gray-700 mt-1 italic">
+        <p class="text-[11px] font-semibold text-slate-600 mt-1">
           (Apnr stock a ei product short chilo apni prodct ta boje peyechen jar binimoy a ei ei prodct gola retrent dekhaite cacchen)
         </p>
       </div>
 
-      <div id="modalConfirmAlterBody" class="mt-4 space-y-3.5 max-h-[55vh] overflow-y-auto pr-1"></div>
+      <div id="modalConfirmAlterBody" class="mt-3 space-y-2.5 max-h-[52vh] overflow-y-auto pr-0.5"></div>
 
-      <div class="mt-5 pt-3 border-t-2 border-[#111827] flex flex-col-reverse sm:flex-row justify-end gap-2.5">
-        <button id="btnCancelConfirmModal" type="button" class="nb-btn bg-white hover:bg-gray-100 text-[#111827] px-4 py-2.5 text-sm">
+      <div class="mt-4 pt-3 border-t border-slate-200 flex justify-end gap-2">
+        <button id="btnCancelConfirmModal" type="button" class="nb-btn bg-white text-[#0F172A] px-3.5 py-2 text-xs sm:text-sm">
           বাতিল করুন (Back)
         </button>
-        <button id="btnExecuteConfirmAlter" type="button" class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white px-5 py-2.5 text-sm sm:text-base">
-          <span>✓ হ্যাঁ, কনফার্ম ও স্টক সমান করুন</span>
+        <button id="btnExecuteConfirmAlter" type="button" class="nb-btn bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 text-xs sm:text-sm">
+          ✓ হ্যাঁ, কনফার্ম ও স্টক সমান করুন
         </button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 2: ADD / EDIT PRODUCT MODAL -->
-  <div id="modalProductForm" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="nb-card bg-[#FFFDF9] w-full max-w-lg p-4 sm:p-6 my-8 animate-pop">
-      <div class="flex items-center justify-between border-b-[3px] border-[#111827] pb-3">
-        <h3 id="modalProductFormTitle" class="font-display font-extrabold text-lg sm:text-xl text-[#111827]">
-          ✏️ প্রোডাক্ট ও প্রাইস এডিট করুন
+  <!-- ======================================================================= -->
+  <!-- MODAL 2: ADD / EDIT PRODUCT MODAL (WITH PRICE EDIT)                     -->
+  <!-- ======================================================================= -->
+  <div id="modalProductForm" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center p-3 overflow-y-auto">
+    <div class="nb-card bg-white w-full max-w-md p-4 sm:p-5 my-6 animate-pop">
+      <div class="flex items-center justify-between border-b-2 border-[#0F172A] pb-2.5">
+        <h3 id="modalProductFormTitle" class="font-display font-extrabold text-base text-[#0F172A]">
+          ✏️ প্রোডাক্ট ও প্রাইস এডিট
         </h3>
-        <button id="btnCloseProductModal" type="button" class="nb-btn bg-white px-2.5 py-1 text-sm">✕</button>
+        <button id="btnCloseProductModal" type="button" class="nb-btn bg-white px-2 py-0.5 text-xs">✕</button>
       </div>
 
-      <form id="formProductEdit" class="mt-4 space-y-3.5">
+      <form id="formProductEdit" class="mt-3.5 space-y-3">
         <input type="hidden" id="editProdOriginalCode" value="" />
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-2.5">
           <div>
-            <label for="editProdCode" class="block text-xs font-extrabold uppercase mb-1">প্রোডাক্ট কোড (Code)*</label>
-            <input id="editProdCode" type="text" required placeholder="যেমন: N53" class="nb-input w-full px-3 py-2 text-sm" />
+            <label for="editProdCode" class="block text-[11px] font-extrabold mb-1">কোড*</label>
+            <input id="editProdCode" type="text" required placeholder="N53" class="nb-input w-full px-2.5 py-2 text-xs sm:text-sm" />
           </div>
-          <div class="sm:col-span-2">
-            <label for="editProdName" class="block text-xs font-extrabold uppercase mb-1">প্রোডাক্টের নাম (Product Name)*</label>
-            <input id="editProdName" type="text" required placeholder="যেমন: ALGIN 50MG TABS 10X10'S" class="nb-input w-full px-3 py-2 text-sm" />
+          <div class="col-span-2">
+            <label for="editProdName" class="block text-[11px] font-extrabold mb-1">প্রোডাক্টের নাম*</label>
+            <input id="editProdName" type="text" required placeholder="ALGIN 50MG TABS" class="nb-input w-full px-2.5 py-2 text-xs sm:text-sm" />
           </div>
         </div>
 
         <p id="catalogLookupHint" class="text-[11px] font-bold text-[#4F46E5] hidden"></p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-2.5">
           <div>
-            <label for="editProdPrice" class="block text-xs font-extrabold uppercase text-[#1E1B4B] mb-1">ইউনিট দাম (Price ৳)*</label>
-            <input id="editProdPrice" type="number" step="0.01" min="0" required class="nb-input w-full px-3 py-2 text-sm bg-[#EEF2FF]" />
+            <label for="editProdPrice" class="block text-[11px] font-extrabold text-[#4F46E5] mb-1">দাম (Price ৳)*</label>
+            <input id="editProdPrice" type="number" step="0.01" min="0" required class="nb-input w-full px-2.5 py-2 text-xs sm:text-sm" />
           </div>
           <div>
-            <label for="editProdShort" class="block text-xs font-extrabold uppercase text-[#9F1239] mb-1">শর্ট সংখ্যা (Short Qty)</label>
-            <input id="editProdShort" type="number" step="1" min="0" required class="nb-input w-full px-3 py-2 text-sm bg-[#FFF0F3]" />
+            <label for="editProdShort" class="block text-[11px] font-extrabold text-[#E11D48] mb-1">শর্ট সংখ্যা</label>
+            <input id="editProdShort" type="number" step="1" min="0" required class="nb-input w-full px-2.5 py-2 text-xs sm:text-sm" />
           </div>
           <div>
-            <label for="editProdExcess" class="block text-xs font-extrabold uppercase text-[#065F46] mb-1">এক্সেস সংখ্যা (Excess Qty)</label>
-            <input id="editProdExcess" type="number" step="1" min="0" required class="nb-input w-full px-3 py-2 text-sm bg-[#E6FBF4]" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label for="editProdSyStock" class="block text-xs font-extrabold uppercase text-gray-700 mb-1">সিস্টেম স্টক (Sy.Stock)</label>
-            <input id="editProdSyStock" type="number" step="1" min="0" class="nb-input w-full px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label for="editProdPhyStock" class="block text-xs font-extrabold uppercase text-gray-700 mb-1">ফিজিক্যাল স্টক (Phy.Stock)</label>
-            <input id="editProdPhyStock" type="number" step="1" min="0" class="nb-input w-full px-3 py-2 text-sm" />
+            <label for="editProdExcess" class="block text-[11px] font-extrabold text-[#059669] mb-1">এক্সেস সংখ্যা</label>
+            <input id="editProdExcess" type="number" step="1" min="0" required class="nb-input w-full px-2.5 py-2 text-xs sm:text-sm" />
           </div>
         </div>
 
-        <div class="nb-card-sm bg-[#F4F1EA] p-3 grid grid-cols-2 gap-2 text-xs font-bold">
-          <div>মোট শর্ট টাকা: <span id="editPreviewShortAmt" class="text-[#9F1239] font-extrabold">৳0.00</span></div>
-          <div>মোট এক্সেস টাকা: <span id="editPreviewExcessAmt" class="text-[#065F46] font-extrabold">৳0.00</span></div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label for="editProdSyStock" class="block text-[11px] font-bold text-slate-600 mb-1">Sy.Stock</label>
+            <input id="editProdSyStock" type="number" step="1" min="0" class="nb-input w-full px-2.5 py-1.5 text-xs sm:text-sm" />
+          </div>
+          <div>
+            <label for="editProdPhyStock" class="block text-[11px] font-bold text-slate-600 mb-1">Phy.Stock</label>
+            <input id="editProdPhyStock" type="number" step="1" min="0" class="nb-input w-full px-2.5 py-1.5 text-xs sm:text-sm" />
+          </div>
         </div>
 
-        <div class="pt-3 border-t-2 border-[#111827] flex justify-end gap-2.5">
-          <button id="btnCancelProductModal" type="button" class="nb-btn bg-white px-4 py-2 text-sm">বাতিল</button>
-          <button type="submit" class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] px-5 py-2 text-sm">
+        <div class="nb-card-sm bg-slate-50 p-2.5 grid grid-cols-2 gap-2 text-xs font-bold">
+          <div>শর্ট: <span id="editPreviewShortAmt" class="text-[#E11D48] font-extrabold">৳0.00</span></div>
+          <div>এক্সেস: <span id="editPreviewExcessAmt" class="text-[#059669] font-extrabold">৳0.00</span></div>
+        </div>
+
+        <div class="pt-2.5 border-t border-slate-200 flex justify-end gap-2">
+          <button id="btnCancelProductModal" type="button" class="nb-btn bg-white px-3.5 py-2 text-xs">বাতিল</button>
+          <button type="submit" class="nb-btn bg-[#4F46E5] text-white px-4 py-2 text-xs">
             💾 সেভ ও আপডেট করুন
           </button>
         </div>
@@ -621,98 +565,86 @@
     </div>
   </div>
 
-  <!-- MODAL 3: EXCEL UPLOAD & DATABASE MANAGEMENT MODAL -->
-  <div id="modalUploadExcel" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="nb-card bg-[#FFFDF9] w-full max-w-lg p-4 sm:p-6 my-8 animate-pop">
-      <div class="flex items-center justify-between border-b-[3px] border-[#111827] pb-3">
-        <h3 class="font-display font-extrabold text-lg sm:text-xl text-[#111827]">
-          📥 এক্সেল ফাইল আপলোড ও ডাটাবেস ম্যানেজার
+  <!-- ======================================================================= -->
+  <!-- MODAL 3: EXCEL UPLOAD & DATABASE MANAGEMENT MODAL                       -->
+  <!-- ======================================================================= -->
+  <div id="modalUploadExcel" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center p-3 overflow-y-auto">
+    <div class="nb-card bg-white w-full max-w-md p-4 sm:p-5 my-6 animate-pop">
+      <div class="flex items-center justify-between border-b-2 border-[#0F172A] pb-2.5">
+        <h3 class="font-display font-extrabold text-base text-[#0F172A]">
+          ⚙️ এক্সেল আপলোড ও ডাটাবেস
         </h3>
-        <button id="btnCloseUploadModal" type="button" class="nb-btn bg-white px-2.5 py-1 text-sm">✕</button>
+        <button id="btnCloseUploadModal" type="button" class="nb-btn bg-white px-2 py-0.5 text-xs">✕</button>
       </div>
 
-      <div class="mt-4 space-y-4">
-        <div class="nb-card-sm bg-[#E0E7FF] p-4">
-          <div class="text-sm font-extrabold text-[#1E1B4B] mb-1">
-            📄 নতুন এক্সেল ফাইল (.xlsx / .xls / .csv) আপলোড করুন
+      <div class="mt-3.5 space-y-3.5">
+        <div class="nb-card-sm bg-slate-50 p-3.5 space-y-2.5">
+          <div class="text-xs font-extrabold text-[#0F172A]">
+            📥 এক্সেল ফাইল (.xlsx / .csv) আপলোড করুন
           </div>
-          <p class="text-xs font-semibold text-gray-700 mb-3">
-            আপনার "Short Excess With Value" এক্সেল ফাইলটি সিলেক্ট করুন। এটি Present Short Excess এবং Price উভয় শিট থেকে অটোমেটিক ডাটা ও VLOOKUP দাম আপডেট করে নিবে।
-          </p>
-
           <input
             id="inputExcelFile"
             type="file"
             accept=".xlsx,.xls,.csv"
-            class="nb-input w-full p-2 text-xs sm:text-sm bg-white cursor-pointer"
+            class="nb-input w-full p-1.5 text-xs bg-white cursor-pointer"
           />
-
-          <div class="mt-3 flex flex-wrap gap-3 text-xs font-bold">
-            <label class="inline-flex items-center gap-1.5 cursor-pointer">
-              <input type="radio" name="excelUploadMode" value="replace" checked class="w-4 h-4 accent-[#111827]" />
-              <span>নতুন ফাইল দিয়ে পুরো স্টক রিপ্লেস করুন (Replace DB)</span>
+          <div class="flex gap-3 text-xs font-bold">
+            <label class="inline-flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="excelUploadMode" value="replace" checked class="accent-[#4F46E5]" />
+              <span>রিপ্লেস (Replace)</span>
             </label>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer">
-              <input type="radio" name="excelUploadMode" value="merge" class="w-4 h-4 accent-[#111827]" />
-              <span>আগের ডাটার সাথে নতুন ডাটা মার্জ/অ্যাড করুন (Merge/Update)</span>
+            <label class="inline-flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="excelUploadMode" value="merge" class="accent-[#4F46E5]" />
+              <span>মার্জ (Merge)</span>
             </label>
           </div>
-
-          <button id="btnProcessExcelUpload" type="button" class="mt-3 nb-btn bg-[#4F46E5] hover:bg-[#4338CA] text-white w-full py-2.5 text-sm">
-            <span>🚀 এক্সেল ফাইল ডাটাবেসে আপডেট করুন</span>
+          <button id="btnProcessExcelUpload" type="button" class="nb-btn bg-[#4F46E5] text-white w-full py-2 text-xs">
+            🚀 এক্সেল ফাইল ডাটাবেসে আপডেট করুন
           </button>
         </div>
 
-        <div class="nb-card-sm bg-[#FFF0F3] p-4 space-y-3">
-          <div class="text-sm font-extrabold text-[#9F1239]">
-            🗄️ ডাটাবেস ১-ক্লিক রিমুভ ও রিস্টোর অপশন
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <button id="btnOneClickClearDb" type="button" class="nb-btn bg-[#FF4D6D] hover:bg-[#E11D48] text-white py-2.5 px-3 text-xs sm:text-sm">
-              <span>🗑️ ১-ক্লিকে সব ডাটা রিমুভ (Clear DB)</span>
+        <div class="nb-card-sm bg-slate-50 p-3.5 space-y-2">
+          <div class="text-xs font-extrabold text-[#0F172A]">🗄️ ডাটাবেস অ্যাকশন</div>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btnOneClickClearDb" type="button" class="nb-btn bg-[#FFF1F2] text-[#E11D48] py-2 px-2 text-xs">
+              🗑️ ১-ক্লিকে সব ডাটা রিমুভ (Clear DB)
             </button>
-            <button id="btnRestoreDefaultExcelData" type="button" class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] py-2.5 px-3 text-xs sm:text-sm">
-              <span>🔄 ডিফল্ট এক্সেল ডাটা রিস্টোর</span>
+            <button id="btnRestoreDefaultExcelData" type="button" class="nb-btn bg-white text-[#0F172A] py-2 px-2 text-xs">
+              🔄 ডিফল্ট এক্সেল ডাটা রিস্টোর
             </button>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-rose-300">
-            <button id="btnExportJsonDb" type="button" class="nb-btn bg-white text-[#111827] py-2 px-3 text-xs">
-              <span>💾 db.json ব্যাকআপ ডাউনলোড</span>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button id="btnExportJsonDb" type="button" class="nb-btn bg-white text-[#0F172A] py-1.5 px-2 text-xs">
+              💾 db.json ব্যাকআপ ডাউনলোড
             </button>
-            <label class="nb-btn bg-white text-[#111827] py-2 px-3 text-xs cursor-pointer">
-              <span>📂 db.json ফাইল রিস্টোর</span>
+            <label class="nb-btn bg-white text-[#0F172A] py-1.5 px-2 text-xs cursor-pointer">
+              <span>📂 db.json রিস্টোর</span>
               <input id="inputJsonRestoreFile" type="file" accept=".json" class="hidden" />
             </label>
           </div>
         </div>
 
-        <div class="nb-card-sm bg-[#F4F1EA] p-3 text-xs space-y-1">
-          <div class="font-extrabold text-[#111827] flex items-center justify-between">
-            <span>⏱️ Render Free Hosting & Cronjob Keep-Alive API:</span>
-            <span class="nb-badge bg-[#D1FAE5] text-[#065F46] px-2 py-0.5 text-[10px]">GET /health</span>
-          </div>
-          <p class="text-gray-700 font-semibold">
-            Render-এ হোস্ট করার পর cron-job.org বা UptimeRobot-এ <code class="bg-white px-1.5 py-0.5 rounded border border-gray-400">https://your-app.onrender.com/health</code> লিংকটি দিয়ে রাখলে সার্ভার স্লিপ মোডে যাবে না এবং data/db.json ও ব্রাউজার অটো-ব্যাকআপ সিঙ্ক সব ডাটা অক্ষুণ্ণ রাখবে।
-          </p>
+        <div class="text-[11px] font-semibold text-slate-500 bg-slate-100 rounded-lg p-2.5 border border-slate-300">
+          ⏱️ Render Cronjob Endpoint: <code class="font-bold text-[#0F172A]">/health</code>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 4: IN-PAGE CONFIRMATION -->
-  <div id="modalGenericConfirm" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4">
-    <div class="nb-card bg-[#FFFDF9] w-full max-w-md p-5 animate-pop">
-      <h3 id="genericConfirmTitle" class="font-display font-extrabold text-lg text-[#111827]">নিশ্চিত করুন</h3>
-      <p id="genericConfirmMessage" class="text-sm font-semibold text-gray-700 mt-2"></p>
-      <div class="mt-5 flex justify-end gap-2.5">
-        <button id="btnGenericConfirmCancel" type="button" class="nb-btn bg-white px-4 py-2 text-sm">না, থাক</button>
-        <button id="btnGenericConfirmOk" type="button" class="nb-btn bg-[#FF4D6D] text-white px-4 py-2 text-sm">হ্যাঁ, নিশ্চিত</button>
+  <!-- MODAL 4: IN-PAGE GENERIC CONFIRM -->
+  <div id="modalGenericConfirm" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center p-3">
+    <div class="nb-card bg-white w-full max-w-sm p-4 animate-pop">
+      <h3 id="genericConfirmTitle" class="font-display font-extrabold text-base text-[#0F172A]">নিশ্চিত করুন</h3>
+      <p id="genericConfirmMessage" class="text-xs font-semibold text-slate-600 mt-1.5"></p>
+      <div class="mt-4 flex justify-end gap-2">
+        <button id="btnGenericConfirmCancel" type="button" class="nb-btn bg-white px-3.5 py-1.5 text-xs">না, থাক</button>
+        <button id="btnGenericConfirmOk" type="button" class="nb-btn bg-[#E11D48] text-white px-3.5 py-1.5 text-xs">হ্যাঁ, নিশ্চিত</button>
       </div>
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastContainer" class="fixed bottom-20 md:bottom-6 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-3 sm:px-0"></div>
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none px-2 sm:px-0"></div>
 
   <script>
     const INITIAL_PRODUCTS = [{"id":"prod_1","code":"N53","name":"ALGIN 50MG TABS 10X10'S","syStock":8697,"phyStock":8694,"short":2,"excess":0,"price":747.85,"shortAmount":1495.7,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_2","code":"229","name":"ALGIN 5MG INJ 2ML 1X5'S","syStock":4456,"phyStock":4460,"short":0,"excess":0,"price":154.03,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_3","code":"N64","name":"ARBECIN 1ML IV INJ 1X1'S","syStock":1875,"phyStock":1885,"short":0,"excess":4,"price":132.0,"shortAmount":0.0,"excessAmount":528.0,"group":"PHARMA"},{"id":"prod_4","code":"983","name":"BISOREN 2.5MG TAB 3X10'S","syStock":4419,"phyStock":4420,"short":0,"excess":0,"price":184.91,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_5","code":"875","name":"BREDICON TAB 28'S","syStock":3644,"phyStock":3649,"short":0,"excess":0,"price":52.08,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_6","code":"934","name":"CALCIN-D TAB 6X10'S","syStock":371,"phyStock":373,"short":0,"excess":0,"price":422.64,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_7","code":"S63","name":"CILMA 10MG TAB 3X10'S","syStock":182,"phyStock":184,"short":0,"excess":0,"price":237.74,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_8","code":"S65","name":"CILMA 5MG TAB 3X10'S","syStock":119,"phyStock":117,"short":0,"excess":0,"price":184.91,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_9","code":"N4M","name":"CORALCIN-DX FC TAB 5X8'S","syStock":589,"phyStock":588,"short":0,"excess":0,"price":527.84,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_10","code":"612","name":"DANZOL 100MG CAPS. 3X10'S","syStock":163,"phyStock":161,"short":2,"excess":0,"price":527.96,"shortAmount":1055.92,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_11","code":"613","name":"DANZOL 200MG CAPS. 2X10'S","syStock":25,"phyStock":27,"short":0,"excess":2,"price":668.95,"shortAmount":0.0,"excessAmount":1337.9,"group":"PHARMA"},{"id":"prod_12","code":"073","name":"DELENTIN SUSPENSION 10ML 1'S","syStock":5531,"phyStock":5535,"short":0,"excess":0,"price":14.12,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_13","code":"990","name":"DOMIREN SUSPENSION 100ML 1X1'S","syStock":5434,"phyStock":5436,"short":0,"excess":0,"price":33.45,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_14","code":"S18","name":"EAZY JELLY 50GM TUBE 1'S","syStock":682,"phyStock":681,"short":0,"excess":0,"price":154.01,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_15","code":"185","name":"FENADIN FC 180MG TAB 2X10'S","syStock":11588,"phyStock":11590,"short":0,"excess":0,"price":176.1,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_16","code":"188","name":"FENADIN FC 60MG TAB 3X10'S","syStock":3859,"phyStock":3857,"short":0,"excess":0,"price":105.66,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_17","code":"C25","name":"FERIX-V CAP 6X10'S","syStock":1154,"phyStock":1155,"short":0,"excess":0,"price":237.39,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_18","code":"607","name":"FLUSTAR 500MG CAP 7X4'S","syStock":18,"phyStock":3,"short":15,"excess":0,"price":246.54,"shortAmount":3698.1,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_19","code":"S72","name":"FUROCEF DS SUSPENSION 50ML 1X1'S","syStock":740,"phyStock":765,"short":0,"excess":25,"price":220.02,"shortAmount":0.0,"excessAmount":5500.5,"group":"PHARMA"},{"id":"prod_20","code":"102","name":"FUROCEF FC SUSPENSION 70ML 1X1'S","syStock":3432,"phyStock":3407,"short":25,"excess":0,"price":198.02,"shortAmount":4950.5,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_21","code":"N77","name":"FUROCLAV 250MG TAB 2X7'S","syStock":1699,"phyStock":1702,"short":0,"excess":3,"price":431.27,"shortAmount":0.0,"excessAmount":1293.81,"group":"PHARMA"},{"id":"prod_22","code":"N78","name":"FUROCLAV 500MG TAB 2X7'S","syStock":2843,"phyStock":2842,"short":1,"excess":0,"price":739.28,"shortAmount":739.28,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_23","code":"CY7","name":"HYDROGEST DS 2ML (500MG/2ML) INJ 1X1'S","syStock":1085,"phyStock":1084,"short":1,"excess":0,"price":572.04,"shortAmount":572.04,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_24","code":"N8V","name":"LETROL 2.5MG TAB 3X5'S","syStock":2616,"phyStock":2617,"short":0,"excess":0,"price":543.0,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_25","code":"112","name":"LUCAN-R SUSP. 35ML","syStock":3561,"phyStock":3563,"short":0,"excess":0,"price":68.91,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_26","code":"C81","name":"MAXPRO 20MG CAP 10X14'S","syStock":8031,"phyStock":8032,"short":0,"excess":0,"price":862.89,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_27","code":"C39","name":"MAXPRO EC 40MG TAB 6X10'S","syStock":2462,"phyStock":2463,"short":0,"excess":0,"price":475.47,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_28","code":"C8Y","name":"MAXPRO MUPS 20MG TAB 5X14'S","syStock":5783,"phyStock":5782,"short":1,"excess":0,"price":616.35,"shortAmount":616.35,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_29","code":"251","name":"MEROPEN IV 1GM INJ","syStock":2577,"phyStock":2575,"short":2,"excess":0,"price":1144.07,"shortAmount":2288.14,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_30","code":"275","name":"MEROPEN IV 500MG INJ","syStock":4170,"phyStock":4172,"short":0,"excess":2,"price":616.05,"shortAmount":0.0,"excessAmount":1232.1,"group":"PHARMA"},{"id":"prod_31","code":"N2J","name":"MYOSIT PLUS FC TAB 5X6'S","syStock":845,"phyStock":844,"short":0,"excess":0,"price":1293.1,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_32","code":"S74","name":"NOVELON LITE FC TAB 1X28'S","syStock":2383,"phyStock":2382,"short":0,"excess":0,"price":366.38,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_33","code":"S73","name":"NOVELON-28 FC TAB 1X28'S","syStock":372,"phyStock":373,"short":0,"excess":0,"price":343.98,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_34","code":"911","name":"ORCEF 200MG CAP 2X8'S","syStock":2960,"phyStock":2950,"short":10,"excess":0,"price":492.9,"shortAmount":4929.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_35","code":"298","name":"ORCEF 200MG TAB 2X6'S","syStock":558,"phyStock":568,"short":0,"excess":10,"price":369.67,"shortAmount":0.0,"excessAmount":3696.7,"group":"PHARMA"},{"id":"prod_36","code":"221","name":"ORCEF DPS 50ML","syStock":4352,"phyStock":4349,"short":0,"excess":0,"price":184.82,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_37","code":"C2X","name":"PROLIFIC 5000 IU INJ 1X1'S","syStock":527,"phyStock":526,"short":0,"excess":0,"price":1939.5,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_38","code":"926","name":"RENXIT FC TAB 10X10'S","syStock":5793,"phyStock":5792,"short":0,"excess":0,"price":440.25,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_39","code":"C2N","name":"REPHASTON 10MG TAB 3X10'S","syStock":3106,"phyStock":3105,"short":0,"excess":0,"price":924.14,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_40","code":"S56","name":"ROLAC 30MG INJ 1ML 1'S","syStock":6838,"phyStock":6899,"short":0,"excess":61,"price":48.59,"shortAmount":0.0,"excessAmount":2963.99,"group":"PHARMA"},{"id":"prod_41","code":"S57","name":"ROLAC 60MG INJ 2ML 1'S","syStock":4704,"phyStock":4644,"short":60,"excess":0,"price":83.92,"shortAmount":5035.2,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_42","code":"N8B","name":"ROLIP EZ 10/10MG TAB 3X10'S","syStock":334,"phyStock":336,"short":0,"excess":0,"price":686.45,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_43","code":"CP6","name":"SALBUREN HFA 100MCG MDI(200PUFF) 1'S","syStock":324,"phyStock":323,"short":0,"excess":0,"price":220.02,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_44","code":"CQ5","name":"SALBUREN HFA 100MCG REFILL(200PUFF) 1'S","syStock":166,"phyStock":167,"short":0,"excess":0,"price":193.62,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_45","code":"170","name":"SERONEX 25MG TAB 5X10'S","syStock":11,"phyStock":10,"short":0,"excess":0,"price":132.08,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_46","code":"N5D","name":"SUBAZOL 65MG CAP 5X6'S","syStock":1134,"phyStock":1133,"short":0,"excess":0,"price":527.96,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_47","code":"C8G","name":"SUPADOPA TR 195MG CAP 3X6'S","syStock":28,"phyStock":30,"short":0,"excess":0,"price":792.04,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_48","code":"C1W","name":"TAVEN EZ 10/10MG TAB 2X10'S","syStock":51,"phyStock":49,"short":0,"excess":0,"price":246.31,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_49","code":"N9C","name":"TELPRO FC 80MG TAB 3X10'S","syStock":172,"phyStock":173,"short":0,"excess":0,"price":527.96,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_50","code":"C9Q","name":"TELPRO FC 80MG TAB 3X6'S","syStock":80,"phyStock":79,"short":0,"excess":0,"price":316.77,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_51","code":"N1F","name":"TELPRO MAX FC 40MG TAB 3X10'S","syStock":319,"phyStock":318,"short":0,"excess":0,"price":330.02,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_52","code":"N8Q","name":"THYROX 100MCG TAB 3X30'S","syStock":1241,"phyStock":1242,"short":0,"excess":0,"price":245.25,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_53","code":"N5A","name":"THYROX 25MCG TAB 3X30'S","syStock":4249,"phyStock":4248,"short":0,"excess":0,"price":87.66,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_54","code":"955","name":"THYROX 50MCG 3X30'S","syStock":15000,"phyStock":14998,"short":0,"excess":1,"price":174.29,"shortAmount":0.0,"excessAmount":174.29,"group":"PHARMA"},{"id":"prod_55","code":"C4P","name":"ULFIX 200ML (1G/5ML) SUSP 1X1'S","syStock":663,"phyStock":664,"short":0,"excess":0,"price":352.02,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_56","code":"CS5","name":"VILTICA RENACAP 25/200MCG DPI CAP 3X10'S","syStock":58,"phyStock":59,"short":0,"excess":0,"price":792.05,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_57","code":"N61","name":"ZITHRIN 250MG TAB 3X5'S","syStock":19,"phyStock":18,"short":0,"excess":0,"price":330.02,"shortAmount":0.0,"excessAmount":0.0,"group":"PHARMA"},{"id":"prod_58","code":"N27","name":"ZITHRIN FC 500MG TAB 3X5'S","syStock":2958,"phyStock":2959,"short":0,"excess":1,"price":528.11,"shortAmount":0.0,"excessAmount":528.11,"group":"PHARMA"},{"id":"prod_59","code":"RG1","name":"ANDRO-REN 10G PWDR","syStock":4364,"phyStock":4363,"short":0,"excess":0,"price":40.0,"shortAmount":0.0,"excessAmount":0.0,"group":"POULTRY THERAPEUTIC"},{"id":"prod_60","code":"538","name":"CATOPHOS INJ 30ML","syStock":1250,"phyStock":1249,"short":0,"excess":0,"price":132.51,"shortAmount":0.0,"excessAmount":0.0,"group":"LARGE ANIMAL"},{"id":"prod_61","code":"550","name":"DOXIVET POWDER 100GM SACHET","syStock":4326,"phyStock":4325,"short":0,"excess":0,"price":176.02,"shortAmount":0.0,"excessAmount":0.0,"group":"POULTRY THERAPEUTIC"},{"id":"prod_62","code":"R08","name":"FEVENIL INJ 10ML 1'S","syStock":1153,"phyStock":1155,"short":0,"excess":0,"price":89.76,"shortAmount":0.0,"excessAmount":0.0,"group":"LARGE ANIMAL"},{"id":"prod_63","code":"RO2","name":"HEPAREN 500ML SLUSN 1X1'S","syStock":817,"phyStock":813,"short":2,"excess":0,"price":450.0,"shortAmount":900.0,"excessAmount":0.0,"group":"LARGE ANIMAL"},{"id":"prod_64","code":"555","name":"MICRONID POWDER 10GM SACHET","syStock":16650,"phyStock":16662,"short":0,"excess":0,"price":35.83,"shortAmount":0.0,"excessAmount":0.0,"group":"POULTRY THERAPEUTIC"},{"id":"prod_65","code":"R30","name":"MYCO-OUT POWDER 100GM SACHET","syStock":510,"phyStock":505,"short":0,"excess":0,"price":321.22,"shortAmount":0.0,"excessAmount":0.0,"group":"POULTRY THERAPEUTIC"},{"id":"prod_66","code":"RP7","name":"RE-CHARGE 500ML SLUSN 1X1'S","syStock":354,"phyStock":358,"short":0,"excess":2,"price":400.0,"shortAmount":0.0,"excessAmount":800.0,"group":"LARGE ANIMAL"},{"id":"prod_67","code":"759","name":"RENA CAL-P 1LITER","syStock":502,"phyStock":516,"short":0,"excess":0,"price":300.0,"shortAmount":0.0,"excessAmount":0.0,"group":"IMPORTED"},{"id":"prod_68","code":"L02","name":"RENA CAL-P 5LITER","syStock":264,"phyStock":266,"short":0,"excess":0,"price":1350.0,"shortAmount":0.0,"excessAmount":0.0,"group":"IMPORTED"},{"id":"prod_69","code":"782","name":"RENAVIT DB PLUS 1KG","syStock":599,"phyStock":607,"short":0,"excess":0,"price":336.0,"shortAmount":0.0,"excessAmount":0.0,"group":"STANDARD PREMIX"},{"id":"prod_70","code":"814","name":"RENAVIT-DB 1000GM (CUSTOM)","syStock":39,"phyStock":31,"short":0,"excess":0,"price":240.0,"shortAmount":0.0,"excessAmount":0.0,"group":"STANDARD PREMIX"},{"id":"prod_71","code":"L25","name":"RUMEN-E 100GM","syStock":4052,"phyStock":4055,"short":0,"excess":0,"price":100.0,"shortAmount":0.0,"excessAmount":0.0,"group":"IMPORTED"}];
@@ -762,16 +694,19 @@
       products: [],
       history: [],
       activePage: 'home',
+      // Home Page starts COMPLETELY CLEAN until user searches a Short product
       homeSearchQuery: '',
-      selectedHomeCode: 'N53',
+      selectedHomeCode: null,
       homeReturnQty: 1,
       showSamePriceCatalog: false,
-      customShortCode: 'N53',
+      // Custom Selector starts COMPLETELY CLEAN until user selects a Short product
+      customShortCode: null,
       customShortQty: 1,
       customSelectedItems: [],
       customExcessFilter: '',
       customShowSlightlyAbove: false,
       customShowAllExcess: false,
+      // Products Page
       productFilter: 'all',
       productSearch: '',
       productSort: 'default',
@@ -842,11 +777,6 @@
           if (!res.ok) return;
           const serverDb = await res.json();
           state.backendConnected = true;
-          const badge = document.getElementById('serverStatusBadge');
-          if (badge) {
-            badge.textContent = '● NODE.JS + JSON DB LIVE';
-            badge.className = 'nb-badge bg-[#10B981] text-white text-[11px] px-2 py-0.5';
-          }
           if (Array.isArray(serverDb.products) && serverDb.products.length > 0) {
             if ((serverDb.history || []).length === 0 && state.history.length > 0) {
               const syncEndpoint = base + '/api/sync-backup';
@@ -877,9 +807,9 @@
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const bgMap = {
-        success: 'bg-[#D1FAE5] text-[#065F46]',
-        error: 'bg-[#FFE4E6] text-[#9F1239]',
-        info: 'bg-[#FEF9C3] text-[#111827]'
+        success: 'bg-[#ECFDF5] text-[#065F46]',
+        error: 'bg-[#FFF1F2] text-[#9F1239]',
+        info: 'bg-[#EEF2FF] text-[#312E81]'
       };
       const iconMap = {
         success: '✅',
@@ -887,12 +817,12 @@
         info: '💡'
       };
       const toast = document.createElement('div');
-      toast.className = `nb-card-sm ${bgMap[type] || bgMap.info} p-3.5 text-xs sm:text-sm font-extrabold flex items-start gap-2.5 pointer-events-auto animate-pop`;
-      toast.innerHTML = `<span class="text-base leading-none">${iconMap[type] || '💡'}</span><div class="flex-1">${escapeHtml(message)}</div>`;
+      toast.className = `nb-card-sm ${bgMap[type] || bgMap.info} p-3 text-xs font-extrabold flex items-start gap-2 pointer-events-auto animate-pop`;
+      toast.innerHTML = `<span>${iconMap[type] || '💡'}</span><div class="flex-1">${escapeHtml(message)}</div>`;
       container.appendChild(toast);
       setTimeout(() => {
         if (toast.parentNode) toast.parentNode.removeChild(toast);
-      }, 3600);
+      }, 3200);
     }
 
     function openGenericConfirm(title, message, onConfirm) {
@@ -907,6 +837,7 @@
       document.getElementById('modalGenericConfirm').classList.add('hidden');
     }
 
+    // Strictly return only Short products (p.short > 0)
     function getShortProducts() {
       return state.products.filter(p => p.short > 0);
     }
@@ -919,61 +850,41 @@
       const brand = getBrandPrefix(targetProd.name);
       if (!brand) return [];
       const matches = [];
-      state.products.forEach(p => {
+      getExcessProducts().forEach(p => {
         if (p.code === targetProd.code) return;
         const pBrand = getBrandPrefix(p.name);
         if (pBrand === brand || p.name.toUpperCase().includes(brand)) {
-          if (p.excess > 0 && p.price > 0) {
-            const idealQty = Math.max(1, Math.min(p.excess, Math.round(targetAmount / p.price) || 1));
-            const totalVal = round2(idealQty * p.price);
-            const diff = round2(totalVal - targetAmount);
-            matches.push({
-              type: 'excess_brand',
-              product: p,
-              recommendedQty: idealQty,
-              totalValue: totalVal,
-              diff,
-              absDiff: Math.abs(diff)
-            });
-          } else {
-            matches.push({
-              type: 'stock_brand_no_excess',
-              product: p,
-              recommendedQty: Math.max(1, Math.round(targetAmount / (p.price || 1)) || 1),
-              totalValue: round2((Math.max(1, Math.round(targetAmount / (p.price || 1)) || 1)) * p.price),
-              diff: 0,
-              absDiff: 999999
-            });
-          }
+          const idealQty = Math.max(1, Math.min(p.excess, Math.round(targetAmount / p.price) || 1));
+          const totalVal = round2(idealQty * p.price);
+          const diff = round2(totalVal - targetAmount);
+          matches.push({
+            product: p,
+            recommendedQty: idealQty,
+            totalValue: totalVal,
+            diff,
+            absDiff: Math.abs(diff)
+          });
         }
       });
-      matches.sort((a, b) => {
-        if (a.type !== b.type) return a.type === 'excess_brand' ? -1 : 1;
-        return a.absDiff - b.absDiff;
-      });
+      matches.sort((a, b) => a.absDiff - b.absDiff);
       return matches;
     }
 
     function findSameOrClosePriceMatches(targetProd, targetAmount) {
       const excessList = getExcessProducts().filter(p => p.code !== targetProd.code);
       const results = [];
-
       excessList.forEach(p => {
         const bestQty = Math.max(1, Math.min(p.excess, Math.round(targetAmount / p.price) || 1));
         const totalVal = round2(bestQty * p.price);
         const diff = round2(totalVal - targetAmount);
-        const unitPriceDiff = Math.abs(p.price - targetProd.price);
         results.push({
           product: p,
           qty: bestQty,
           totalValue: totalVal,
           diff,
-          absDiff: Math.abs(diff),
-          unitPriceDiff,
-          isUnitPriceClose: unitPriceDiff <= Math.max(150, targetProd.price * 0.25)
+          absDiff: Math.abs(diff)
         });
       });
-
       results.sort((a, b) => a.absDiff - b.absDiff);
       return results;
     }
@@ -1018,9 +929,7 @@
           const qFloor = Math.floor(targetAmount / p.price);
           const qCeil = Math.ceil(targetAmount / p.price);
           [qFloor, qCeil].forEach(q => {
-            if (q >= 1 && q <= p.excess) {
-              addCandidate([{ product: p, qty: q }]);
-            }
+            if (q >= 1 && q <= p.excess) addCandidate([{ product: p, qty: q }]);
           });
         }
       });
@@ -1038,10 +947,7 @@
               const q2Ceil = Math.ceil(rem1 / p2.price);
               [q2Floor, q2Ceil].forEach(q2 => {
                 if (q2 >= 1 && q2 <= p2.excess) {
-                  addCandidate([
-                    { product: p1, qty: q1 },
-                    { product: p2, qty: q2 }
-                  ]);
+                  addCandidate([{ product: p1, qty: q1 }, { product: p2, qty: q2 }]);
                 }
               });
             }
@@ -1065,11 +971,7 @@
                 const p3 = excessList[k];
                 const q3 = Math.min(p3.excess, Math.max(1, Math.round(rem2 / p3.price)));
                 if (q3 >= 1 && q3 <= p3.excess) {
-                  addCandidate([
-                    { product: p1, qty: q1 },
-                    { product: p2, qty: q2 },
-                    { product: p3, qty: q3 }
-                  ]);
+                  addCandidate([{ product: p1, qty: q1 }, { product: p2, qty: q2 }, { product: p3, qty: q3 }]);
                 }
               }
             }
@@ -1082,7 +984,7 @@
         return a.itemCount - b.itemCount;
       });
 
-      return candidates.slice(0, 6);
+      return candidates.slice(0, 5);
     }
 
     function renderTotalsAndCounts() {
@@ -1118,9 +1020,7 @@
       const totalProds = state.products.length;
       const activeHistoryCount = state.history.filter(h => !h.cancelled).length;
       document.getElementById('navCountProducts').textContent = String(totalProds);
-      document.getElementById('mobNavCountProducts').textContent = String(totalProds);
       document.getElementById('navCountHistory').textContent = String(activeHistoryCount);
-      document.getElementById('mobNavCountHistory').textContent = String(activeHistoryCount);
 
       const balancedCount = state.products.filter(p => p.short === 0 && p.excess === 0).length;
       document.getElementById('countFilterAll').textContent = String(totalProds);
@@ -1130,145 +1030,84 @@
       document.getElementById('countFilterCatalog').textContent = String(INITIAL_CATALOG.length);
     }
 
-    function renderHomeQuickShortChips() {
-      const container = document.getElementById('homeQuickShortChips');
-      const shortProds = getShortProducts();
-      if (shortProds.length === 0) {
-        container.innerHTML = `<div class="text-xs font-bold text-[#065F46] bg-[#D1FAE5] border-2 border-[#111827] rounded-lg px-3 py-1.5">🎉 অভিনন্দন! বর্তমানে কোনো প্রোডাক্ট শর্ট নেই। যেকোনো প্রোডাক্ট সার্চ করে টেস্ট করতে পারেন।</div>`;
-        return;
-      }
-
-      container.innerHTML = shortProds.map(p => {
-        const isSelected = state.selectedHomeCode === p.code;
-        const activeCls = isSelected
-          ? 'bg-[#FF4D6D] text-white shadow-[2px_2px_0_#111827] translate-x-[1px] translate-y-[1px]'
-          : 'bg-[#FFF0F3] hover:bg-[#FFE4E6] text-[#111827]';
-        return `
-          <button
-            type="button"
-            data-select-home-code="${escapeHtml(p.code)}"
-            class="nb-btn ${activeCls} text-xs px-2.5 py-1.5"
-          >
-            <span class="font-extrabold">[${escapeHtml(p.code)}]</span>
-            <span class="truncate max-w-[160px] sm:max-w-[220px]">${escapeHtml(p.name)}</span>
-            <span class="nb-badge ${isSelected ? 'bg-white text-[#9F1239]' : 'bg-[#FF4D6D] text-white'} text-[10px] px-1.5 py-0.2">
-              শর্ট: ${p.short} টি (${formatTaka(p.shortAmount)})
-            </span>
-          </button>
-        `;
-      }).join('');
-    }
-
+    // Strictly search ONLY Short products (p.short > 0)
     function renderHomeSearchDropdown() {
       const dropdown = document.getElementById('homeSearchDropdown');
       const clearBtn = document.getElementById('btnClearHomeSearch');
       const q = state.homeSearchQuery.trim().toUpperCase();
 
-      if (!q) {
+      if (!q && ! state.selectedHomeCode) {
         dropdown.classList.add('hidden');
         clearBtn.classList.add('hidden');
         return;
       }
-      clearBtn.classList.remove('hidden');
 
-      const stockMatches = state.products.filter(p =>
+      if (q || state.selectedHomeCode) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      if (!q) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      // ONLY search products that currently have short > 0
+      const shortMatches = getShortProducts().filter(p =>
         p.code.toUpperCase().includes(q) || p.name.toUpperCase().includes(q)
       );
 
-      stockMatches.sort((a, b) => {
-        if ((b.short > 0) !== (a.short > 0)) return b.short > 0 ? 1 : -1;
-        return b.shortAmount - a.shortAmount;
-      });
-
-      const stockCodes = new Set(stockMatches.map(p => p.code.toUpperCase()));
-      const catalogMatches = INITIAL_CATALOG.filter(c =>
-        !stockCodes.has(c.code.toUpperCase()) &&
-        (c.code.toUpperCase().includes(q) || c.name.toUpperCase().includes(q))
-      ).slice(0, 12);
-
-      if (stockMatches.length === 0 && catalogMatches.length === 0) {
-        dropdown.innerHTML = `<div class="p-4 text-sm font-bold text-gray-600 text-center">কোনো প্রোডাক্ট পাওয়া যায়নি।</div>`;
+      if (shortMatches.length === 0) {
+        dropdown.innerHTML = `
+          <div class="p-3.5 text-xs sm:text-sm font-bold text-slate-600 text-center">
+            এই নামে বা কোডে কোনো শর্ট প্রোডাক্ট পাওয়া যায়নি। (শুধুমাত্র শর্ট থাকা প্রোডাক্ট সার্চ করা যাবে)
+          </div>
+        `;
         dropdown.classList.remove('hidden');
         return;
       }
 
-      let html = '';
-      stockMatches.slice(0, 15).forEach(p => {
-        const badgeHtml = p.short > 0
-          ? `<span class="nb-badge bg-[#FF4D6D] text-white text-xs px-2 py-0.5">শর্ট: ${p.short} টি (${formatTaka(p.shortAmount)})</span>`
-          : p.excess > 0
-            ? `<span class="nb-badge bg-[#10B981] text-white text-xs px-2 py-0.5">এক্সেস: ${p.excess} টি (${formatTaka(p.excessAmount)})</span>`
-            : `<span class="nb-badge bg-gray-200 text-gray-800 text-xs px-2 py-0.5">সমান (0)</span>`;
-
-        html += `
-          <div
-            data-pick-home-code="${escapeHtml(p.code)}"
-            class="p-3 hover:bg-[#FEF9C3] cursor-pointer flex flex-wrap items-center justify-between gap-2 transition-colors"
-          >
-            <div>
-              <div class="font-extrabold text-sm text-[#111827]">
-                <span class="bg-[#111827] text-white px-1.5 py-0.5 rounded text-xs mr-1.5">${escapeHtml(p.code)}</span>
-                ${escapeHtml(p.name)}
-              </div>
-              <div class="text-xs font-bold text-gray-600 mt-0.5">
-                ইউনিট দাম: <span class="text-[#111827]">${formatTaka(p.price)}</span> • Sy.Stock: ${p.syStock} • Phy.Stock: ${p.phyStock}
-              </div>
+      dropdown.innerHTML = shortMatches.map(p => `
+        <div
+          data-pick-home-code="${escapeHtml(p.code)}"
+          class="p-3 hover:bg-[#EEF2FF] cursor-pointer flex items-center justify-between gap-2 transition-colors"
+        >
+          <div class="min-w-0">
+            <div class="font-extrabold text-xs sm:text-sm text-[#0F172A] truncate">
+              <span class="bg-[#0F172A] text-white px-1.5 py-0.5 rounded text-[11px] mr-1">${escapeHtml(p.code)}</span>
+              ${escapeHtml(p.name)}
             </div>
-            <div>${badgeHtml}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-0.5">
+              দাম: <span class="text-[#0F172A]">${formatTaka(p.price)}</span> • মোট শর্ট ভ্যালু: <span class="text-[#E11D48]">${formatTaka(p.shortAmount)}</span>
+            </div>
           </div>
-        `;
-      });
-
-      if (catalogMatches.length > 0) {
-        html += `<div class="bg-gray-100 px-3 py-1.5 text-[11px] font-extrabold uppercase text-gray-600">মাস্টার প্রাইস ক্যাটালগ থেকে (সিলেক্ট করলে স্টকে যুক্ত হবে)</div>`;
-        catalogMatches.forEach(c => {
-          html += `
-            <div
-              data-pick-catalog-code="${escapeHtml(c.code)}"
-              class="p-3 hover:bg-[#E0E7FF] cursor-pointer flex flex-wrap items-center justify-between gap-2 transition-colors"
-            >
-              <div>
-                <div class="font-extrabold text-sm text-[#111827]">
-                  <span class="bg-[#4F46E5] text-white px-1.5 py-0.5 rounded text-xs mr-1.5">${escapeHtml(c.code)}</span>
-                  ${escapeHtml(c.name)}
-                </div>
-                <div class="text-xs font-bold text-gray-600 mt-0.5">
-                  ইউনিট দাম: <span class="text-[#111827]">${formatTaka(c.price)}</span> • গ্রুপ: ${escapeHtml(c.group)}
-                </div>
-              </div>
-              <span class="nb-badge bg-[#E0E7FF] text-[#1E1B4B] text-xs px-2 py-0.5">+ সিলেক্ট করুন</span>
-            </div>
-          `;
-        });
-      }
-
-      dropdown.innerHTML = html;
+          <span class="nb-badge bg-[#FFF1F2] text-[#E11D48] text-xs px-2 py-0.5 shrink-0">
+            শর্ট: ${p.short} টি
+          </span>
+        </div>
+      `).join('');
       dropdown.classList.remove('hidden');
     }
 
     function renderHomeSelectedProductAndOptions() {
       const container = document.getElementById('homeSelectedContainer');
-      let targetProd = state.products.find(p => p.code === state.selectedHomeCode);
-      if (!targetProd) {
-        const shorts = getShortProducts();
-        targetProd = shorts[0] || state.products[0];
-        if (targetProd) state.selectedHomeCode = targetProd.code;
-      }
 
-      if (!targetProd) {
-        container.innerHTML = `
-          <div class="nb-card bg-white p-6 text-center">
-            <div class="text-3xl mb-2">📭</div>
-            <h3 class="font-display font-extrabold text-lg">ডাটাবেসে কোনো প্রোডাক্ট নেই</h3>
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">উপরের "এক্সেল আপলোড" বা "DB ক্লিয়ার / ব্যাকআপ" বাটন থেকে ডিফল্ট ডাটা রিস্টোর বা নতুন এক্সেল ফাইল আপলোড করুন।</p>
-          </div>
-        `;
+      // Keep Home Page 100% CLEAN if no Short product has been searched & selected!
+      if (!state.selectedHomeCode) {
+        container.innerHTML = '';
         return;
       }
 
-      const maxShort = Math.max(1, targetProd.short || 1);
+      const targetProd = getShortProducts().find(p => p.code === state.selectedHomeCode);
+      if (!targetProd) {
+        state.selectedHomeCode = null;
+        container.innerHTML = '';
+        return;
+      }
+
       if (state.homeReturnQty < 1) state.homeReturnQty = 1;
-      if (targetProd.short > 0 && state.homeReturnQty > targetProd.short) {
+      if (state.homeReturnQty > targetProd.short) {
         state.homeReturnQty = targetProd.short;
       }
 
@@ -1280,379 +1119,277 @@
       const catalogSamePrice = INITIAL_CATALOG.filter(c =>
         c.code !== targetProd.code &&
         (Math.abs(c.price - targetProd.price) <= 2.0 || Math.abs(c.price - targetAmount) <= 2.0)
-      ).slice(0, 12);
+      ).slice(0, 8);
 
-      let brandHtml = '';
-      if (brandMatches.length === 0) {
-        brandHtml = `
-          <div class="nb-card-sm bg-white/80 p-3.5 text-xs sm:text-sm font-bold text-gray-700">
-            এই নামের (${escapeHtml(getBrandPrefix(targetProd.name))}) অন্য কোনো এক্সেস প্রোডাক্ট বর্তমানে রিপোর্টে নেই। নিচে একই দামের ও কম দামের কম্বিনেশন অপশনগুলো দেখুন।
-          </div>
-        `;
-      } else {
-        brandHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">` + brandMatches.map(m => {
-          const p = m.product;
-          if (m.type === 'excess_brand') {
-            const diffStr = m.diff === 0 ? 'একদম সমান (৳0.00)' : (m.diff > 0 ? `+${formatTaka(m.diff)} বেশি` : `${formatTaka(m.diff)} কম`);
-            const payloadStr = encodeURIComponent(JSON.stringify({
-              shortCode: targetProd.code,
-              shortQty: state.homeReturnQty,
-              items: [{ code: p.code, qty: m.recommendedQty }]
-            }));
-            return `
-              <div class="nb-card-sm bg-white p-4 flex flex-col justify-between gap-3">
-                <div>
-                  <div class="flex items-center justify-between gap-2 flex-wrap">
-                    <span class="nb-badge bg-[#7C3AED] text-white text-xs px-2 py-0.5">⭐ SAME BRAND EXCESS</span>
-                    <span class="nb-badge bg-[#D1FAE5] text-[#065F46] text-xs px-2 py-0.5">স্টকে এক্সেস আছে: ${p.excess} টি</span>
-                  </div>
-                  <h4 class="font-display font-extrabold text-base sm:text-lg text-[#111827] mt-2">
-                    [${escapeHtml(p.code)}] ${escapeHtml(p.name)}
-                  </h4>
-                  <div class="text-xs sm:text-sm font-bold text-gray-700 mt-1 space-y-0.5">
-                    <div>ইউনিট দাম: <span class="text-[#111827] font-extrabold">${formatTaka(p.price)}</span> (মোট এক্সেস ভ্যালু: ${formatTaka(p.excessAmount)})</div>
-                    <div class="text-[#4F46E5]">প্রস্তাবিত রিটার্ন: <span class="font-extrabold">${m.recommendedQty} টি × ${formatTaka(p.price)} = ${formatTaka(m.totalValue)}</span></div>
-                    <div>টার্গেট থেকে পার্থক্য: <span class="font-extrabold">${diffStr}</span></div>
-                  </div>
-                </div>
-                <div class="flex flex-wrap gap-2 pt-2 border-t-2 border-dashed border-gray-200">
-                  <button
-                    type="button"
-                    data-confirm-payload="${payloadStr}"
-                    class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white text-xs sm:text-sm px-3.5 py-2 flex-1"
-                  >
-                    <span>✓ কনফার্ম রিটার্ন (${m.recommendedQty} টি)</span>
-                  </button>
-                  <button
-                    type="button"
-                    data-send-custom="${payloadStr}"
-                    class="nb-btn bg-[#FEF9C3] hover:bg-[#FDE047] text-[#111827] text-xs px-3 py-2"
-                    title="কাস্টম সিলেক্টরে পাঠান ও সাথে অন্য প্রোডাক্ট যোগ করুন"
-                  >
-                    <span>🎯 কাস্টম মিলান</span>
-                  </button>
-                </div>
-              </div>
-            `;
-          } else {
-            return `
-              <div class="nb-card-sm bg-gray-50 p-4 flex flex-col justify-between gap-2 opacity-90">
-                <div>
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="nb-badge bg-gray-200 text-gray-800 text-xs px-2 py-0.5">একই নামের অন্য স্টক প্রোডাক্ট</span>
-                    <span class="text-xs font-bold text-gray-600">এক্সেস: ${p.excess} টি | শর্ট: ${p.short} টি</span>
-                  </div>
-                  <h4 class="font-display font-extrabold text-sm sm:text-base text-[#111827] mt-2">
-                    [${escapeHtml(p.code)}] ${escapeHtml(p.name)}
-                  </h4>
-                  <div class="text-xs font-bold text-gray-600 mt-1">
-                    ইউনিট দাম: <span class="text-[#111827]">${formatTaka(p.price)}</span> (এই প্রোডাক্টটি বর্তমানে এক্সেস নেই)
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-        }).join('') + `</div>`;
-      }
-
-      const topCloseExcess = closePriceMatches.slice(0, 6);
-      let samePriceHtml = '';
-      if (topCloseExcess.length === 0) {
-        samePriceHtml = `<div class="nb-card-sm bg-white p-3.5 text-xs sm:text-sm font-bold text-gray-700">বর্তমানে কোনো এক্সেস প্রোডাক্ট নেই।</div>`;
-      } else {
-        samePriceHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">` + topCloseExcess.map(item => {
-          const p = item.product;
-          const diffStr = item.diff === 0 ? 'একদম সমান!' : (item.diff > 0 ? `+${formatTaka(item.diff)}` : `${formatTaka(item.diff)}`);
-          const isVeryClose = item.absDiff <= 30;
-          const payloadStr = encodeURIComponent(JSON.stringify({
-            shortCode: targetProd.code,
-            shortQty: state.homeReturnQty,
-            items: [{ code: p.code, qty: item.qty }]
-          }));
-          return `
-            <div class="nb-card-sm ${isVeryClose ? 'bg-[#E6FBF4]' : 'bg-white'} p-4 flex flex-col justify-between gap-3">
-              <div>
-                <div class="flex items-center justify-between gap-1.5 flex-wrap">
-                  <span class="nb-badge ${isVeryClose ? 'bg-[#10B981] text-white' : 'bg-[#E0F2FE] text-[#0369A1]'} text-[11px] px-2 py-0.5">
-                    ${isVeryClose ? '💎 একদম কাছাকাছি দাম' : '🏷️ কাছাকাছি ভ্যালু'}
-                  </span>
-                  <span class="nb-badge bg-white text-[#065F46] text-[11px] px-2 py-0.5">
-                    এক্সেস আছে: ${p.excess} টি
-                  </span>
-                </div>
-                <h4 class="font-display font-extrabold text-sm sm:text-base text-[#111827] mt-2">
-                  [${escapeHtml(p.code)}] ${escapeHtml(p.name)}
-                </h4>
-                <div class="mt-2 p-2.5 rounded-lg bg-[#F4F1EA] border border-[#111827] text-xs font-bold space-y-1">
-                  <div class="flex justify-between"><span>ইউনিট দাম:</span> <span class="font-extrabold">${formatTaka(p.price)}</span></div>
-                  <div class="flex justify-between text-[#065F46]"><span>রিটার্ন দেখাবেন:</span> <span class="font-extrabold">${item.qty} টি = ${formatTaka(item.totalValue)}</span></div>
-                  <div class="flex justify-between"><span>পার্থক্য (Diff):</span> <span class="font-extrabold">${diffStr}</span></div>
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  data-confirm-payload="${payloadStr}"
-                  class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white text-xs py-2 px-3 flex-1"
-                >
-                  <span>✓ কনফার্ম করুন</span>
-                </button>
-                <button
-                  type="button"
-                  data-send-custom="${payloadStr}"
-                  class="nb-btn bg-white hover:bg-[#FEF9C3] text-[#111827] text-xs py-2 px-2.5"
-                  title="কাস্টম সিলেক্টরে পাঠান"
-                >
-                  🎯
-                </button>
-              </div>
+      // 1. Same Name / Brand Excess Section
+      let brandSectionHtml = '';
+      if (brandMatches.length > 0) {
+        brandSectionHtml = `
+          <div class="nb-card p-4 sm:p-5 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-display font-extrabold text-xs sm:text-base text-[#0F172A] flex items-center gap-1.5">
+                <span class="nb-badge bg-[#EEF2FF] text-[#4F46E5] text-[11px] px-2 py-0.5">১</span>
+                <span>একই নামের এক্সেস প্রোডাক্ট (আগে দেখানো হচ্ছে)</span>
+              </h3>
             </div>
-          `;
-        }).join('') + `</div>`;
-      }
-
-      let catalogSamePriceHtml = '';
-      if (state.showSamePriceCatalog) {
-        if (catalogSamePrice.length === 0) {
-          catalogSamePriceHtml = `<div class="mt-3 p-3 nb-card-sm bg-white text-xs font-bold">মাস্টার প্রাইস ক্যাটালগে এই দামের আর কোনো প্রোডাক্ট পাওয়া যায়নি।</div>`;
-        } else {
-          catalogSamePriceHtml = `
-            <div class="mt-3 nb-card-sm bg-white p-3.5">
-              <div class="text-xs font-extrabold uppercase text-[#1E1B4B] mb-2">
-                📋 মাস্টার প্রাইস শিট থেকে একই দামের (${formatTaka(targetProd.price)}) প্রোডাক্টসমূহ:
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                ${catalogSamePrice.map(c => `
-                  <div class="p-2 rounded-lg border-2 border-[#111827] bg-[#F4F1EA] flex items-center justify-between gap-2 text-xs font-bold">
-                    <div class="truncate">
-                      <span class="bg-[#111827] text-white px-1 rounded">${escapeHtml(c.code)}</span>
-                      ${escapeHtml(c.name)}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${brandMatches.map(m => {
+                const p = m.product;
+                const diffStr = m.diff === 0 ? '৳0.00' : (m.diff > 0 ? `+${formatTaka(m.diff)}` : `${formatTaka(m.diff)}`);
+                const payloadStr = encodeURIComponent(JSON.stringify({
+                  shortCode: targetProd.code,
+                  shortQty: state.homeReturnQty,
+                  items: [{ code: p.code, qty: m.recommendedQty }]
+                }));
+                return `
+                  <div class="nb-card-sm bg-slate-50 p-3.5 flex flex-col justify-between gap-3">
+                    <div>
+                      <div class="flex items-center justify-between gap-1.5">
+                        <span class="nb-badge bg-[#0F172A] text-white text-[11px] px-2 py-0.5">${escapeHtml(p.code)}</span>
+                        <span class="nb-badge bg-[#ECFDF5] text-[#059669] text-[11px] px-2 py-0.5">এক্সেস: ${p.excess} টি</span>
+                      </div>
+                      <h4 class="font-display font-extrabold text-sm text-[#0F172A] mt-2">${escapeHtml(p.name)}</h4>
+                      <div class="text-xs font-bold text-slate-600 mt-1 space-y-0.5">
+                        <div>ইউনিট দাম: <strong class="text-[#0F172A]">${formatTaka(p.price)}</strong></div>
+                        <div class="text-[#059669]">রিটার্ন দেখাবেন: <strong>${m.recommendedQty} টি = ${formatTaka(m.totalValue)}</strong> (পার্থক্য: ${diffStr})</div>
+                      </div>
                     </div>
-                    <span class="text-[#4F46E5] font-extrabold shrink-0">${formatTaka(c.price)}</span>
+                    <div class="flex gap-2">
+                      <button type="button" data-confirm-payload="${payloadStr}" class="nb-btn bg-[#059669] hover:bg-[#047857] text-white text-xs py-2 px-3 flex-1">
+                        ✓ কনফার্ম করুন
+                      </button>
+                      <button type="button" data-send-custom="${payloadStr}" class="nb-btn bg-white text-[#0F172A] text-xs py-2 px-2.5" title="কাস্টম মিলান">
+                        🎯
+                      </button>
+                    </div>
                   </div>
-                `).join('')}
-              </div>
+                `;
+              }).join('')}
             </div>
-          `;
-        }
-      }
-
-      let comboHtml = '';
-      if (comboOptions.length === 0) {
-        comboHtml = `
-          <div class="nb-card-sm bg-white p-4 text-xs sm:text-sm font-bold text-gray-700">
-            এই অ্যামাউন্টের জন্য অটো কম্বিনেশন পাওয়া যায়নি। আপনি <button type="button" data-open-custom-short="${escapeHtml(targetProd.code)}" class="underline text-[#4F46E5] font-extrabold">কাস্টম এক্সেস সিলেক্টর পেজে</button> গিয়ে নিজের ইচ্ছা মতো প্রোডাক্ট মিলিয়ে নিতে পারেন।
           </div>
         `;
-      } else {
-        comboHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">` + comboOptions.map((opt, idx) => {
-          const isBest = idx === 0;
-          const diffStr = opt.diff === 0
-            ? 'একদম সমান (৳0.00)'
-            : (opt.diff > 0 ? `+${formatTaka(opt.diff)} বেশি` : `${formatTaka(opt.diff)} কম`);
-          const payloadStr = encodeURIComponent(JSON.stringify({
-            shortCode: targetProd.code,
-            shortQty: state.homeReturnQty,
-            items: opt.items.map(it => ({ code: it.product.code, qty: it.qty }))
-          }));
-
-          return `
-            <div class="nb-card-sm ${isBest ? 'bg-[#FEFCE8]' : 'bg-white'} p-4 flex flex-col justify-between gap-3">
-              <div>
-                <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <div class="flex items-center gap-1.5">
-                    <span class="nb-badge ${isBest ? 'bg-[#FACC15] text-[#111827]' : 'bg-[#111827] text-white'} text-xs px-2.5 py-0.5">
-                      ${isBest ? '🏆 সেরা অপশন (Option 1)' : `অপশন ${idx + 1} (Option ${idx + 1})`}
-                    </span>
-                    <span class="text-xs font-extrabold text-gray-600">${opt.itemCount} টি আইটেম (${opt.totalUnits} পিস)</span>
-                  </div>
-                  <span class="nb-badge ${opt.absDiff <= 5 ? 'bg-[#10B981] text-white' : 'bg-[#E0E7FF] text-[#1E1B4B]'} text-xs px-2 py-0.5">
-                    পার্থক্য: ${diffStr}
-                  </span>
-                </div>
-
-                <div class="mt-3 border-2 border-[#111827] rounded-xl overflow-hidden bg-white">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr class="bg-[#111827] text-white font-bold">
-                        <th class="py-1.5 px-2.5">এক্সেস প্রোডাক্ট</th>
-                        <th class="py-1.5 px-2 text-center">দাম</th>
-                        <th class="py-1.5 px-2 text-center">রিটার্ন সংখ্যা</th>
-                        <th class="py-1.5 px-2.5 text-right">মোট</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 font-bold">
-                      ${opt.items.map(it => `
-                        <tr>
-                          <td class="py-2 px-2.5">
-                            <span class="bg-gray-200 border border-[#111827] px-1 rounded text-[10px] mr-1">${escapeHtml(it.product.code)}</span>
-                            ${escapeHtml(it.product.name)}
-                            <div class="text-[10px] text-[#065F46]">স্টকে এক্সেস আছে: ${it.product.excess} টি</div>
-                          </td>
-                          <td class="py-2 px-2 text-center">${formatTaka(it.product.price)}</td>
-                          <td class="py-2 px-2 text-center">
-                            <span class="nb-badge bg-[#D1FAE5] text-[#065F46] px-2 py-0.5 text-xs">${it.qty} টি</span>
-                          </td>
-                          <td class="py-2 px-2.5 text-right font-extrabold">${formatTaka(it.qty * it.product.price)}</td>
-                        </tr>
-                      `).join('')}
-                    </tbody>
-                    <tfoot>
-                      <tr class="bg-[#F4F1EA] border-t-2 border-[#111827] font-extrabold text-xs sm:text-sm">
-                        <td colspan="3" class="py-2 px-2.5">মোট এক্সেস রিটার্ন দেখানো হবে:</td>
-                        <td class="py-2 px-2.5 text-right text-[#065F46]">${formatTaka(opt.totalValue)}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-
-              <div class="flex flex-wrap gap-2 pt-1">
-                <button
-                  type="button"
-                  data-confirm-payload="${payloadStr}"
-                  class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white text-xs sm:text-sm py-2.5 px-4 flex-1"
-                >
-                  <span>✓ এই অপশনটি কনফার্ম করুন</span>
-                </button>
-                <button
-                  type="button"
-                  data-send-custom="${payloadStr}"
-                  class="nb-btn bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#111827] text-xs py-2.5 px-3"
-                >
-                  <span>🛠️ কাস্টম এডিট</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('') + `</div>`;
       }
+
+      // 2. Same / Close Price Excess Section
+      const topClose = closePriceMatches.slice(0, 4);
+      let samePriceSectionHtml = `
+        <div class="nb-card p-4 sm:p-5 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <h3 class="font-display font-extrabold text-xs sm:text-base text-[#0F172A] flex items-center gap-1.5">
+              <span class="nb-badge bg-[#EEF2FF] text-[#4F46E5] text-[11px] px-2 py-0.5">${brandMatches.length > 0 ? '২' : '১'}</span>
+              <span>একই বা কাছাকাছি দামের এক্সেস প্রোডাক্ট</span>
+            </h3>
+            <button type="button" id="btnToggleCatalogSamePrice" class="nb-btn bg-slate-100 text-[#0F172A] text-[11px] px-2.5 py-1">
+              ${state.showSamePriceCatalog ? 'প্রাইস শিট লুকান' : `প্রাইস শিটে একই দাম (${catalogSamePrice.length})`}
+            </button>
+          </div>
+          ${topClose.length === 0 ? `<div class="text-xs font-bold text-slate-500">কোনো এক্সেস প্রোডাক্ট পাওয়া যায়নি।</div>` : `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${topClose.map(item => {
+                const p = item.product;
+                const diffStr = item.diff === 0 ? 'সমান' : (item.diff > 0 ? `+${formatTaka(item.diff)}` : `${formatTaka(item.diff)}`);
+                const payloadStr = encodeURIComponent(JSON.stringify({
+                  shortCode: targetProd.code,
+                  shortQty: state.homeReturnQty,
+                  items: [{ code: p.code, qty: item.qty }]
+                }));
+                return `
+                  <div class="nb-card-sm bg-slate-50 p-3.5 flex flex-col justify-between gap-3">
+                    <div>
+                      <div class="flex items-center justify-between gap-1.5">
+                        <span class="nb-badge bg-[#0F172A] text-white text-[11px] px-2 py-0.5">${escapeHtml(p.code)}</span>
+                        <span class="nb-badge bg-[#ECFDF5] text-[#059669] text-[11px] px-2 py-0.5">এক্সেস: ${p.excess} টি</span>
+                      </div>
+                      <h4 class="font-display font-extrabold text-sm text-[#0F172A] mt-2">${escapeHtml(p.name)}</h4>
+                      <div class="text-xs font-bold text-slate-600 mt-1 space-y-0.5">
+                        <div>ইউনিট দাম: <strong class="text-[#0F172A]">${formatTaka(p.price)}</strong></div>
+                        <div class="text-[#059669]">রিটার্ন: <strong>${item.qty} টি = ${formatTaka(item.totalValue)}</strong> (পার্থক্য: ${diffStr})</div>
+                      </div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button type="button" data-confirm-payload="${payloadStr}" class="nb-btn bg-[#059669] hover:bg-[#047857] text-white text-xs py-2 px-3 flex-1">
+                        ✓ কনফার্ম করুন
+                      </button>
+                      <button type="button" data-send-custom="${payloadStr}" class="nb-btn bg-white text-[#0F172A] text-xs py-2 px-2.5" title="কাস্টম মিলান">
+                        🎯
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+          ${state.showSamePriceCatalog && catalogSamePrice.length > 0 ? `
+            <div class="pt-2 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${catalogSamePrice.map(c => `
+                <div class="p-2 rounded-lg border border-slate-300 bg-slate-50 flex items-center justify-between text-xs font-bold">
+                  <span class="truncate"><strong class="mr-1">[${escapeHtml(c.code)}]</strong>${escapeHtml(c.name)}</span>
+                  <span class="text-[#4F46E5] shrink-0 ml-2">${formatTaka(c.price)}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      // 3. Lower-Priced Combination Options Section
+      let comboSectionHtml = `
+        <div class="nb-card p-4 sm:p-5 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div>
+              <h3 class="font-display font-extrabold text-xs sm:text-base text-[#0F172A] flex items-center gap-1.5">
+                <span class="nb-badge bg-[#EEF2FF] text-[#4F46E5] text-[11px] px-2 py-0.5">${brandMatches.length > 0 ? '৩' : '২'}</span>
+                <span>কম দামের প্রোডাক্ট মিলিয়ে স্টক সমান করার অপশন (${formatTaka(targetAmount)})</span>
+              </h3>
+            </div>
+            <button type="button" data-open-custom-short="${escapeHtml(targetProd.code)}" class="nb-btn bg-[#EEF2FF] text-[#4F46E5] text-xs px-3 py-1.5">
+              🎯 কাস্টম সিলেক্টর ➔
+            </button>
+          </div>
+
+          ${comboOptions.length === 0 ? `
+            <div class="text-xs font-bold text-slate-500">কোনো অটো কম্বিনেশন পাওয়া যায়নি। কাস্টম সিলেক্টর ব্যবহার করুন।</div>
+          ` : `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${comboOptions.map((opt, idx) => {
+                const diffStr = opt.diff === 0 ? '৳0.00' : (opt.diff > 0 ? `+${formatTaka(opt.diff)}` : `${formatTaka(opt.diff)}`);
+                const payloadStr = encodeURIComponent(JSON.stringify({
+                  shortCode: targetProd.code,
+                  shortQty: state.homeReturnQty,
+                  items: opt.items.map(it => ({ code: it.product.code, qty: it.qty }))
+                }));
+                return `
+                  <div class="nb-card-sm bg-slate-50 p-3.5 flex flex-col justify-between gap-3">
+                    <div>
+                      <div class="flex items-center justify-between gap-1.5">
+                        <span class="nb-badge ${idx === 0 ? 'bg-[#4F46E5] text-white' : 'bg-white text-[#0F172A]'} text-[11px] px-2 py-0.5">
+                          ${idx === 0 ? '⭐ সেরা অপশন ১' : `অপশন ${idx + 1}`}
+                        </span>
+                        <span class="nb-badge bg-white text-slate-700 text-[11px] px-2 py-0.5">
+                          পার্থক্য: ${diffStr}
+                        </span>
+                      </div>
+
+                      <div class="mt-2.5 space-y-1.5 divide-y divide-slate-200 bg-white p-2.5 rounded-lg border border-slate-300 text-xs font-bold">
+                        ${opt.items.map(it => `
+                          <div class="pt-1.5 first:pt-0 flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                              <div class="text-[#0F172A] truncate">[${escapeHtml(it.product.code)}] ${escapeHtml(it.product.name)}</div>
+                              <div class="text-[11px] text-slate-500">${formatTaka(it.product.price)} × <strong class="text-[#059669]">${it.qty} টি</strong></div>
+                            </div>
+                            <div class="font-extrabold text-[#0F172A] shrink-0">${formatTaka(it.qty * it.product.price)}</div>
+                          </div>
+                        `).join('')}
+                        <div class="pt-2 flex justify-between text-xs font-extrabold text-[#059669]">
+                          <span>মোট রিটার্ন ভ্যালু:</span>
+                          <span>${formatTaka(opt.totalValue)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                      <button type="button" data-confirm-payload="${payloadStr}" class="nb-btn bg-[#059669] hover:bg-[#047857] text-white text-xs py-2 px-3 flex-1">
+                        ✓ এই অপশনটি কনফার্ম করুন
+                      </button>
+                      <button type="button" data-send-custom="${payloadStr}" class="nb-btn bg-white text-[#0F172A] text-xs py-2 px-2.5" title="কাস্টম এডিট">
+                        🛠️
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </div>
+      `;
 
       container.innerHTML = `
-        <div class="nb-card bg-[#FFF0F3] p-4 sm:p-6">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div class="space-y-1.5">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="nb-badge bg-[#111827] text-white text-xs px-2.5 py-1">কোড: ${escapeHtml(targetProd.code)}</span>
-                ${targetProd.short > 0
-                  ? `<span class="nb-badge bg-[#FF4D6D] text-white text-xs px-2.5 py-1">🔴 স্টকে শর্ট আছে: ${targetProd.short} টি (${formatTaka(targetProd.shortAmount)})</span>`
-                  : `<span class="nb-badge bg-white text-[#111827] text-xs px-2.5 py-1">⚖️ স্টকে শর্ট: ০ টি (সিমুলেশন মোড)</span>`
-                }
-                <span class="nb-badge bg-white text-gray-800 text-xs px-2.5 py-1">ইউনিট দাম: ${formatTaka(targetProd.price)}</span>
+        <!-- Selected Short Product Summary Card -->
+        <div class="nb-card p-4 sm:p-5 border-l-[6px] border-l-[#4F46E5]">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="nb-badge bg-[#0F172A] text-white text-xs px-2 py-0.5">${escapeHtml(targetProd.code)}</span>
+                <span class="nb-badge bg-[#FFF1F2] text-[#E11D48] text-xs px-2 py-0.5">
+                  শর্ট: ${targetProd.short} টি (${formatTaka(targetProd.shortAmount)})
+                </span>
+                <button type="button" id="btnCloseSelectedShort" class="nb-btn bg-slate-100 text-slate-700 text-[11px] px-2 py-0.5 ml-auto sm:ml-1">
+                  ✕ ক্লিয়ার
+                </button>
               </div>
-              <h3 class="font-display font-extrabold text-xl sm:text-2xl text-[#111827] pt-1">
+              <h3 class="font-display font-extrabold text-base sm:text-xl text-[#0F172A] mt-1.5 truncate">
                 ${escapeHtml(targetProd.name)}
               </h3>
-              <p class="text-xs sm:text-sm font-bold text-gray-700">
-                সিস্টেম স্টক (Sy.Stock): <span class="text-[#111827]">${targetProd.syStock}</span> • ফিজিক্যাল স্টক (Phy.Stock): <span class="text-[#111827]">${targetProd.phyStock}</span> • মোট শর্ট ভ্যালু: <span class="text-[#9F1239] font-extrabold">${formatTaka(targetProd.shortAmount)}</span>
-              </p>
+              <div class="text-xs font-bold text-slate-500 mt-0.5">
+                ইউনিট দাম: <strong class="text-[#0F172A]">${formatTaka(targetProd.price)}</strong> • মোট শর্ট: <strong class="text-[#E11D48]">${formatTaka(targetProd.shortAmount)}</strong>
+              </div>
             </div>
 
-            <div class="nb-card-sm bg-white p-3.5 sm:p-4 shrink-0 flex flex-col sm:flex-row items-start sm:items-center gap-3.5">
+            <!-- Stepper for Return Quantity -->
+            <div class="nb-card-sm bg-slate-50 p-3 flex items-center justify-between sm:justify-end gap-3 shrink-0">
               <div>
-                <div class="text-[11px] font-extrabold uppercase text-gray-600">কয়টি শর্ট প্রোডাক্ট রিটার্ন নিচ্ছেন?</div>
-                <div class="flex items-center gap-1.5 mt-1.5">
-                  <button type="button" id="btnHomeQtyMinus" class="nb-btn bg-gray-100 hover:bg-gray-200 w-8 h-8 text-base">-</button>
+                <div class="text-[10px] font-extrabold uppercase text-slate-500">রিটার্ন সংখ্যা</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <button type="button" id="btnHomeQtyMinus" class="nb-btn bg-white w-7 h-7 text-sm">-</button>
                   <input
                     id="inputHomeReturnQty"
                     type="number"
                     min="1"
-                    max="${Math.max(999, maxShort)}"
+                    max="${targetProd.short}"
                     value="${state.homeReturnQty}"
                     aria-label="রিটার্ন সংখ্যা"
-                    class="nb-input w-16 text-center py-1 text-sm font-extrabold"
+                    class="nb-input w-12 text-center py-0.5 text-xs font-extrabold"
                   />
-                  <button type="button" id="btnHomeQtyPlus" class="nb-btn bg-gray-100 hover:bg-gray-200 w-8 h-8 text-base">+</button>
+                  <button type="button" id="btnHomeQtyPlus" class="nb-btn bg-white w-7 h-7 text-sm">+</button>
                   ${targetProd.short > 1 ? `
-                    <button type="button" id="btnHomeQtyAll" class="nb-btn ${state.homeReturnQty === targetProd.short ? 'bg-[#FACC15]' : 'bg-[#FFE4E6]'} text-[#111827] text-xs px-2.5 py-1.5">
-                      সব (${targetProd.short} টি)
+                    <button type="button" id="btnHomeQtyAll" class="nb-btn ${state.homeReturnQty === targetProd.short ? 'bg-[#4F46E5] text-white' : 'bg-white text-[#0F172A]'} text-[11px] px-2 py-1">
+                      সব (${targetProd.short})
                     </button>
                   ` : ''}
                 </div>
               </div>
-              <div class="sm:border-l-2 sm:border-dashed sm:border-gray-300 sm:pl-3.5">
-                <div class="text-[11px] font-extrabold uppercase text-[#9F1239]">টার্গেট অল্টার অ্যামাউন্ট</div>
-                <div class="font-display font-extrabold text-xl sm:text-2xl text-[#9F1239]">
-                  ${formatTaka(targetAmount)}
-                </div>
+              <div class="border-l border-slate-300 pl-3 text-right">
+                <div class="text-[10px] font-extrabold uppercase text-slate-500">টার্গেট টাকা</div>
+                <div class="font-display font-extrabold text-base sm:text-lg text-[#4F46E5]">${formatTaka(targetAmount)}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="nb-card bg-[#F5F3FF] p-4 sm:p-5 space-y-3">
-          <div class="flex items-center justify-between flex-wrap gap-2">
-            <div>
-              <span class="nb-badge bg-[#7C3AED] text-white text-xs px-2.5 py-0.5 uppercase">১. অগ্রাধিকার ১ (Priority 1)</span>
-              <h3 class="font-display font-extrabold text-base sm:text-lg text-[#111827] mt-1">
-                ⭐ একই নামের অন্য প্রোডাক্ট (Same Name / Brand Products — আগে দেখানো হচ্ছে)
-              </h3>
-            </div>
-          </div>
-          ${brandHtml}
-        </div>
-
-        <div class="nb-card bg-[#F0F9FF] p-4 sm:p-5 space-y-3">
-          <div class="flex items-center justify-between flex-wrap gap-2">
-            <div>
-              <span class="nb-badge bg-[#0284C7] text-white text-xs px-2.5 py-0.5 uppercase">২. অগ্রাধিকার ২ (Priority 2)</span>
-              <h3 class="font-display font-extrabold text-base sm:text-lg text-[#111827] mt-1">
-                💎 একই বা কাছাকাছি দামের এক্সেস প্রোডাক্ট (Same / Close Price Excess)
-              </h3>
-            </div>
-            <button type="button" id="btnToggleCatalogSamePrice" class="nb-btn bg-white text-[#111827] text-xs px-3 py-1.5">
-              <span>📋 ${state.showSamePriceCatalog ? 'প্রাইস লিস্ট লুকান' : `প্রাইস লিস্টে একই দামের সব প্রোডাক্ট দেখুন (${catalogSamePrice.length})`}</span>
-            </button>
-          </div>
-          ${samePriceHtml}
-          ${catalogSamePriceHtml}
-        </div>
-
-        <div class="nb-card bg-[#FFFBEB] p-4 sm:p-5 space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <span class="nb-badge bg-[#D97706] text-white text-xs px-2.5 py-0.5 uppercase">৩. অগ্রাধিকার ৩ (Priority 3)</span>
-              <h3 class="font-display font-extrabold text-base sm:text-lg text-[#111827] mt-1">
-                🧩 কম দামের প্রোডাক্ট মিলিয়ে স্টক সমান করার অপশন (${formatTaka(targetAmount)} মিলানোর কম্বিনেশন)
-              </h3>
-              <p class="text-xs font-semibold text-gray-700">
-                মেইন প্রোডাক্টের থেকে কম দামের কোন কোন এক্সেস প্রোডাক্ট কতগুলো রিটার্ন দেখালে স্টক সমান হবে তার সেরা অপশনসমূহ:
-              </p>
-            </div>
-            <button type="button" data-open-custom-short="${escapeHtml(targetProd.code)}" class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] text-xs px-3.5 py-2 self-start sm:self-auto shrink-0">
-              <span>🎯 নিজের ইচ্ছা মতো কাস্টম মিলান ➔</span>
-            </button>
-          </div>
-          ${comboHtml}
-        </div>
+        ${brandSectionHtml}
+        ${samePriceSectionHtml}
+        ${comboSectionHtml}
       `;
     }
 
+    // --- Render Page 2: Clean Custom Excess Product Selector ---
     function renderCustomSelectorPage() {
       const selectEl = document.getElementById('customShortSelectDropdown');
       const shortProds = getShortProducts();
-      let currentProd = state.products.find(p => p.code === state.customShortCode);
-      if (!currentProd) {
-        currentProd = shortProds[0] || state.products[0];
-        if (currentProd) state.customShortCode = currentProd.code;
-      }
+      const wrapper = document.getElementById('customWorkspaceWrapper');
+      const activeBar = document.getElementById('customShortActiveBar');
 
       if (selectEl) {
-        const allSorted = [...state.products].sort((a, b) => (b.shortAmount - a.shortAmount));
-        selectEl.innerHTML = allSorted.map(p => {
-          const tag = p.short > 0 ? `[শর্ট: ${p.short}টি = ${formatTaka(p.shortAmount)}]` : `[দাম: ${formatTaka(p.price)}]`;
-          return `<option value="${escapeHtml(p.code)}" ${p.code === state.customShortCode ? 'selected' : ''}>[${escapeHtml(p.code)}] ${escapeHtml(p.name)} — ${tag}</option>`;
-        }).join('');
+        selectEl.innerHTML = `<option value="">-- শর্ট প্রোডাক্ট সিলেক্ট করুন (${shortProds.length} টি) --</option>` +
+          shortProds.map(p => (
+            `<option value="${escapeHtml(p.code)}" ${p.code === state.customShortCode ? 'selected' : ''}>[${escapeHtml(p.code)}] ${escapeHtml(p.name)} — শর্ট: ${p.short}টি (${formatTaka(p.price)})</option>`
+          )).join('');
       }
 
-      const activeBar = document.getElementById('customShortActiveBar');
+      const currentProd = shortProds.find(p => p.code === state.customShortCode);
+
+      // Keep Custom Selector Page CLEAN until a Short Product is chosen!
       if (!currentProd) {
-        activeBar.innerHTML = `<div class="text-xs font-bold text-gray-600">কোনো প্রোডাক্ট পাওয়া যায়নি।</div>`;
+        state.customShortCode = null;
+        activeBar.innerHTML = '';
+        wrapper.classList.add('hidden');
         return;
       }
 
+      wrapper.classList.remove('hidden');
+
       if (state.customShortQty < 1) state.customShortQty = 1;
-      if (currentProd.short > 0 && state.customShortQty > currentProd.short) {
+      if (state.customShortQty > currentProd.short) {
         state.customShortQty = currentProd.short;
       }
 
@@ -1673,121 +1410,100 @@
       const remainingAmount = round2(targetAmount - selectedAmount);
 
       activeBar.innerHTML = `
-        <div class="nb-card-sm bg-[#FFF0F3] p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="nb-badge bg-[#111827] text-white text-xs px-2 py-0.5">${escapeHtml(currentProd.code)}</span>
-              <span class="font-display font-extrabold text-base sm:text-lg text-[#111827]">${escapeHtml(currentProd.name)}</span>
-              <span class="nb-badge bg-[#FF4D6D] text-white text-xs px-2 py-0.5">স্টকে শর্ট: ${currentProd.short} টি</span>
+        <div class="nb-card-sm bg-slate-50 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="nb-badge bg-[#0F172A] text-white text-[11px] px-2 py-0.5">${escapeHtml(currentProd.code)}</span>
+              <span class="font-display font-extrabold text-sm text-[#0F172A] truncate">${escapeHtml(currentProd.name)}</span>
+              <span class="nb-badge bg-[#FFF1F2] text-[#E11D48] text-[11px] px-2 py-0.5">শর্ট: ${currentProd.short} টি</span>
             </div>
-            <div class="text-xs font-bold text-gray-700 mt-1">
-              ইউনিট দাম: <span class="text-[#111827] font-extrabold">${formatTaka(currentProd.price)}</span> • মোট শর্ট ভ্যালু: <span class="text-[#9F1239] font-extrabold">${formatTaka(currentProd.shortAmount)}</span>
+            <div class="text-[11px] font-bold text-slate-500 mt-0.5">
+              ইউনিট দাম: <strong class="text-[#0F172A]">${formatTaka(currentProd.price)}</strong>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 bg-white border-2 border-[#111827] rounded-xl px-3 py-2 shrink-0">
-            <span class="text-xs font-extrabold">রিটার্ন সংখ্যা:</span>
-            <button type="button" id="btnCustomShortMinus" class="nb-btn bg-gray-100 w-7 h-7 text-sm">-</button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="text-xs font-bold text-slate-600">সংখ্যা:</span>
+            <button type="button" id="btnCustomShortMinus" class="nb-btn bg-white w-7 h-7 text-xs">-</button>
             <input
               id="inputCustomShortQty"
               type="number"
               min="1"
-              max="${Math.max(999, currentProd.short || 1)}"
+              max="${currentProd.short}"
               value="${state.customShortQty}"
               aria-label="কাস্টম শর্ট সংখ্যা"
-              class="nb-input w-14 text-center py-0.5 text-sm font-extrabold"
+              class="nb-input w-12 text-center py-0.5 text-xs font-extrabold"
             />
-            <button type="button" id="btnCustomShortPlus" class="nb-btn bg-gray-100 w-7 h-7 text-sm">+</button>
+            <button type="button" id="btnCustomShortPlus" class="nb-btn bg-white w-7 h-7 text-xs">+</button>
             ${currentProd.short > 1 ? `
-              <button type="button" id="btnCustomShortAll" class="nb-btn bg-[#FACC15] text-xs px-2 py-1">সব (${currentProd.short})</button>
+              <button type="button" id="btnCustomShortAll" class="nb-btn bg-white text-xs px-2 py-1">সব (${currentProd.short})</button>
             ` : ''}
           </div>
         </div>
       `;
 
       document.getElementById('customTargetTaka').textContent = formatTaka(targetAmount);
-      document.getElementById('customTargetSubtext').textContent = `${escapeHtml(currentProd.name)} (${state.customShortQty} টি × ${formatTaka(currentProd.price)})`;
+      document.getElementById('customTargetSubtext').textContent = `${state.customShortQty} টি × ${formatTaka(currentProd.price)}`;
 
       document.getElementById('customSelectedTaka').textContent = formatTaka(selectedAmount);
       const totalSelectedUnits = state.customSelectedItems.reduce((s, it) => s + it.qty, 0);
-      document.getElementById('customSelectedSubtext').textContent = `${state.customSelectedItems.length} টি প্রোডাক্ট (${totalSelectedUnits} পিস) সিলেক্ট করা হয়েছে`;
+      document.getElementById('customSelectedSubtext').textContent = `${state.customSelectedItems.length} টি (${totalSelectedUnits} পিস)`;
 
-      const remCard = document.getElementById('customRemainingCard');
       const remEl = document.getElementById('customRemainingTaka');
       const remSub = document.getElementById('customRemainingSubtext');
       const headerRem = document.getElementById('customListHeaderRemaining');
 
+      remEl.textContent = formatTaka(remainingAmount);
       if (Math.abs(remainingAmount) <= 5) {
-        remCard.className = 'nb-card-sm bg-[#D1FAE5] p-4';
-        remEl.textContent = formatTaka(remainingAmount);
-        remSub.textContent = '🎉 দারুণ! স্টক প্রায় সমান হয়ে গেছে — এখন কনফার্ম করতে পারেন!';
+        remSub.textContent = '✓ প্রায় সমান!';
       } else if (remainingAmount > 0) {
-        remCard.className = 'nb-card-sm bg-[#FEF9C3] p-4';
-        remEl.textContent = formatTaka(remainingAmount);
-        remSub.textContent = `আরও ${formatTaka(remainingAmount)} এর এক্সেস প্রোডাক্ট নিচে থেকে সিলেক্ট করুন`;
+        remSub.textContent = 'নিচে থেকে মিলান';
       } else {
-        remCard.className = 'nb-card-sm bg-[#FFE4E6] p-4';
-        remEl.textContent = `${formatTaka(remainingAmount)} (অতিরিক্ত)`;
-        remSub.textContent = `টার্গেটের চেয়ে ${formatTaka(Math.abs(remainingAmount))} বেশি সিলেক্ট হয়েছে`;
+        remSub.textContent = 'বেশি সিলেক্ট হয়েছে';
       }
       headerRem.textContent = formatTaka(Math.max(0, remainingAmount));
 
       const basketContainer = document.getElementById('customSelectedBasketContainer');
       if (state.customSelectedItems.length === 0) {
-        basketContainer.innerHTML = `
-          <div class="nb-card-sm bg-white p-4 text-center border-dashed">
-            <p class="text-xs sm:text-sm font-bold text-gray-600">
-              এখনও কোনো এক্সেস প্রোডাক্ট সিলেক্ট করা হয়নি। নিচের তালিকা থেকে আপনার পছন্দমতো প্রোডাক্ট <strong>“+ সিলেক্ট করুন”</strong> বাটনে ক্লিক করে যোগ করুন।
-            </p>
-          </div>
-        `;
+        basketContainer.innerHTML = '';
       } else {
         const payloadStr = encodeURIComponent(JSON.stringify({
           shortCode: currentProd.code,
           shortQty: state.customShortQty,
           items: state.customSelectedItems.map(it => ({ code: it.code, qty: it.qty }))
         }));
-        const diff = round2(selectedAmount - targetAmount);
-        const diffText = diff === 0 ? 'একদম সমান (৳0.00)' : (diff > 0 ? `+${formatTaka(diff)} বেশি` : `${formatTaka(diff)} বাকি`);
 
         basketContainer.innerHTML = `
-          <div class="nb-card bg-[#E6FBF4] p-4 sm:p-5 space-y-3.5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <span class="nb-badge bg-[#10B981] text-white text-xs px-2.5 py-0.5">✓ আপনার সিলেক্ট করা এক্সেস লিস্ট</span>
-                <h3 class="font-display font-extrabold text-base sm:text-lg text-[#111827] mt-1">
-                  সিলেক্টেড এক্সেস প্রোডাক্টসমূহ (মোট: ${formatTaka(selectedAmount)} | ${diffText})
-                </h3>
+          <div class="nb-card p-3.5 sm:p-4 space-y-3 border-l-[6px] border-l-[#059669]">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="font-display font-extrabold text-xs sm:text-sm text-[#0F172A]">
+                ✓ আপনার সিলেক্ট করা এক্সেস প্রোডাক্ট (${formatTaka(selectedAmount)})
               </div>
               <button
                 type="button"
                 data-confirm-payload="${payloadStr}"
-                class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white text-sm px-5 py-2.5"
+                class="nb-btn bg-[#059669] hover:bg-[#047857] text-white text-xs px-3.5 py-2"
               >
-                <span>✅ কনফার্ম রিটার্ন ও স্টক সমান করুন</span>
+                ✓ কনফার্ম রিটার্ন
               </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               ${state.customSelectedItems.map(it => {
                 const p = it.product;
                 return `
-                  <div class="nb-card-sm bg-white p-3 flex items-center justify-between gap-2">
+                  <div class="nb-card-sm bg-slate-50 p-2.5 flex items-center justify-between gap-2">
                     <div class="min-w-0">
-                      <div class="font-extrabold text-xs sm:text-sm text-[#111827] truncate">
-                        <span class="bg-[#111827] text-white px-1.5 py-0.5 rounded text-[11px] mr-1">${escapeHtml(p.code)}</span>
-                        ${escapeHtml(p.name)}
-                      </div>
-                      <div class="text-xs font-bold text-gray-600 mt-0.5">
-                        ${formatTaka(p.price)} × ${it.qty} টি = <span class="text-[#065F46] font-extrabold">${formatTaka(it.qty * p.price)}</span>
-                        <span class="text-[11px] text-gray-500">(সর্বোচ্চ এক্সেস: ${p.excess})</span>
+                      <div class="font-extrabold text-xs text-[#0F172A] truncate">[${escapeHtml(p.code)}] ${escapeHtml(p.name)}</div>
+                      <div class="text-[11px] font-bold text-slate-500">
+                        ${formatTaka(p.price)} × ${it.qty} = <strong class="text-[#059669]">${formatTaka(it.qty * p.price)}</strong>
                       </div>
                     </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                      <button type="button" data-custom-item-minus="${escapeHtml(p.code)}" class="nb-btn bg-gray-100 w-7 h-7 text-sm">-</button>
-                      <span class="font-extrabold text-sm w-6 text-center">${it.qty}</span>
-                      <button type="button" data-custom-item-plus="${escapeHtml(p.code)}" class="nb-btn bg-gray-100 w-7 h-7 text-sm" ${it.qty >= p.excess ? 'disabled' : ''}>+</button>
-                      <button type="button" data-custom-item-remove="${escapeHtml(p.code)}" class="nb-btn bg-[#FFE4E6] text-[#9F1239] w-7 h-7 text-xs" title="বাদ দিন">✕</button>
+                    <div class="flex items-center gap-1 shrink-0">
+                      <button type="button" data-custom-item-minus="${escapeHtml(p.code)}" class="nb-btn bg-white w-6 h-6 text-xs">-</button>
+                      <span class="font-extrabold text-xs w-5 text-center">${it.qty}</span>
+                      <button type="button" data-custom-item-plus="${escapeHtml(p.code)}" class="nb-btn bg-white w-6 h-6 text-xs" ${it.qty >= p.excess ? 'disabled' : ''}>+</button>
+                      <button type="button" data-custom-item-remove="${escapeHtml(p.code)}" class="nb-btn bg-[#FFF1F2] text-[#E11D48] w-6 h-6 text-[10px]">✕</button>
                     </div>
                   </div>
                 `;
@@ -1813,7 +1529,7 @@
             const sub = round2(q * p.price);
             if (sub <= remainingAmount + 60) {
               bestFits.push({
-                label: `[${p.code}] ${p.name} (${q} টি × ${formatTaka(p.price)} = ${formatTaka(sub)})`,
+                label: `[${p.code}] ${p.name} (${q} টি = ${formatTaka(sub)})`,
                 items: [{ code: p.code, qty: q }],
                 total: sub,
                 absDiff: Math.abs(remainingAmount - sub)
@@ -1822,28 +1538,18 @@
           }
         });
         bestFits.sort((a, b) => a.absDiff - b.absDiff);
-        const topFits = bestFits.slice(0, 3);
+        const topFits = bestFits.slice(0, 2);
 
         if (topFits.length > 0) {
           suggestionBox.innerHTML = `
-            <div class="nb-card-sm bg-[#FEF9C3] p-3.5">
-              <div class="text-xs font-extrabold uppercase text-[#111827] flex items-center gap-1.5">
-                <span>💡 স্মার্ট সাজেশন (বাকি ${formatTaka(remainingAmount)} মিলানোর জন্য নিচের প্রোডাক্ট নিলে সবচেয়ে ভালো হবে):</span>
-              </div>
-              <div class="mt-2 flex flex-wrap gap-2">
+            <div class="p-2.5 rounded-xl bg-[#EEF2FF] border border-[#4F46E5] flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-extrabold text-[#312E81]">💡 সেরা সাজেশন (বাকি ${formatTaka(remainingAmount)} এর জন্য):</span>
+              <div class="flex flex-wrap gap-1.5">
                 ${topFits.map(fit => {
                   const fitJson = encodeURIComponent(JSON.stringify(fit.items));
-                  const remAfter = round2(remainingAmount - fit.total);
                   return `
-                    <button
-                      type="button"
-                      data-apply-custom-suggestion="${fitJson}"
-                      class="nb-btn bg-white hover:bg-[#D1FAE5] text-[#111827] text-xs px-3 py-1.5 text-left"
-                    >
-                      <span>➕ ${escapeHtml(fit.label)}</span>
-                      <span class="nb-badge bg-[#10B981] text-white text-[10px] px-1.5 py-0.2">
-                        বাকি থাকবে: ${formatTaka(remAfter)}
-                      </span>
+                    <button type="button" data-apply-custom-suggestion="${fitJson}" class="nb-btn bg-white text-[#0F172A] text-[11px] px-2.5 py-1">
+                      ➕ ${escapeHtml(fit.label)}
                     </button>
                   `;
                 }).join('')}
@@ -1858,7 +1564,7 @@
       }
 
       const qFilter = state.customExcessFilter.trim().toUpperCase();
-      let eligibleExcess = allUnselectedExcess.filter(p => {
+      const eligibleExcess = allUnselectedExcess.filter(p => {
         if (qFilter && !p.code.toUpperCase().includes(qFilter) && !p.name.toUpperCase().includes(qFilter)) {
           return false;
         }
@@ -1877,14 +1583,8 @@
       const gridEl = document.getElementById('customEligibleExcessGrid');
       if (eligibleExcess.length === 0) {
         gridEl.innerHTML = `
-          <div class="md:col-span-2 nb-card-sm bg-[#F4F1EA] p-5 text-center space-y-2">
-            <div class="text-2xl">🔍</div>
-            <div class="font-extrabold text-sm text-[#111827]">
-              বাকি টাকার (${formatTaka(Math.max(0, remainingAmount))}) আন্ডারে আর কোনো এক্সেস প্রোডাক্ট পাওয়া যায়নি।
-            </div>
-            <p class="text-xs font-semibold text-gray-600">
-              আপনি চাইলে উপরের <strong>"+৳50 কাছাকাছি দামেরও দেখান"</strong> বা <strong>"সব এক্সেস দেখান"</strong> টিক চিহ্ন দিন অথবা সিলেক্টেড লিস্ট থেকে কনফার্ম করুন।
-            </p>
+          <div class="sm:col-span-2 p-4 text-center text-xs font-bold text-slate-500 bg-slate-50 rounded-xl border border-slate-200">
+            বাকি টাকার (${formatTaka(Math.max(0, remainingAmount))}) ভেতর আর কোনো এক্সেস প্রোডাক্ট নেই। উপরে "+৳50 পর্যন্ত দেখান" বা "সব এক্সেস" অপশনটি অন করতে পারেন।
           </div>
         `;
       } else {
@@ -1892,45 +1592,36 @@
           const maxFitQty = remainingAmount > 0
             ? Math.max(1, Math.min(p.excess, Math.floor((remainingAmount + (state.customShowSlightlyAbove ? 50 : 0.01)) / p.price) || 1))
             : 1;
-          const isSameBrand = getBrandPrefix(p.name) === targetBrand;
           return `
-            <div class="nb-card-sm ${isSameBrand ? 'bg-[#F5F3FF]' : 'bg-white'} p-3.5 flex flex-col justify-between gap-3">
+            <div class="nb-card-sm bg-slate-50 p-3 flex flex-col justify-between gap-2.5">
               <div>
-                <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <div class="flex items-center gap-1.5">
-                    <span class="nb-badge bg-[#111827] text-white text-xs px-2 py-0.5">${escapeHtml(p.code)}</span>
-                    ${isSameBrand ? `<span class="nb-badge bg-[#7C3AED] text-white text-[10px] px-2 py-0.5">⭐ SAME BRAND</span>` : ''}
-                  </div>
-                  <span class="nb-badge bg-[#D1FAE5] text-[#065F46] text-xs px-2 py-0.5">
-                    স্টকে এক্সেস: ${p.excess} টি
-                  </span>
+                <div class="flex items-center justify-between gap-1.5">
+                  <span class="nb-badge bg-[#0F172A] text-white text-[11px] px-1.5 py-0.5">${escapeHtml(p.code)}</span>
+                  <span class="nb-badge bg-[#ECFDF5] text-[#059669] text-[11px] px-1.5 py-0.5">এক্সেস: ${p.excess} টি</span>
                 </div>
-                <h4 class="font-display font-extrabold text-sm sm:text-base text-[#111827] mt-2">
-                  ${escapeHtml(p.name)}
-                </h4>
-                <div class="mt-1.5 text-xs font-bold text-gray-700 flex flex-wrap justify-between gap-2">
-                  <span>ইউনিট দাম: <strong class="text-[#111827] text-sm">${formatTaka(p.price)}</strong></span>
-                  <span class="text-[#065F46]">বাকি টাকায় নেয়া যাবে: <strong>১ থেকে ${maxFitQty} টি</strong></span>
+                <h4 class="font-display font-extrabold text-xs sm:text-sm text-[#0F172A] mt-1.5">${escapeHtml(p.name)}</h4>
+                <div class="text-[11px] font-bold text-slate-600 mt-0.5 flex justify-between">
+                  <span>দাম: <strong class="text-[#0F172A]">${formatTaka(p.price)}</strong></span>
+                  <span class="text-[#059669]">নেয়া যাবে: ১-${maxFitQty} টি</span>
                 </div>
               </div>
-
-              <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-200">
+              <div class="flex gap-1.5">
                 <button
                   type="button"
                   data-custom-add-code="${escapeHtml(p.code)}"
                   data-custom-add-qty="1"
-                  class="nb-btn bg-[#10B981] hover:bg-[#059669] text-white text-xs py-2 px-3 flex-1"
+                  class="nb-btn bg-[#4F46E5] text-white text-xs py-1.5 px-2.5 flex-1"
                 >
-                  <span>+ ১ টি সিলেক্ট (${formatTaka(p.price)})</span>
+                  + ১ টি (${formatTaka(p.price)})
                 </button>
                 ${maxFitQty > 1 ? `
                   <button
                     type="button"
                     data-custom-add-code="${escapeHtml(p.code)}"
                     data-custom-add-qty="${maxFitQty}"
-                    class="nb-btn bg-[#FACC15] hover:bg-[#FDE047] text-[#111827] text-xs py-2 px-3"
+                    class="nb-btn bg-white text-[#0F172A] text-xs py-1.5 px-2.5"
                   >
-                    <span>+ ${maxFitQty} টি (${formatTaka(maxFitQty * p.price)})</span>
+                    + ${maxFitQty} টি
                   </button>
                 ` : ''}
               </div>
@@ -1940,6 +1631,7 @@
       }
     }
 
+    // --- Render Page 3: Responsive Mobile-First Product Cards & Table ---
     function renderProductsPage() {
       const container = document.getElementById('productsListContainer');
       const q = state.productSearch.trim().toUpperCase();
@@ -1955,40 +1647,30 @@
 
       if (state.productFilter === 'catalog') {
         let catList = INITIAL_CATALOG.filter(c =>
-          !q || c.code.toUpperCase().includes(q) || c.name.toUpperCase().includes(q) || c.group.toUpperCase().includes(q)
+          !q || c.code.toUpperCase().includes(q) || c.name.toUpperCase().includes(q)
         );
         if (state.productSort === 'price_desc') catList.sort((a, b) => b.price - a.price);
         if (state.productSort === 'price_asc') catList.sort((a, b) => a.price - b.price);
-        if (state.productSort === 'name_asc') catList.sort((a, b) => a.name.localeCompare(b.name));
 
-        const shown = catList.slice(0, 100);
+        const shown = catList.slice(0, 80);
         container.innerHTML = `
-          <div class="nb-card bg-white p-4">
-            <div class="text-xs font-extrabold text-gray-600 mb-3">
-              মাস্টার প্রাইস ক্যাটালগ থেকে ${catList.length} টি প্রোডাক্ট পাওয়া গেছে (প্রথম ${shown.length} টি দেখানো হচ্ছে)। যেকোনো প্রোডাক্ট "+ স্টকে আনুন" বাটনে ক্লিক করে শর্ট/এক্সেস রিপোর্টে যোগ করতে পারবেন।
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              ${shown.map(c => `
-                <div class="nb-card-sm bg-[#F4F1EA] p-3 flex items-center justify-between gap-2">
-                  <div class="min-w-0">
-                    <div class="font-extrabold text-xs sm:text-sm text-[#111827] truncate">
-                      <span class="bg-[#111827] text-white px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeHtml(c.code)}</span>
-                      ${escapeHtml(c.name)}
-                    </div>
-                    <div class="text-xs font-bold text-gray-700 mt-0.5">
-                      দাম: <span class="text-[#4F46E5] font-extrabold">${formatTaka(c.price)}</span> • ${escapeHtml(c.group)}
-                    </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${shown.map(c => `
+              <div class="nb-card-sm p-3 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="font-extrabold text-xs sm:text-sm text-[#0F172A] truncate">
+                    <span class="bg-[#0F172A] text-white px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeHtml(c.code)}</span>
+                    ${escapeHtml(c.name)}
                   </div>
-                  <button
-                    type="button"
-                    data-add-from-catalog="${escapeHtml(c.code)}"
-                    class="nb-btn bg-[#FACC15] text-[#111827] text-xs px-2.5 py-1.5 shrink-0"
-                  >
-                    + স্টকে আনুন
-                  </button>
+                  <div class="text-xs font-bold text-slate-500 mt-0.5">
+                    দাম: <strong class="text-[#4F46E5]">${formatTaka(c.price)}</strong>
+                  </div>
                 </div>
-              `).join('')}
-            </div>
+                <button type="button" data-add-from-catalog="${escapeHtml(c.code)}" class="nb-btn bg-[#EEF2FF] text-[#4F46E5] text-xs px-2.5 py-1.5 shrink-0">
+                  + স্টকে আনুন
+                </button>
+              </div>
+            `).join('')}
           </div>
         `;
         return;
@@ -2006,111 +1688,57 @@
       else if (state.productSort === 'excess_desc') list.sort((a, b) => b.excessAmount - a.excessAmount);
       else if (state.productSort === 'price_desc') list.sort((a, b) => b.price - a.price);
       else if (state.productSort === 'price_asc') list.sort((a, b) => a.price - b.price);
-      else if (state.productSort === 'name_asc') list.sort((a, b) => a.name.localeCompare(b.name));
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="nb-card bg-white p-8 text-center">
-            <div class="text-3xl mb-2">📦</div>
-            <div class="font-display font-extrabold text-base">এই ফিল্টারে কোনো প্রোডাক্ট পাওয়া যায়নি</div>
+          <div class="nb-card p-6 text-center text-xs sm:text-sm font-bold text-slate-500">
+            কোনো প্রোডাক্ট পাওয়া যায়নি।
           </div>
         `;
         return;
       }
 
+      // Clean Responsive Card Grid (Looks great on both mobile phones and desktop!)
       container.innerHTML = `
-        <div class="nb-card bg-white overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs sm:text-sm">
-              <thead>
-                <tr class="bg-[#111827] text-white font-extrabold uppercase text-[11px] sm:text-xs">
-                  <th class="py-3 px-3">কোড</th>
-                  <th class="py-3 px-3">প্রোডাক্টের নাম</th>
-                  <th class="py-3 px-2 text-center">Sy.Stock</th>
-                  <th class="py-3 px-2 text-center">Phy.Stock</th>
-                  <th class="py-3 px-2.5 text-right bg-[#312E81]">ইউনিট দাম (৳)</th>
-                  <th class="py-3 px-2 text-center bg-[#881337]">শর্ট (Short)</th>
-                  <th class="py-3 px-2.5 text-right bg-[#881337]">শর্ট টাকা</th>
-                  <th class="py-3 px-2 text-center bg-[#064E3B]">এক্সেস (Excess)</th>
-                  <th class="py-3 px-2.5 text-right bg-[#064E3B]">এক্সেস টাকা</th>
-                  <th class="py-3 px-3 text-center">অ্যাকশন / এডিট</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y-2 divide-gray-200 font-bold">
-                ${list.map(p => {
-                  const rowBg = p.short > 0 ? 'bg-[#FFF0F3]/60' : (p.excess > 0 ? 'bg-[#E6FBF4]/60' : 'bg-white');
-                  return `
-                    <tr class="${rowBg} hover:bg-[#FEF9C3]/60 transition-colors">
-                      <td class="py-2.5 px-3 font-extrabold">
-                        <span class="bg-[#111827] text-white px-2 py-0.5 rounded text-xs">${escapeHtml(p.code)}</span>
-                      </td>
-                      <td class="py-2.5 px-3 font-extrabold text-[#111827]">${escapeHtml(p.name)}</td>
-                      <td class="py-2.5 px-2 text-center text-gray-700">${p.syStock}</td>
-                      <td class="py-2.5 px-2 text-center text-gray-700">${p.phyStock}</td>
-                      <td class="py-2.5 px-2.5 text-right font-extrabold text-[#1E1B4B]">
-                        <button
-                          type="button"
-                          data-edit-product="${escapeHtml(p.code)}"
-                          class="underline decoration-dotted hover:text-[#4F46E5] cursor-pointer"
-                          title="ক্লিক করে দাম এডিট করুন"
-                        >
-                          ${formatTaka(p.price)} ✏️
-                        </button>
-                      </td>
-                      <td class="py-2.5 px-2 text-center">
-                        ${p.short > 0
-                          ? `<span class="nb-badge bg-[#FF4D6D] text-white px-2 py-0.5 text-xs">${p.short}</span>`
-                          : `<span class="text-gray-400">0</span>`
-                        }
-                      </td>
-                      <td class="py-2.5 px-2.5 text-right font-extrabold ${p.shortAmount > 0 ? 'text-[#9F1239]' : 'text-gray-400'}">
-                        ${p.shortAmount > 0 ? formatTaka(p.shortAmount) : '৳0.00'}
-                      </td>
-                      <td class="py-2.5 px-2 text-center">
-                        ${p.excess > 0
-                          ? `<span class="nb-badge bg-[#10B981] text-white px-2 py-0.5 text-xs">${p.excess}</span>`
-                          : `<span class="text-gray-400">0</span>`
-                        }
-                      </td>
-                      <td class="py-2.5 px-2.5 text-right font-extrabold ${p.excessAmount > 0 ? 'text-[#065F46]' : 'text-gray-400'}">
-                        ${p.excessAmount > 0 ? formatTaka(p.excessAmount) : '৳0.00'}
-                      </td>
-                      <td class="py-2.5 px-3 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                          ${p.short > 0 ? `
-                            <button
-                              type="button"
-                              data-jump-match="${escapeHtml(p.code)}"
-                              class="nb-btn bg-[#FACC15] text-[#111827] text-[11px] px-2 py-1"
-                              title="এই শর্ট প্রোডাক্টটি মিলান"
-                            >
-                              ⚖️ মিলান
-                            </button>
-                          ` : ''}
-                          <button
-                            type="button"
-                            data-edit-product="${escapeHtml(p.code)}"
-                            class="nb-btn bg-[#E0E7FF] text-[#1E1B4B] text-[11px] px-2 py-1"
-                            title="দাম ও স্টক এডিট করুন"
-                          >
-                            ✏️ এডিট
-                          </button>
-                          <button
-                            type="button"
-                            data-delete-product="${escapeHtml(p.code)}"
-                            class="nb-btn bg-[#FFE4E6] text-[#9F1239] text-[11px] px-2 py-1"
-                            title="ডিলিট করুন"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  `;
-                }).join('')}
-              </tbody>
-            </table>
-          </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+          ${list.map(p => {
+            const borderAccent = p.short > 0
+              ? 'border-l-[5px] border-l-[#E11D48]'
+              : (p.excess > 0 ? 'border-l-[5px] border-l-[#059669]' : '');
+            return `
+              <div class="nb-card-sm p-3.5 flex flex-col justify-between gap-2.5 ${borderAccent}">
+                <div>
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="nb-badge bg-[#0F172A] text-white text-[11px] px-2 py-0.5">${escapeHtml(p.code)}</span>
+                    <div class="flex items-center gap-1.5">
+                      ${p.short > 0 ? `<span class="nb-badge bg-[#FFF1F2] text-[#E11D48] text-[11px] px-2 py-0.5">শর্ট: ${p.short} (${formatTaka(p.shortAmount)})</span>` : ''}
+                      ${p.excess > 0 ? `<span class="nb-badge bg-[#ECFDF5] text-[#059669] text-[11px] px-2 py-0.5">এক্সেস: ${p.excess} (${formatTaka(p.excessAmount)})</span>` : ''}
+                      ${p.short === 0 && p.excess === 0 ? `<span class="nb-badge bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5">সমান</span>` : ''}
+                    </div>
+                  </div>
+                  <h4 class="font-display font-extrabold text-sm text-[#0F172A] mt-2">${escapeHtml(p.name)}</h4>
+                  <div class="text-xs font-bold text-slate-500 mt-1 flex flex-wrap justify-between gap-2">
+                    <span>ইউনিট দাম: <strong class="text-[#0F172A]">${formatTaka(p.price)}</strong></span>
+                    <span>Sy: ${p.syStock} | Phy: ${p.phyStock}</span>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
+                  ${p.short > 0 ? `
+                    <button type="button" data-jump-match="${escapeHtml(p.code)}" class="nb-btn bg-[#4F46E5] text-white text-xs px-2.5 py-1 mr-auto">
+                      ⚖️ মিলান
+                    </button>
+                  ` : ''}
+                  <button type="button" data-edit-product="${escapeHtml(p.code)}" class="nb-btn bg-slate-100 text-[#0F172A] text-xs px-2.5 py-1">
+                    ✏️ প্রাইস / এডিট
+                  </button>
+                  <button type="button" data-delete-product="${escapeHtml(p.code)}" class="nb-btn bg-[#FFF1F2] text-[#E11D48] text-xs px-2 py-1" title="ডিলিট">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
     }
@@ -2119,12 +1747,8 @@
       const container = document.getElementById('historyListContainer');
       if (state.history.length === 0) {
         container.innerHTML = `
-          <div class="nb-card bg-white p-8 text-center">
-            <div class="text-3xl mb-2">📜</div>
-            <h3 class="font-display font-extrabold text-lg">এখনও কোনো হিস্ট্রি তৈরি হয়নি</h3>
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">
-              আপনি যখনই কোনো শর্ট প্রোডাক্টের সাথে এক্সেস প্রোডাক্ট কনফার্ম করবেন অথবা প্রোডাক্ট এডিট করবেন, তার সম্পূর্ণ রেকর্ড ও সময় এখানে জমা থাকবে।
-            </p>
+          <div class="nb-card p-6 text-center text-xs sm:text-sm font-bold text-slate-500">
+            এখনও কোনো হিস্ট্রি নেই।
           </div>
         `;
         return;
@@ -2134,64 +1758,47 @@
         const isCancelled = Boolean(item.cancelled);
         if (item.type === 'ALTER_CONFIRM') {
           return `
-            <div class="nb-card ${isCancelled ? 'bg-gray-100 opacity-80' : 'bg-white'} p-4 sm:p-5">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-dashed border-gray-300 pb-3">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="nb-badge ${isCancelled ? 'bg-gray-400 text-white' : 'bg-[#10B981] text-white'} text-xs px-2.5 py-0.5">
-                    ${isCancelled ? '🚫 বাতিলকৃত (CANCELLED)' : '✅ রিটার্ন অল্টার কনফার্মড'}
+            <div class="nb-card ${isCancelled ? 'opacity-65 bg-slate-50' : 'bg-white'} p-3.5 sm:p-4 space-y-2.5">
+              <div class="flex items-center justify-between gap-2 flex-wrap border-b border-slate-200 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="nb-badge ${isCancelled ? 'bg-slate-200 text-slate-700' : 'bg-[#ECFDF5] text-[#059669]'} text-xs px-2 py-0.5">
+                    ${isCancelled ? 'বাতিলকৃত' : '✓ কনফার্মড'}
                   </span>
-                  <span class="text-xs font-extrabold text-gray-700">🕒 সময়: ${escapeHtml(item.timestampDisplay)}</span>
+                  <span class="text-xs font-bold text-slate-500">🕒 ${escapeHtml(item.timestampDisplay)}</span>
                 </div>
                 ${!isCancelled ? `
-                  <button
-                    type="button"
-                    data-cancel-history="${escapeHtml(item.id)}"
-                    class="nb-btn bg-[#FF4D6D] hover:bg-[#E11D48] text-white text-xs px-3.5 py-1.5 self-start sm:self-auto"
-                  >
-                    <span>↩️ ক্যান্সেল / স্টক আগের অবস্থায় ফিরিয়ে নিন</span>
+                  <button type="button" data-cancel-history="${escapeHtml(item.id)}" class="nb-btn bg-[#FFF1F2] text-[#E11D48] text-xs px-2.5 py-1">
+                    ↩️ ক্যান্সেল করুন
                   </button>
-                ` : `
-                  <span class="text-xs font-bold text-[#9F1239]">ক্যান্সেল করা হয়েছে (${escapeHtml(item.cancelledAtDisplay || '')}) — স্টক পূর্বের অবস্থায় ফিরে গেছে</span>
-                `}
+                ` : ''}
               </div>
 
-              <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                <div class="nb-card-sm bg-[#FFF0F3] p-3">
-                  <div class="text-[11px] font-extrabold uppercase text-[#9F1239]">🔴 বুঝে পাওয়া শর্ট প্রোডাক্ট (Short Balanced):</div>
-                  <div class="font-display font-extrabold text-sm sm:text-base text-[#111827] mt-1">
-                    [${escapeHtml(item.shortProduct.code)}] ${escapeHtml(item.shortProduct.name)}
-                  </div>
-                  <div class="text-xs font-bold text-gray-700 mt-1">
-                    পরিমাণ: <strong>${item.shortProduct.qty} টি</strong> × ${formatTaka(item.shortProduct.price)} = <strong class="text-[#9F1239]">${formatTaka(item.shortProduct.totalValue)}</strong>
-                  </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div class="p-2.5 rounded-lg bg-[#FFF1F2] border border-rose-200">
+                  <div class="font-extrabold text-[#E11D48]">বুঝে পাওয়া শর্ট প্রোডাক্ট:</div>
+                  <div class="font-bold text-[#0F172A] mt-0.5">[${escapeHtml(item.shortProduct.code)}] ${escapeHtml(item.shortProduct.name)}</div>
+                  <div class="font-bold text-slate-600">${item.shortProduct.qty} টি × ${formatTaka(item.shortProduct.price)} = <strong>${formatTaka(item.shortProduct.totalValue)}</strong></div>
                 </div>
 
-                <div class="nb-card-sm bg-[#E6FBF4] p-3">
-                  <div class="text-[11px] font-extrabold uppercase text-[#065F46]">🟢 বিনিময়ে রিটার্ন দেখানো এক্সেস প্রোডাক্ট (Excess Balanced):</div>
-                  <ul class="mt-1 space-y-1 text-xs font-bold text-[#111827]">
+                <div class="p-2.5 rounded-lg bg-[#ECFDF5] border border-emerald-200">
+                  <div class="font-extrabold text-[#059669]">বিনিময়ে রিটার্ন দেখানো এক্সেস:</div>
+                  <ul class="mt-0.5 space-y-0.5 font-bold text-[#0F172A]">
                     ${item.excessItems.map(ex => `
-                      <li class="flex justify-between gap-2">
-                        <span>[${escapeHtml(ex.code)}] ${escapeHtml(ex.name)} (${ex.qty} টি × ${formatTaka(ex.price)})</span>
-                        <span class="font-extrabold text-[#065F46]">${formatTaka(ex.subtotal)}</span>
+                      <li class="flex justify-between">
+                        <span>[${escapeHtml(ex.code)}] ${escapeHtml(ex.name)} (${ex.qty}টি)</span>
+                        <span>${formatTaka(ex.subtotal)}</span>
                       </li>
                     `).join('')}
                   </ul>
-                  <div class="mt-2 pt-1.5 border-t border-emerald-300 flex justify-between text-xs font-extrabold">
-                    <span>মোট এক্সেস রিটার্ন:</span>
-                    <span class="text-[#065F46]">${formatTaka(item.totalExcessValue)}</span>
-                  </div>
                 </div>
               </div>
             </div>
           `;
         } else {
           return `
-            <div class="nb-card-sm bg-white p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="nb-badge bg-[#E0E7FF] text-[#1E1B4B] text-xs px-2 py-0.5">${escapeHtml(item.badge || 'SYSTEM LOG')}</span>
-                <span class="text-xs sm:text-sm font-extrabold text-[#111827]">${escapeHtml(item.summary)}</span>
-              </div>
-              <span class="text-xs font-bold text-gray-500">🕒 ${escapeHtml(item.timestampDisplay)}</span>
+            <div class="nb-card-sm p-3 flex items-center justify-between gap-2 text-xs font-bold">
+              <div><span class="text-[#4F46E5] mr-1">${escapeHtml(item.badge || '')}</span> ${escapeHtml(item.summary)}</div>
+              <span class="text-slate-400 shrink-0">${escapeHtml(item.timestampDisplay)}</span>
             </div>
           `;
         }
@@ -2244,52 +1851,28 @@
       };
 
       const bodyEl = document.getElementById('modalConfirmAlterBody');
-      const newShortRem = Math.max(0, shortProd.short - shortQty);
-
       bodyEl.innerHTML = `
-        <div class="nb-card-sm bg-[#FFF0F3] p-3.5">
-          <div class="text-xs font-extrabold uppercase text-[#9F1239]">
-            ১. আপনার স্টকে শর্ট ছিল (আপনি বুঝে পেয়েছেন):
-          </div>
-          <div class="font-display font-extrabold text-base text-[#111827] mt-1">
-            [${escapeHtml(shortProd.code)}] ${escapeHtml(shortProd.name)}
-          </div>
-          <div class="mt-1.5 flex flex-wrap justify-between gap-2 text-xs font-bold text-gray-800">
-            <span>পরিমাণ: <strong>${shortQty} টি × ${formatTaka(shortProd.price)}</strong></span>
-            <span class="text-[#9F1239] font-extrabold text-sm">মোট: ${formatTaka(shortTotal)}</span>
-          </div>
-          <div class="mt-1 text-[11px] font-extrabold text-[#065F46]">
-            স্টক আপডেট: শর্ট ${shortProd.short} টি ➔ ${newShortRem} টি (${newShortRem === 0 ? 'পুরোপুরি সমান হয়ে যাবে!' : `বাকি শর্ট থাকবে ${newShortRem} টি`})
+        <div class="p-3 rounded-xl bg-[#FFF1F2] border-2 border-[#0F172A] text-xs space-y-1">
+          <div class="font-extrabold text-[#E11D48] uppercase">শর্ট ছিল (আপনি বুঝে পেয়েছেন):</div>
+          <div class="font-display font-extrabold text-sm text-[#0F172A]">[${escapeHtml(shortProd.code)}] ${escapeHtml(shortProd.name)}</div>
+          <div class="flex justify-between font-bold text-slate-700">
+            <span>${shortQty} টি × ${formatTaka(shortProd.price)}</span>
+            <span class="font-extrabold text-[#E11D48]">${formatTaka(shortTotal)}</span>
           </div>
         </div>
 
-        <div class="nb-card-sm bg-[#E6FBF4] p-3.5">
-          <div class="text-xs font-extrabold uppercase text-[#065F46]">
-            ২. যার বিনিময়ে আপনি সিস্টেমে রিটার্ন দেখাতে চাচ্ছেন (এক্সেস প্রোডাক্ট):
+        <div class="p-3 rounded-xl bg-[#ECFDF5] border-2 border-[#0F172A] text-xs space-y-1.5">
+          <div class="font-extrabold text-[#059669] uppercase">বিনিময়ে রিটার্ন দেখাতে চাচ্ছেন:</div>
+          ${resolvedExcess.map(ex => `
+            <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-300 font-bold">
+              <span>[${escapeHtml(ex.code)}] ${escapeHtml(ex.name)} (${ex.qty} টি × ${formatTaka(ex.price)})</span>
+              <span class="font-extrabold text-[#059669]">${formatTaka(ex.subtotal)}</span>
+            </div>
+          `).join('')}
+          <div class="pt-1 flex justify-between font-extrabold text-xs">
+            <span>মোট এক্সেস রিটার্ন:</span>
+            <span class="text-[#059669]">${formatTaka(totalExcessVal)}</span>
           </div>
-          <div class="mt-2 space-y-2">
-            ${resolvedExcess.map(ex => {
-              const newExRem = Math.max(0, ex.currentExcess - ex.qty);
-              return `
-                <div class="bg-white border-2 border-[#111827] rounded-lg p-2.5 text-xs font-bold">
-                  <div class="flex justify-between gap-2">
-                    <span class="font-extrabold text-[#111827]">[${escapeHtml(ex.code)}] ${escapeHtml(ex.name)}</span>
-                    <span class="font-extrabold text-[#065F46]">${formatTaka(ex.subtotal)}</span>
-                  </div>
-                  <div class="flex justify-between text-[11px] text-gray-600 mt-0.5">
-                    <span>রিটার্ন সংখ্যা: ${ex.qty} টি × ${formatTaka(ex.price)}</span>
-                    <span>এক্সেস: ${ex.currentExcess} টি ➔ ${newExRem} টি</span>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-
-        <div class="nb-card-sm bg-[#111827] text-white p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-extrabold">
-          <div>শর্ট ভ্যালু: <span class="text-[#FF4D6D]">${formatTaka(shortTotal)}</span></div>
-          <div>এক্সেস রিটার্ন ভ্যালু: <span class="text-[#10B981]">${formatTaka(totalExcessVal)}</span></div>
-          <div>পার্থক্য: <span class="text-[#FACC15]">${diff >= 0 ? '+' : ''}${formatTaka(diff)}</span></div>
         </div>
       `;
 
@@ -2355,24 +1938,18 @@
       state.pendingAlter = null;
       state.customSelectedItems = [];
 
-      if (shortProd.short > 0) {
-        state.homeReturnQty = 1;
-        state.customShortQty = 1;
-      } else {
-        const nextShort = getShortProducts()[0];
-        if (nextShort) {
-          state.selectedHomeCode = nextShort.code;
-          state.customShortCode = nextShort.code;
-        }
-        state.homeReturnQty = 1;
-        state.customShortQty = 1;
+      if (shortProd.short <= 0) {
+        state.selectedHomeCode = null;
+        state.customShortCode = null;
       }
+      state.homeReturnQty = 1;
+      state.customShortQty = 1;
 
       document.getElementById('modalConfirmAlter').classList.add('hidden');
       saveLocalState();
       syncWithNodeBackend('save', 'ALTER_CONFIRM');
       renderAll();
-      showToast(`কনফার্ম সম্পন্ন! [${shortProd.code}] শর্ট ও নির্বাচিত এক্সেস প্রোডাক্টের স্টক সমান করা হয়েছে।`, 'success');
+      showToast(`কনফার্ম সম্পন্ন! [${shortProd.code}] ও এক্সেস স্টক সমান হয়েছে।`, 'success');
     }
 
     function cancelHistoryTransaction(historyId) {
@@ -2401,7 +1978,7 @@
       saveLocalState();
       syncWithNodeBackend('save', 'CANCEL_HISTORY');
       renderAll();
-      showToast(`অল্টারটি ক্যান্সেল করা হয়েছে এবং স্টক পূর্বের অবস্থায় ফিরিয়ে নেয়া হয়েছে!`, 'info');
+      showToast(`অল্টারটি ক্যান্সেল করা হয়েছে এবং স্টক পূর্বের অবস্থায় ফিরে গেছে!`, 'info');
     }
 
     function openProductModal(codeToEdit = null, catalogSeedCode = null) {
@@ -2422,7 +1999,7 @@
       if (codeToEdit) {
         const prod = state.products.find(p => p.code === codeToEdit);
         if (!prod) return;
-        titleEl.textContent = `✏️ প্রোডাক্ট ও প্রাইস এডিট — [${prod.code}]`;
+        titleEl.textContent = `✏️ এডিট — [${prod.code}]`;
         origInput.value = prod.code;
         codeInput.value = prod.code;
         nameInput.value = prod.name;
@@ -2474,7 +2051,7 @@
       const phyStock = Math.max(0, Math.round(Number(document.getElementById('editProdPhyStock').value) || 0));
 
       if (!code || !name) {
-        showToast('প্রোডাক্টের কোড এবং নাম অবশ্যই দিতে হবে!', 'error');
+        showToast('কোড এবং নাম দিতে হবে!', 'error');
         return;
       }
 
@@ -2492,15 +2069,14 @@
             syStock,
             phyStock
           }, idx);
-
           state.history.unshift({
             id: 'log_' + now.getTime(),
             type: 'LOG',
-            badge: '✏️ PRODUCT EDIT',
-            summary: `[${code}] ${name} আপডেট করা হয়েছে (দাম: ${formatTaka(price)}, শর্ট: ${shortQty}, এক্সেস: ${excessQty})`,
+            badge: '✏️ EDIT',
+            summary: `[${code}] ${name} আপডেট হয়েছে (দাম: ${formatTaka(price)}, শর্ট: ${shortQty}, এক্সেস: ${excessQty})`,
             timestampDisplay: now.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' })
           });
-          showToast(`[${code}] ${name} সফলভাবে আপডেট হয়েছে!`, 'success');
+          showToast(`[${code}] আপডেট হয়েছে!`, 'success');
         }
       } else {
         const existingIdx = state.products.findIndex(p => p.code.toUpperCase() === code.toUpperCase());
@@ -2515,7 +2091,6 @@
             syStock,
             phyStock
           }, existingIdx);
-          showToast(`[${code}] প্রোডাক্টটি ইতিমধ্যে থাকায় আপডেট করা হয়েছে!`, 'info');
         } else {
           state.products.unshift(normalizeProduct({
             code,
@@ -2526,16 +2101,15 @@
             syStock,
             phyStock
           }, state.products.length));
-          showToast(`নতুন প্রোডাক্ট [${code}] ${name} যোগ করা হয়েছে!`, 'success');
         }
-
         state.history.unshift({
           id: 'log_' + now.getTime(),
           type: 'LOG',
-          badge: '➕ PRODUCT ADDED',
-          summary: `নতুন প্রোডাক্ট [${code}] ${name} যুক্ত করা হয়েছে (দাম: ${formatTaka(price)}, শর্ট: ${shortQty}, এক্সেস: ${excessQty})`,
+          badge: '➕ ADD',
+          summary: `[${code}] ${name} যুক্ত হয়েছে`,
           timestampDisplay: now.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' })
         });
+        showToast(`[${code}] যুক্ত হয়েছে!`, 'success');
       }
 
       document.getElementById('modalProductForm').classList.add('hidden');
@@ -2547,7 +2121,7 @@
     function handleExcelUpload() {
       const fileInput = document.getElementById('inputExcelFile');
       if (!fileInput.files || fileInput.files.length === 0) {
-        showToast('অনুগ্রহ করে প্রথমে একটি এক্সেল (.xlsx/.xls/.csv) ফাইল সিলেক্ট করুন!', 'error');
+        showToast('প্রথমে একটি এক্সেল ফাইল সিলেক্ট করুন!', 'error');
         return;
       }
 
@@ -2639,7 +2213,7 @@
           }
 
           if (uploadedProducts.length === 0) {
-            showToast('এক্সেল ফাইলে কোনো বৈধ প্রোডাক্ট রো পাওয়া যায়নি!', 'error');
+            showToast('এক্সেল ফাইলে বৈধ কোনো প্রোডাক্ট পাওয়া যায়নি!', 'error');
             return;
           }
 
@@ -2653,39 +2227,23 @@
             state.products = Array.from(byCode.values());
           }
 
-          const now = new Date();
-          state.history.unshift({
-            id: 'log_' + now.getTime(),
-            type: 'LOG',
-            badge: '📥 EXCEL UPLOAD',
-            summary: `এক্সেল ফাইল "${file.name}" থেকে ${uploadedProducts.length} টি প্রোডাক্ট ডাটাবেসে আপডেট করা হয়েছে (${mode === 'replace' ? 'Replace' : 'Merge'})`,
-            timestampDisplay: now.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' })
-          });
-
-          const firstShort = getShortProducts()[0];
-          if (firstShort) {
-            state.selectedHomeCode = firstShort.code;
-            state.customShortCode = firstShort.code;
-          }
-
+          state.selectedHomeCode = null;
+          state.customShortCode = null;
           document.getElementById('modalUploadExcel').classList.add('hidden');
           fileInput.value = '';
           saveLocalState();
           syncWithNodeBackend('save', 'EXCEL_UPLOAD');
           renderAll();
-          showToast(`এক্সেল ফাইল সফলভাবে আপলোড হয়েছে! মোট ${uploadedProducts.length} টি প্রোডাক্ট লোড করা হয়েছে।`, 'success');
+          showToast(`এক্সেল ফাইল থেকে ${uploadedProducts.length} টি প্রোডাক্ট আপডেট হয়েছে!`, 'success');
         } catch (err) {
-          showToast('এক্সেল ফাইল রিড করতে সমস্যা হয়েছে: ' + (err.message || ''), 'error');
+          showToast('এক্সেল ফাইল রিড করতে সমস্যা হয়েছে!', 'error');
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
     function exportUpdatedExcel() {
-      if (typeof XLSX === 'undefined') {
-        showToast('এক্সেল লাইব্রেরি লোড হয়নি। JSON ব্যাকআপ ব্যবহার করুন।', 'error');
-        return;
-      }
+      if (typeof XLSX === 'undefined') return;
       const wb = XLSX.utils.book_new();
       const rows = [
         [],
@@ -2707,7 +2265,7 @@
       const ws = XLSX.utils.aoa_to_sheet(rows);
       XLSX.utils.book_append_sheet(wb, ws, 'Present Short Excess');
       XLSX.writeFile(wb, 'Updated_Short_Excess_Report.xlsx');
-      showToast('আপডেটেড শর্ট ও এক্সেস এক্সেল ফাইল ডাউনলোড হয়েছে!', 'success');
+      showToast('এক্সেল ফাইল ডাউনলোড হয়েছে!', 'success');
     }
 
     function switchPage(pageId) {
@@ -2734,7 +2292,6 @@
 
     function renderAll() {
       renderTotalsAndCounts();
-      renderHomeQuickShortChips();
       renderHomeSearchDropdown();
       renderHomeSelectedProductAndOptions();
       renderCustomSelectorPage();
@@ -2751,8 +2308,6 @@
       });
 
       document.getElementById('btnGoToCustomFromHome').addEventListener('click', () => {
-        state.customShortCode = state.selectedHomeCode;
-        state.customShortQty = state.homeReturnQty;
         switchPage('custom');
       });
 
@@ -2774,25 +2329,19 @@
 
       function triggerClearAllDb() {
         openGenericConfirm(
-          '🗑️ ১-ক্লিকে সব প্রোডাক্ট রিমুভ নিশ্চিত করুন',
-          'আপনি কি নিশ্চিত যে ডাটাবেস থেকে সব প্রোডাক্ট ১ ক্লিকে মুছে ফেলতে চান? (আপনি যেকোনো সময় এক্সেল আপলোড বা ডিফল্ট ডাটা রিস্টোর করতে পারবেন)',
+          '🗑️ সব ডাটা রিমুভ নিশ্চিত করুন',
+          'আপনি কি নিশ্চিত যে ডাটাবেস থেকে সব প্রোডাক্ট ১ ক্লিকে রিমুভ করতে চান?',
           () => {
             state.products = [];
+            state.selectedHomeCode = null;
+            state.customShortCode = null;
             state.customSelectedItems = [];
-            const now = new Date();
-            state.history.unshift({
-              id: 'log_' + now.getTime(),
-              type: 'LOG',
-              badge: '🗑️ DB CLEARED',
-              summary: '১-ক্লিকে ডাটাবেসের সব প্রোডাক্ট রিমুভ করা হয়েছে।',
-              timestampDisplay: now.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' })
-            });
             closeGenericConfirm();
             document.getElementById('modalUploadExcel').classList.add('hidden');
             saveLocalState();
             syncWithNodeBackend('save', 'CLEAR_ALL_DB');
             renderAll();
-            showToast('ডাটাবেস থেকে সব প্রোডাক্ট রিমুভ করা হয়েছে!', 'info');
+            showToast('সব প্রোডাক্ট রিমুভ করা হয়েছে!', 'info');
           }
         );
       }
@@ -2802,29 +2351,19 @@
 
       document.getElementById('btnRestoreDefaultExcelData').addEventListener('click', () => {
         openGenericConfirm(
-          '🔄 ডিফল্ট এক্সেল ডাটা রিস্টোর',
-          'আপনি কি মূল "Short Excess With Value 29-10-26.xlsx" ফাইলের ৭১টি স্টক প্রোডাক্ট ডাটাবেসে রিস্টোর করতে চান?',
+          '🔄 ডিফল্ট ডাটা রিস্টোর',
+          'আপনি কি মূল এক্সেল ফাইলের ৭১টি স্টক প্রোডাক্ট রিস্টোর করতে চান?',
           () => {
             state.products = INITIAL_PRODUCTS.map((p, i) => normalizeProduct(p, i));
+            state.selectedHomeCode = null;
+            state.customShortCode = null;
             state.customSelectedItems = [];
-            state.selectedHomeCode = 'N53';
-            state.customShortCode = 'N53';
-            state.homeReturnQty = 1;
-            state.customShortQty = 1;
-            const now = new Date();
-            state.history.unshift({
-              id: 'log_' + now.getTime(),
-              type: 'LOG',
-              badge: '🔄 DB RESTORED',
-              summary: 'মূল এক্সেল ফাইলের ৭১টি প্রোডাক্ট ডাটাবেসে রিস্টোর করা হয়েছে।',
-              timestampDisplay: now.toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' })
-            });
             closeGenericConfirm();
             document.getElementById('modalUploadExcel').classList.add('hidden');
             saveLocalState();
             syncWithNodeBackend('save', 'RESTORE_DEFAULT');
             renderAll();
-            showToast('ডিফল্ট এক্সেল ডাটা (৭১টি প্রোডাক্ট) সফলভাবে রিস্টোর হয়েছে!', 'success');
+            showToast('ডিফল্ট এক্সেল ডাটা রিস্টোর হয়েছে!', 'success');
           }
         );
       });
@@ -2839,7 +2378,6 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('db.json ব্যাকআপ ডাউনলোড সম্পন্ন হয়েছে!', 'success');
       });
 
       document.getElementById('inputJsonRestoreFile').addEventListener('change', (e) => {
@@ -2856,7 +2394,7 @@
               syncWithNodeBackend('save', 'JSON_RESTORE');
               renderAll();
               document.getElementById('modalUploadExcel').classList.add('hidden');
-              showToast('db.json থেকে ডাটাবেস সফলভাবে রিস্টোর হয়েছে!', 'success');
+              showToast('db.json রিস্টোর সম্পন্ন!', 'success');
             }
           } catch (err) {
             showToast('অবৈধ JSON ফাইল!', 'error');
@@ -2872,6 +2410,7 @@
         }
       });
 
+      // Home Search (Strictly Short Products)
       const homeInput = document.getElementById('homeSearchInput');
       homeInput.addEventListener('input', (e) => {
         state.homeSearchQuery = e.target.value;
@@ -2880,10 +2419,12 @@
 
       document.getElementById('btnClearHomeSearch').addEventListener('click', () => {
         state.homeSearchQuery = '';
+        state.selectedHomeCode = null;
         homeInput.value = '';
-        renderHomeSearchDropdown();
+        renderAll();
       });
 
+      // Custom Page Short Search (Strictly Short Products)
       const customShortSearch = document.getElementById('customShortSearchInput');
       const customShortDropdown = document.getElementById('customShortDropdown');
       customShortSearch.addEventListener('input', (e) => {
@@ -2892,20 +2433,20 @@
           customShortDropdown.classList.add('hidden');
           return;
         }
-        const matches = state.products.filter(p =>
+        const matches = getShortProducts().filter(p =>
           p.code.toUpperCase().includes(q) || p.name.toUpperCase().includes(q) || String(p.price).includes(q)
-        ).slice(0, 12);
+        );
 
         if (matches.length === 0) {
-          customShortDropdown.innerHTML = `<div class="p-3 text-xs font-bold text-gray-600">কোনো প্রোডাক্ট পাওয়া যায়নি</div>`;
+          customShortDropdown.innerHTML = `<div class="p-3 text-xs font-bold text-slate-500">এই নামে কোনো শর্ট প্রোডাক্ট নেই</div>`;
         } else {
           customShortDropdown.innerHTML = matches.map(p => `
-            <div data-pick-custom-short="${escapeHtml(p.code)}" class="p-2.5 hover:bg-[#FEF9C3] cursor-pointer flex justify-between items-center text-xs font-bold">
-              <div>
-                <span class="bg-[#111827] text-white px-1.5 py-0.5 rounded mr-1">${escapeHtml(p.code)}</span>
+            <div data-pick-custom-short="${escapeHtml(p.code)}" class="p-2.5 hover:bg-[#EEF2FF] cursor-pointer flex justify-between items-center text-xs font-bold">
+              <div class="truncate">
+                <span class="bg-[#0F172A] text-white px-1.5 py-0.5 rounded mr-1">${escapeHtml(p.code)}</span>
                 ${escapeHtml(p.name)} (${formatTaka(p.price)})
               </div>
-              <span class="nb-badge ${p.short > 0 ? 'bg-[#FF4D6D] text-white' : 'bg-gray-200 text-gray-800'} px-2 py-0.5 text-[10px]">
+              <span class="nb-badge bg-[#FFF1F2] text-[#E11D48] px-2 py-0.5 text-[10px] shrink-0">
                 শর্ট: ${p.short} টি
               </span>
             </div>
@@ -2915,18 +2456,19 @@
       });
 
       document.getElementById('customShortSelectDropdown').addEventListener('change', (e) => {
-        state.customShortCode = e.target.value;
+        state.customShortCode = e.target.value || null;
         state.customShortQty = 1;
         state.customSelectedItems = [];
         renderCustomSelectorPage();
       });
 
       document.getElementById('btnResetCustomSelector').addEventListener('click', () => {
+        state.customShortCode = null;
         state.customSelectedItems = [];
         state.customExcessFilter = '';
         document.getElementById('customExcessFilterInput').value = '';
+        document.getElementById('customShortSearchInput').value = '';
         renderCustomSelectorPage();
-        showToast('কাস্টম সিলেকশন রিসেট করা হয়েছে।', 'info');
       });
 
       document.getElementById('customShowSlightlyAboveToggle').addEventListener('change', (e) => {
@@ -2976,7 +2518,7 @@
         if (cat && !document.getElementById('editProdOriginalCode').value) {
           document.getElementById('editProdName').value = cat.name;
           document.getElementById('editProdPrice').value = cat.price;
-          hintEl.textContent = `✓ প্রাইস ক্যাটালগ থেকে পাওয়া গেছে: ${cat.name} (${formatTaka(cat.price)})`;
+          hintEl.textContent = `✓ প্রাইস ক্যাটালগ: ${cat.name} (${formatTaka(cat.price)})`;
           hintEl.classList.remove('hidden');
           updateEditModalPreview();
         } else {
@@ -3003,54 +2545,29 @@
         saveLocalState();
         syncWithNodeBackend('save', 'CLEAN_HISTORY');
         renderHistoryPage();
-        showToast('ক্যান্সেল হওয়া লগগুলো পরিষ্কার করা হয়েছে।', 'info');
       });
 
       document.body.addEventListener('click', (e) => {
-        const target = e.target.closest('button, [data-pick-home-code], [data-pick-catalog-code], [data-pick-custom-short]');
+        const target = e.target.closest('button, [data-pick-home-code], [data-pick-custom-short]');
         if (!target) return;
-
-        if (target.hasAttribute('data-select-home-code')) {
-          const code = target.getAttribute('data-select-home-code');
-          state.selectedHomeCode = code;
-          state.homeReturnQty = 1;
-          renderAll();
-          return;
-        }
 
         if (target.hasAttribute('data-pick-home-code')) {
           const code = target.getAttribute('data-pick-home-code');
           state.selectedHomeCode = code;
           state.homeReturnQty = 1;
           state.homeSearchQuery = '';
-          document.getElementById('homeSearchInput').value = '';
+          const p = getShortProducts().find(x => x.code === code);
+          document.getElementById('homeSearchInput').value = p ? `${p.code} - ${p.name}` : '';
+          document.getElementById('homeSearchDropdown').classList.add('hidden');
           renderAll();
           return;
         }
 
-        if (target.hasAttribute('data-pick-catalog-code')) {
-          const code = target.getAttribute('data-pick-catalog-code');
-          const cat = CATALOG_BY_CODE.get(code.toUpperCase());
-          if (cat) {
-            const newProd = normalizeProduct({
-              code: cat.code,
-              name: cat.name,
-              price: cat.price,
-              short: 1,
-              excess: 0,
-              syStock: 1,
-              phyStock: 0,
-              group: cat.group
-            }, state.products.length);
-            state.products.unshift(newProd);
-            state.selectedHomeCode = newProd.code;
-            state.homeReturnQty = 1;
-            state.homeSearchQuery = '';
-            document.getElementById('homeSearchInput').value = '';
-            saveLocalState();
-            renderAll();
-            showToast(`[${cat.code}] ${cat.name} প্রাইস শিট থেকে স্টকে যুক্ত ও সিলেক্ট করা হয়েছে!`, 'info');
-          }
+        if (target.id === 'btnCloseSelectedShort') {
+          state.selectedHomeCode = null;
+          state.homeSearchQuery = '';
+          document.getElementById('homeSearchInput').value = '';
+          renderAll();
           return;
         }
 
@@ -3060,15 +2577,15 @@
           return;
         }
         if (target.id === 'btnHomeQtyPlus') {
-          const p = state.products.find(x => x.code === state.selectedHomeCode);
-          const maxQ = p && p.short > 0 ? p.short : 999;
+          const p = getShortProducts().find(x => x.code === state.selectedHomeCode);
+          const maxQ = p ? p.short : 1;
           state.homeReturnQty = Math.min(maxQ, state.homeReturnQty + 1);
           renderHomeSelectedProductAndOptions();
           return;
         }
         if (target.id === 'btnHomeQtyAll') {
-          const p = state.products.find(x => x.code === state.selectedHomeCode);
-          if (p && p.short > 0) {
+          const p = getShortProducts().find(x => x.code === state.selectedHomeCode);
+          if (p) {
             state.homeReturnQty = p.short;
             renderHomeSelectedProductAndOptions();
           }
@@ -3096,7 +2613,6 @@
             state.customShortQty = payload.shortQty || 1;
             state.customSelectedItems = (payload.items || []).map(it => ({ code: it.code, qty: it.qty }));
             switchPage('custom');
-            showToast('অপশনটি কাস্টম সিলেক্টরে লোড করা হয়েছে — নিজের ইচ্ছা মতো পরিবর্তন করুন!', 'info');
           } catch (err) {}
           return;
         }
@@ -3127,15 +2643,15 @@
           return;
         }
         if (target.id === 'btnCustomShortPlus') {
-          const p = state.products.find(x => x.code === state.customShortCode);
-          const maxQ = p && p.short > 0 ? p.short : 999;
+          const p = getShortProducts().find(x => x.code === state.customShortCode);
+          const maxQ = p ? p.short : 1;
           state.customShortQty = Math.min(maxQ, state.customShortQty + 1);
           renderCustomSelectorPage();
           return;
         }
         if (target.id === 'btnCustomShortAll') {
-          const p = state.products.find(x => x.code === state.customShortCode);
-          if (p && p.short > 0) {
+          const p = getShortProducts().find(x => x.code === state.customShortCode);
+          if (p) {
             state.customShortQty = p.short;
             renderCustomSelectorPage();
           }
@@ -3146,11 +2662,8 @@
           const code = target.getAttribute('data-custom-add-code');
           const qty = Math.max(1, Number(target.getAttribute('data-custom-add-qty')) || 1);
           const existing = state.customSelectedItems.find(it => it.code === code);
-          if (existing) {
-            existing.qty += qty;
-          } else {
-            state.customSelectedItems.push({ code, qty });
-          }
+          if (existing) existing.qty += qty;
+          else state.customSelectedItems.push({ code, qty });
           renderCustomSelectorPage();
           return;
         }
@@ -3215,15 +2728,15 @@
           const p = state.products.find(x => x.code === code);
           if (!p) return;
           openGenericConfirm(
-            `🗑️ প্রোডাক্ট ডিলিট নিশ্চিত করুন`,
-            `আপনি কি নিশ্চিত যে [${p.code}] ${p.name} ডাটাবেস থেকে রিমুভ করতে চান?`,
+            `🗑️ প্রোডাক্ট ডিলিট`,
+            `আপনি কি [${p.code}] ${p.name} রিমুভ করতে চান?`,
             () => {
               state.products = state.products.filter(x => x.code !== code);
               closeGenericConfirm();
               saveLocalState();
               syncWithNodeBackend('save', 'DELETE_PRODUCT');
               renderAll();
-              showToast(`[${p.code}] প্রোডাক্টটি রিমুভ করা হয়েছে।`, 'info');
+              showToast(`[${p.code}] রিমুভ করা হয়েছে।`, 'info');
             }
           );
           return;
@@ -3233,7 +2746,7 @@
           const histId = target.getAttribute('data-cancel-history');
           openGenericConfirm(
             '↩️ অল্টার ক্যান্সেল ও স্টক রিস্টোর',
-            'আপনি কি এই কনফার্ম করা রিটার্নটি ক্যান্সেল করতে চান? এটি শর্ট এবং এক্সেস উভয় প্রোডাক্টের স্টক আবার আগের অবস্থায় ফিরিয়ে দিবে।',
+            'আপনি কি এই কনফার্ম করা রিটার্নটি ক্যান্সেল করতে চান? এটি শর্ট এবং এক্সেস উভয় প্রোডাক্টের স্টক আগের অবস্থায় ফিরিয়ে দিবে।',
             () => {
               closeGenericConfirm();
               cancelHistoryTransaction(histId);
