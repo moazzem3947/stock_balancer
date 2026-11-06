@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>STOCK SHORT & EXCESS BALANCER | NEO-BRUTALISM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg: #F4F0EA;
+      --card: #FFFFFF;
+      --ink: #111111;
+      --short: #FF3B5C;
+      --short-soft: #FFE3E8;
+      --excess: #00E5A3;
+      --excess-soft: #D9FFF3;
+      --yellow: #FFD600;
+      --yellow-soft: #FFF8C9;
+      --purple: #9D7BFF;
+      --blue: #38B6FF;
+      --border: 3px solid #111111;
+      --shadow: 5px 5px 0px #111111;
+      --shadow-sm: 3px 3px 0px #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(#111111 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      min-height: 100vh;
+      padding-bottom: 95px;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--yellow);
+      border-bottom: var(--border);
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 0 #111;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      background: var(--ink);
+      color: var(--yellow);
+      font-weight: 800;
+      padding: 6px 10px;
+      border: 2px solid var(--ink);
+      font-size: 1.1rem;
+    }
+
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      opacity: 0.85;
+    }
+
+    .sync-badge {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      box-shadow: var(--shadow-sm);
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--excess);
+      border: 1.5px solid var(--ink);
+      display: inline-block;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* DESKTOP NAV TABS */
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      background: var(--card);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 12px 10px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .tab-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #111;
+    }
+
+    .tab-btn.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    .tab-count {
+      background: var(--yellow);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 1px 6px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* SUMMARY HERO CARDS (HOME) */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card.short-card {
+      background: var(--short);
+      color: #FFF;
+    }
+
+    .stat-card.excess-card {
+      background: var(--excess);
+      color: var(--ink);
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: inline-block;
+      background: var(--ink);
+      color: #FFF;
+      padding: 3px 8px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .stat-meta {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    /* NEO CARD */
+    .neo-box {
+      background: var(--card);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .box-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* SEARCH INPUT */
+    .search-wrap {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .neo-input {
+      width: 100%;
+      padding: 13px 14px;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      background: #FFF;
+      outline: none;
+    }
+
+    .neo-input:focus {
+      background: var(--yellow-soft);
+    }
+
+    .neo-btn {
+      background: var(--yellow);
+      color: var(--ink);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .neo-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #111;
+    }
+
+    .neo-btn.green { background: var(--excess); }
+    .neo-btn.red { background: var(--short); color: #FFF; }
+    .neo-btn.purple { background: var(--purple); color: #FFF; }
+    .neo-btn.blue { background: var(--blue); color: #111; }
+    .neo-btn.dark { background: var(--ink); color: var(--yellow); }
+    .neo-btn.white { background: #FFF; }
+
+    /* QUICK PILLS FOR SHORT ITEMS */
+    .quick-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .quick-pill {
+      background: var(--short-soft);
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 #111;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-pill.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    /* MATCHER RESULTS */
+    .selected-short-banner {
+      background: var(--short-soft);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 2px solid var(--ink);
+      background: #FFF;
+    }
+
+    .qty-stepper button {
+      background: var(--yellow);
+      border: none;
+      width: 34px;
+      height: 34px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .qty-stepper input {
+      width: 55px;
+      height: 34px;
+      text-align: center;
+      border: none;
+      border-left: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .option-card {
+      background: #FFF;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+    }
+
+    .option-card.priority-brand {
+      background: #FFFDF0;
+      border-color: #111;
+      box-shadow: 5px 5px 0 var(--purple);
+    }
+
+    .option-card.priority-exact {
+      background: #F2FFF9;
+      box-shadow: 5px 5px 0 var(--excess);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      border: 2px solid var(--ink);
+      text-transform: uppercase;
+    }
+
+    .badge-brand { background: var(--purple); color: #FFF; }
+    .badge-same { background: var(--excess); color: #111; }
+    .badge-combo { background: var(--yellow); color: #111; }
+    .badge-lower { background: var(--blue); color: #111; }
+
+    .opt-item-line {
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .diff-chip {
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border: 2px solid var(--ink);
+    }
+
+    /* TABLE STYLES */
+    .table-wrap {
+      overflow-x: auto;
+      border: var(--border);
+      background: #FFF;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th, td {
+      border-bottom: 2px solid var(--ink);
+      border-right: 2px solid var(--ink);
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    th {
+      background: var(--yellow);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+    }
+
+    tr:hover td {
+      background: #FFFDF2;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--card);
+      border: 4px solid var(--ink);
+      box-shadow: 8px 8px 0 #111;
+      max-width: 540px;
+      width: 100%;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .bangla-confirm-quote {
+      background: var(--yellow-soft);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-sm);
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.5;
+      margin: 14px 0;
+    }
+
+    /* MOBILE BOTTOM NAV */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: var(--border);
+      z-index: 150;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .bnav-btn {
+      background: none;
+      border: none;
+      border-right: 2px solid var(--ink);
+      padding: 10px 4px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .bnav-btn:last-child { border-right: none; }
+    .bnav-btn.active {
+      background: var(--yellow);
+    }
+
+    .section-view { display: none; }
+    .section-view.active { display: block; }
+
+    @media (max-width: 768px) {
+      .nav-tabs { display: none; }
+      .bottom-nav { display: grid; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .stat-value { font-size: 1.65rem; }
+      .search-wrap { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">R⚡S</div>
+      <div>
+        <div class="brand-title">STOCK SHORT & EXCESS BALANCER</div>
+        <div class="brand-sub">Return Exchange & JSON Database System</div>
+      </div>
+    </div>
+    <div class="sync-badge">
+      <span class="dot" id="serverDot"></span>
+      <span id="serverStatusText">DB SYNCED</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- DESKTOP TABS -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('home')" id="dtab-home">
+        🏠 HOME & MATCHER
+      </button>
+      <button class="tab-btn" onclick="switchTab('history')" id="dtab-history">
+        📜 HISTORY & CANCEL <span class="tab-count" id="histCountBadge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('products')" id="dtab-products">
+        📦 ALL PRODUCTS <span class="tab-count" id="prodCountBadge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('excel')" id="dtab-excel">
+        📤 EXCEL UPLOAD & DB
+      </button>
+    </nav>
+
+    <!-- ================= TAB 1: HOME & RETURN MATCHER ================= -->
+    <section id="view-home" class="section-view active">
+      <!-- Total Short & Excess Cards -->
+      <div class="hero-grid">
+        <div class="stat-card short-card">
+          <div class="stat-label">📉 TOTAL SHORT STOCK</div>
+          <div class="stat-value mono" id="homeShortTk">৳ 0.00</div>
+          <div class="stat-meta">
+            <span class="stat-pill" id="homeShortPcs">0 Pcs Short</span>
+            <span class="stat-pill" id="homeShortItems">0 Products</span>
+          </div>
+        </div>
+        <div class="stat-card excess-card">
+          <div class="stat-label">📈 TOTAL EXCESS STOCK</div>
+          <div class="stat-value mono" id="homeExcessTk">৳ 0.00</div>
+          <div class="stat-meta">
+            <span class="stat-pill" id="homeExcessPcs">0 Pcs Excess</span>
+            <span class="stat-pill" id="homeExcessItems">0 Products</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="neo-box">
+        <div class="box-title">
+          <span>🔍 SEARCH PRODUCT FOR RETURN BALANCING</span>
+          <span style="font-size:0.78rem; background:var(--yellow); padding:3px 8px; border:2px solid #111;">
+            Name ba Code diye search korun
+          </span>
+        </div>
+        <div class="search-wrap">
+          <input type="text" id="homeSearchInput" class="neo-input" placeholder="Product Name ba Code likhun (Ex: ALGIN, N53, ORCEF, ROLAC, DANZOL, 607)..." oninput="handleHomeSearch()" />
+          <button class="neo-btn dark" onclick="clearHomeSearch()">✖ CLEAR</button>
+        </div>
+
+        <div style="font-size:0.78rem; font-weight:800; margin-bottom:6px;">⚡ SHORT STOCK PRODUCTS (CLICK TO MATCH RETURN):</div>
+        <div class="quick-pills" id="shortQuickPills"></div>
+      </div>
+
+      <!-- Dynamic Search Results & Return Matching Engine -->
+      <div id="matcherResultArea"></div>
+    </section>
+
+    <!-- ================= TAB 2: HISTORY & CANCEL ================= -->
+    <section id="view-history" class="section-view">
+      <div class="neo-box">
+        <div class="box-title">
+          <span>📜 RETURN BALANCING HISTORY & CANCEL LOG</span>
+          <button class="neo-btn white" onclick="exportHistoryExcel()">📥 EXPORT HISTORY EXCEL</button>
+        </div>
+        <p style="font-size:0.85rem; font-weight:700; margin-bottom:14px;">
+          Kon somoy kon product short return niye kon excess product return dekhano hoyeche tar sompurno talika. Cale 1-click e <b>Cancel Adjustment</b> kore ager stock-e fire jete parben.
+        </p>
+        <div id="historyListContainer"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: ALL PRODUCTS CRUD & PRICE EDIT ================= -->
+    <section id="view-products" class="section-view">
+      <div class="neo-box">
+        <div class="box-title">
+          <span>📦 ALL SHORT & EXCESS PRODUCTS (ADD / EDIT / PRICE / DELETE)</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="neo-btn green" onclick="openProductModal()">➕ ADD NEW PRODUCT</button>
+            <button class="neo-btn yellow" onclick="exportCurrentStockExcel()">📥 EXPORT EXCEL</button>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+          <input type="text" id="prodTableSearch" class="neo-input" style="flex:1; min-width:220px;" placeholder="Search by Code or Product Name..." oninput="renderProductsTable()" />
+          <select id="prodFilterType" class="neo-input" style="width:auto;" onchange="renderProductsTable()">
+            <option value="ALL">All Products</option>
+            <option value="SHORT">Only Short (>0)</option>
+            <option value="EXCESS">Only Excess (>0)</option>
+            <option value="ACTIVE">Short or Excess (>0)</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Product Name</th>
+                <th>Sy.Stock</th>
+                <th>Phy.Stock</th>
+                <th>Short</th>
+                <th>Excess</th>
+                <th>Unit Price (৳)</th>
+                <th>Short Amt</th>
+                <th>Excess Amt</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: EXCEL UPLOAD & JSON DB ================= -->
+    <section id="view-excel" class="section-view">
+      <div class="neo-box">
+        <div class="box-title">
+          <span>📤 EXCEL FILE UPLOAD (UPDATE JSON DATABASE)</span>
+        </div>
+        <p style="font-size:0.88rem; font-weight:700; margin-bottom:14px;">
+          Apnar <b>Short Excess With Value.xlsx</b> format-er Excel file select kore database notun kore Replace othoba Merge korte parben.
+        </p>
+
+        <div style="background:var(--yellow-soft); border:var(--border); padding:16px; margin-bottom:16px;">
+          <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" class="neo-input" style="margin-bottom:12px;" />
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="neo-btn green" onclick="processExcelUpload('replace')">🔄 UPLOAD & REPLACE FULL DB</button>
+            <button class="neo-btn blue" onclick="processExcelUpload('merge')">➕ UPLOAD & MERGE PRODUCTS</button>
+          </div>
+        </div>
+
+        <div class="box-title" style="margin-top:24px;">
+          <span>🗄️ JSON DATABASE (`db.json`) BACKUP & RESET</span>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="/api/backup" class="neo-btn dark" download="db.json">💾 DOWNLOAD db.json BACKUP</a>
+          <button class="neo-btn white" onclick="triggerJsonRestore()">📂 RESTORE FROM db.json FILE</button>
+          <input type="file" id="jsonRestoreInput" accept=".json" style="display:none" onchange="handleJsonRestore(event)" />
+          <button class="neo-btn red" onclick="resetFactoryDB()">⚠️ RESET TO INITIAL EXCEL DATA</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="bottom-nav">
+    <button class="bnav-btn active" onclick="switchTab('home')" id="mnav-home">
+      <span>🏠</span><span>Home</span>
+    </button>
+    <button class="bnav-btn" onclick="switchTab('history')" id="mnav-history">
+      <span>📜</span><span>History</span>
+    </button>
+    <button class="bnav-btn" onclick="switchTab('products')" id="mnav-products">
+      <span>📦</span><span>Products</span>
+    </button>
+    <button class="bnav-btn" onclick="switchTab('excel')" id="mnav-excel">
+      <span>📤</span><span>Excel/DB</span>
+    </button>
+  </nav>
+
+  <!-- CONFIRMATION MODAL (BANGLA MESSAGE) -->
+  <div class="modal-backdrop" id="confirmModal">
+    <div class="modal-box">
+      <div style="background:var(--ink); color:var(--yellow); padding:8px 12px; font-weight:800; font-size:1rem; display:flex; justify-content:space-between;">
+        <span>✅ CONFIRM RETURN BALANCING</span>
+        <span style="cursor:pointer;" onclick="closeConfirmModal()">✖</span>
+      </div>
+
+      <div class="bangla-confirm-quote" id="confirmBanglaText"></div>
+
+      <div id="confirmBreakdownBox" style="background:var(--bg); border:2px solid #111; padding:12px; font-size:0.85rem; font-weight:700; margin-bottom:12px;"></div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.8rem; font-weight:800; display:block; margin-bottom:4px;">📝 Optional Note / Memo / Customer Ref:</label>
+        <input type="text" id="confirmNoteInput" class="neo-input" placeholder="Ex: Memo #402 / PSO Return..." />
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="neo-btn white" onclick="closeConfirmModal()">❌ CANCEL</button>
+        <button class="neo-btn green" onclick="executeConfirmAdjustment()">✔️ CONFIRM & EQUALIZE STOCK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT ADD / EDIT MODAL -->
+  <div class="modal-backdrop" id="productModal">
+    <div class="modal-box">
+      <div style="background:var(--yellow); color:var(--ink); border-bottom:3px solid #111; padding:10px 12px; font-weight:800; font-size:1rem; display:flex; justify-content:space-between; margin:-20px -20px 16px -20px;">
+        <span id="prodModalTitle">✏️ EDIT PRODUCT & PRICE</span>
+        <span style="cursor:pointer;" onclick="closeProductModal()">✖</span>
+      </div>
+      <input type="hidden" id="editOrigCode" />
+      <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px; margin-bottom:10px;">
+        <div>
+          <label style="font-size:0.75rem; font-weight:800;">CODE *</label>
+          <input type="text" id="editCode" class="neo-input" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:800;">PRODUCT NAME *</label>
+          <input type="text" id="editName" class="neo-input" />
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+        <div>
+          <label style="font-size:0.75rem; font-weight:800;">UNIT PRICE (৳) *</label>
+          <input type="number" step="0.01" id="editPrice" class="neo-input mono" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:800; color:var(--short);">SHORT QTY</label>
+          <input type="number" id="editShort" class="neo-input mono" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:800; color:#008a60;">EXCESS QTY</label>
+          <input type="number" id="editExcess" class="neo-input mono" />
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
+        <div>
+          <label style="font-size:0.75rem; font-weight:800;">SYSTEM STOCK</label>
+          <input type="number" id="editSysStock" class="neo-input mono" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:800;">PHYSICAL STOCK</label>
+          <input type="number" id="editPhyStock" class="neo-input mono" />
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="neo-btn white" onclick="closeProductModal()">CANCEL</button>
+        <button class="neo-btn green" onclick="saveProductModal()">💾 SAVE PRODUCT</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let DB = { products: [], history: [], lastUpdated: '' };
+    let selectedShortCode = null;
+    let selectedShortReturnQty = 1;
+    let pendingConfirmPayload = null;
+    let customBuilderCart = {}; // code -> qty
+
+    async function fetchDatabase() {
+      try {
+        const res = await fetch('/api/data');
+        if (!res.ok) throw new Error('API Error');
+        DB = await res.json();
+        document.getElementById('serverDot').style.background = '#00E5A3';
+        document.getElementById('serverStatusText').textContent = 'JSON DB LIVE';
+      } catch (e) {
+        console.warn('Running in standalone fallback mode:', e);
+        document.getElementById('serverDot').style.background = '#FFD600';
+        document.getElementById('serverStatusText').textContent = 'LOCAL MODE';
+      }
+      refreshAllViews();
+    }
+
+    function refreshAllViews() {
+      renderSummaryTotals();
+      renderShortQuickPills();
+      handleHomeSearch();
+      renderHistoryList();
+      renderProductsTable();
+      document.getElementById('prodCountBadge').textContent = DB.products.length;
+      document.getElementById('histCountBadge').textContent = DB.history.filter(h => h.status === 'CONFIRMED').length;
+    }
+
+    function renderSummaryTotals() {
+      let shortTk = 0, excessTk = 0, shortPcs = 0, excessPcs = 0, shortItems = 0, excessItems = 0;
+      DB.products.forEach(p => {
+        const sh = Number(p.short) || 0;
+        const ex = Number(p.excess) || 0;
+        const pr = Number(p.price) || 0;
+        if (sh > 0) {
+          shortPcs += sh;
+          shortTk += sh * pr;
+          shortItems++;
+        }
+        if (ex > 0) {
+          excessPcs += ex;
+          excessTk += ex * pr;
+          excessItems++;
+        }
+      });
+
+      document.getElementById('homeShortTk').textContent = '৳ ' + shortTk.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('homeShortPcs').textContent = shortPcs + ' Pcs Short';
+      document.getElementById('homeShortItems').textContent = shortItems + ' Products';
+
+      document.getElementById('homeExcessTk').textContent = '৳ ' + excessTk.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('homeExcessPcs').textContent = excessPcs + ' Pcs Excess';
+      document.getElementById('homeExcessItems').textContent = excessItems + ' Products';
+    }
+
+    function renderShortQuickPills() {
+      const container = document.getElementById('shortQuickPills');
+      const shorts = DB.products.filter(p => Number(p.short) > 0);
+      if (shorts.length === 0) {
+        container.innerHTML = `<span style="font-size:0.8rem; font-weight:700; color:#008a60;">🎉 Kono Short Product nei! Sob stock soman ache.</span>`;
+        return;
+      }
+      container.innerHTML = shorts.map(p => {
+        const isAct = selectedShortCode === p.code ? 'active' : '';
+        return `<div class="quick-pill ${isAct}" onclick="selectProductForMatch('${p.code}')">
+          <span>${p.code} - ${p.name.split(' ')[0]}</span>
+          <span class="mono" style="background:#111; color:#fff; padding:1px 5px;">-${p.short} (৳${p.price})</span>
+        </div>`;
+      }).join('');
+    }
+
+    function selectProductForMatch(code) {
+      selectedShortCode = code;
+      const prod = DB.products.find(p => p.code === code);
+      if (prod) {
+        selectedShortReturnQty = prod.short > 0 ? prod.short : 1;
+        document.getElementById('homeSearchInput').value = prod.code + ' - ' + prod.name;
+      }
+      customBuilderCart = {};
+      renderShortQuickPills();
+      renderMatcherForSelected(prod);
+    }
+
+    function clearHomeSearch() {
+      selectedShortCode = null;
+      document.getElementById('homeSearchInput').value = '';
+      customBuilderCart = {};
+      renderShortQuickPills();
+      handleHomeSearch();
+    }
+
+    function handleHomeSearch() {
+      const raw = document.getElementById('homeSearchInput').value.trim();
+      const area = document.getElementById('matcherResultArea');
+
+      if (!raw && !selectedShortCode) {
+        // Show default overview of all active Short items so user can pick immediately
+        const shorts = DB.products.filter(p => p.short > 0);
+        area.innerHTML = `
+          <div class="neo-box">
+            <div class="box-title">
+              <span>📋 CURRENT SHORT PRODUCTS (${shorts.length} ITEMS)</span>
+              <span style="font-size:0.78rem;">Je product-ti customer return dite chay seta select korun</span>
+            </div>
+            <div class="options-grid">
+              ${shorts.map(p => `
+                <div class="option-card" style="background:var(--short-soft);">
+                  <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span class="badge-tag" style="background:#111; color:var(--yellow);">${p.code}</span>
+                      <span class="mono" style="font-weight:800; font-size:0.9rem;">Unit: ৳${p.price.toFixed(2)}</span>
+                    </div>
+                    <div style="font-weight:800; font-size:1rem; margin:8px 0 4px;">${p.name}</div>
+                    <div class="mono" style="font-size:0.85rem; font-weight:800; color:#b8001f;">
+                      Short: ${p.short} Pcs | Total Short: ৳${(p.short * p.price).toFixed(2)}
+                    </div>
+                  </div>
+                  <button class="neo-btn dark" style="width:100%; margin-top:8px;" onclick="selectProductForMatch('${p.code}')">
+                    🔄 FIND EXCESS RETURN OPTIONS
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Check if input matches selectedShortCode or search query
+      let q = raw.toLowerCase();
+      if (raw.includes(' - ')) {
+        q = raw.split(' - ')[0].trim().toLowerCase();
+      }
+
+      const matches = DB.products.filter(p =>
+        p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q)
+      );
+
+      if (matches.length === 0) {
+        area.innerHTML = `<div class="neo-box"><b>❌ "${raw}" diye kono product pawa jayni!</b></div>`;
+        return;
+      }
+
+      // Prefer exact code match or first short item
+      const target = matches.find(p => p.code.toLowerCase() === q) || matches.find(p => p.short > 0) || matches[0];
+      if (selectedShortCode !== target.code) {
+        selectedShortCode = target.code;
+        selectedShortReturnQty = target.short > 0 ? target.short : 1;
+        customBuilderCart = {};
+      }
+      renderMatcherForSelected(target, matches.filter(m => m.code !== target.code));
+    }
+
+    function getBrandPrefix(name) {
+      if (!name) return '';
+      return name.trim().split(/[\s-]+/)[0].toUpperCase();
+    }
+
+    function changeReturnQty(delta, maxShort) {
+      const limit = maxShort > 0 ? maxShort : 999;
+      selectedShortReturnQty = Math.min(limit, Math.max(1, selectedShortReturnQty + delta));
+      const prod = DB.products.find(p => p.code === selectedShortCode);
+      if (prod) renderMatcherForSelected(prod);
+    }
+
+    function onDirectQtyInput(val, maxShort) {
+      const parsed = parseInt(val, 10) || 1;
+      const limit = maxShort > 0 ? maxShort : 999;
+      selectedShortReturnQty = Math.min(limit, Math.max(1, parsed));
+      const prod = DB.products.find(p => p.code === selectedShortCode);
+      if (prod) renderMatcherForSelected(prod);
+    }
+
+    // CORE SMART MATCHING ENGINE
+    function generateSmartReturnOptions(shortProd, returnQty) {
+      const targetAmount = Number((returnQty * shortProd.price).toFixed(2));
+      const brand = getBrandPrefix(shortProd.name);
+      const excessPool = DB.products.filter(p => p.excess > 0 && p.code !== shortProd.code);
+
+      const options = [];
+
+      // 1. PRIORITY 1: SAME BRAND / SAME FIRST WORD EXCESS PRODUCTS
+      const sameBrandExcess = excessPool.filter(p => getBrandPrefix(p.name) === brand);
+      sameBrandExcess.forEach(ex => {
+        const idealQty = Math.max(1, Math.min(ex.excess, Math.round(targetAmount / ex.price) || 1));
+        const totalVal = Number((idealQty * ex.price).toFixed(2));
+        const diff = Number((totalVal - targetAmount).toFixed(2));
+        options.push({
+          type: 'SAME_BRAND',
+          badge: `⭐ SAME BRAND (${brand})`,
+          badgeClass: 'badge-brand',
+          cardClass: 'priority-brand',
+          title: `Same Brand Return: ${ex.name}`,
+          items: [{ code: ex.code, name: ex.name, qty: idealQty, price: ex.price, maxExcess: ex.excess, amount: totalVal }],
+          totalVal,
+          diff,
+          absDiff: Math.abs(diff),
+          rank: 1
+        });
+      });
+
+      // 2. PRIORITY 2: SAME / SIMILAR UNIT PRICE EXCESS PRODUCTS (Single Product Match)
+      excessPool.forEach(ex => {
+        if (getBrandPrefix(ex.name) === brand) return; // already in priority 1
+        // Try both floor and ceil around targetAmount / ex.price
+        const qFloor = Math.max(1, Math.min(ex.excess, Math.floor(targetAmount / ex.price) || 1));
+        const qCeil = Math.max(1, Math.min(ex.excess, Math.ceil(targetAmount / ex.price) || 1));
+        const candidates = qFloor === qCeil ? [qFloor] : [qFloor, qCeil];
+
+        candidates.forEach(q => {
+          const totalVal = Number((q * ex.price).toFixed(2));
+          const diff = Number((totalVal - targetAmount).toFixed(2));
+          const pctDiff = Math.abs(diff) / (targetAmount || 1);
+          if (pctDiff <= 0.42 || Math.abs(ex.price - shortProd.price) <= 160) {
+            options.push({
+              type: 'SINGLE_CLOSE',
+              badge: Math.abs(diff) <= 25 ? '🎯 NEAR EXACT VALUE' : (ex.price < shortProd.price ? '📉 LOWER PRICE MATCH' : '⚖️ CLOSE PRICE MATCH'),
+              badgeClass: Math.abs(diff) <= 25 ? 'badge-same' : 'badge-lower',
+              cardClass: Math.abs(diff) <= 25 ? 'priority-exact' : '',
+              title: `${q} Pcs × ${ex.name}`,
+              items: [{ code: ex.code, name: ex.name, qty: q, price: ex.price, maxExcess: ex.excess, amount: totalVal }],
+              totalVal,
+              diff,
+              absDiff: Math.abs(diff),
+              rank: Math.abs(diff) <= 25 ? 2 : 3
+            });
+          }
+        });
+      });
+
+      // 3. PRIORITY 3: MULTI-PRODUCT LOWER PRICE COMBINATIONS (2-Item Smart Combos)
+      const lowerPool = excessPool.filter(p => p.price < targetAmount);
+      for (let i = 0; i < lowerPool.length; i++) {
+        for (let j = i + 1; j < lowerPool.length; j++) {
+          const A = lowerPool[i];
+          const B = lowerPool[j];
+          let bestCombo = null;
+
+          for (let qa = 1; qa <= Math.min(A.excess, 20); qa++) {
+            const rem = targetAmount - (qa * A.price);
+            if (rem <= 0) continue;
+            const qb = Math.max(1, Math.min(B.excess, Math.round(rem / B.price)));
+            const totalVal = Number((qa * A.price + qb * B.price).toFixed(2));
+            const diff = Number((totalVal - targetAmount).toFixed(2));
+            const absDiff = Math.abs(diff);
+
+            if (absDiff <= targetAmount * 0.15 || absDiff <= 60) {
+              if (!bestCombo || absDiff < bestCombo.absDiff) {
+                bestCombo = {
+                  type: 'COMBO',
+                  badge: '🧩 LOWER-PRICE COMBO',
+                  badgeClass: 'badge-combo',
+                  cardClass: absDiff <= 15 ? 'priority-exact' : '',
+                  title: `Combo: ${A.code} (${qa}) + ${B.code} (${qb})`,
+                  items: [
+                    { code: A.code, name: A.name, qty: qa, price: A.price, maxExcess: A.excess, amount: Number((qa * A.price).toFixed(2)) },
+                    { code: B.code, name: B.name, qty: qb, price: B.price, maxExcess: B.excess, amount: Number((qb * B.price).toFixed(2)) }
+                  ],
+                  totalVal,
+                  diff,
+                  absDiff,
+                  rank: 2.5
+                };
+              }
+            }
+          }
+          if (bestCombo) options.push(bestCombo);
+        }
+      }
+
+      // Sort: Same Brand first, then smallest value difference
+      options.sort((a, b) => {
+        if (a.type === 'SAME_BRAND' && b.type !== 'SAME_BRAND') return -1;
+        if (b.type === 'SAME_BRAND' && a.type !== 'SAME_BRAND') return 1;
+        return a.absDiff - b.absDiff;
+      });
+
+      // Deduplicate identical item signatures
+      const seen = new Set();
+      const unique = [];
+      for (const opt of options) {
+        const sig = opt.items.map(i => `${i.code}:${i.qty}`).sort().join('|');
+        if (!seen.has(sig)) {
+          seen.add(sig);
+          unique.push(opt);
+        }
+        if (unique.length >= 9) break;
+      }
+
+      return unique;
+    }
+
+    function renderMatcherForSelected(prod, otherMatches = []) {
+      const area = document.getElementById('matcherResultArea');
+      if (!prod) return;
+
+      const returnQty = selectedShortReturnQty;
+      const targetAmount = Number((returnQty * prod.price).toFixed(2));
+      const smartOptions = generateSmartReturnOptions(prod, returnQty);
+      const allExcess = DB.products.filter(p => p.excess > 0 && p.code !== prod.code);
+
+      area.innerHTML = `
+        <div class="neo-box">
+          <div class="selected-short-banner">
+            <div>
+              <span class="badge-tag" style="background:#111; color:var(--yellow);">${prod.code}</span>
+              <span class="badge-tag" style="background:var(--short); color:#fff;">SHORT: ${prod.short} PCS</span>
+              <h2 style="font-size:1.25rem; font-weight:800; margin-top:6px;">${prod.name}</h2>
+              <div class="mono" style="font-size:0.88rem; font-weight:700; margin-top:3px;">
+                Unit Price: <b>৳${prod.price.toFixed(2)}</b> | Total Product Short: <b>৳${(prod.short * prod.price).toFixed(2)}</b> (Sy: ${prod.sysStock} / Phy: ${prod.phyStock})
+              </div>
+            </div>
+
+            <div style="background:#fff; border:3px solid #111; padding:10px 14px; box-shadow:3px 3px 0 #111;">
+              <div style="font-size:0.75rem; font-weight:800; margin-bottom:4px;">RETURN NETE CHAN (SHORT QTY):</div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="qty-stepper">
+                  <button onclick="changeReturnQty(-1, ${prod.short})">−</button>
+                  <input type="number" value="${returnQty}" onchange="onDirectQtyInput(this.value, ${prod.short})" />
+                  <button onclick="changeReturnQty(1, ${prod.short})">+</button>
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; font-weight:800;">TARGET VALUE</div>
+                  <div class="mono" style="font-size:1.15rem; font-weight:800; color:var(--short);">৳ ${targetAmount.toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          ${otherMatches.length > 0 ? `
+            <div style="margin-bottom:14px; font-size:0.8rem; font-weight:800;">
+              🔎 Onnanno Search Match:
+              ${otherMatches.slice(0, 6).map(m => `
+                <button class="neo-btn white" style="padding:4px 8px; font-size:0.75rem; margin:2px;" onclick="selectProductForMatch('${m.code}')">
+                  ${m.code} - ${m.name} (Short:${m.short} / Ex:${m.excess})
+                </button>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <div class="box-title">
+            <span>🎯 RECOMMENDED EXCESS RETURN OPTIONS (TARGET: ৳${targetAmount.toFixed(2)})</span>
+            <span style="font-size:0.76rem; background:var(--excess-soft); border:2px solid #111; padding:3px 8px;">
+              Same Brand age dekhano hoyeche, erpor Same/Kom Dam-er Option
+            </span>
+          </div>
+
+          ${smartOptions.length === 0 ? `
+            <div style="padding:14px; background:var(--yellow-soft); border:2px solid #111; font-weight:700;">
+              ⚠️ Automatic close match pawa jayni. Niche Manual Custom Excess Selector theke jekono excess product select korun.
+            </div>
+          ` : `
+            <div class="options-grid">
+              ${smartOptions.map((opt, idx) => {
+                const diffStr = opt.diff === 0 ? 'EXACT MATCH (৳0.00)' : (opt.diff > 0 ? `+৳${opt.diff.toFixed(2)} Excess` : `-৳${Math.abs(opt.diff).toFixed(2)} Gap`);
+                const diffBg = Math.abs(opt.diff) <= 30 ? 'var(--excess)' : 'var(--yellow)';
+                const encodedItems = encodeURIComponent(JSON.stringify(opt.items));
+                return `
+                  <div class="option-card ${opt.cardClass}">
+                    <div>
+                      <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:6px;">
+                        <span class="badge-tag ${opt.badgeClass}">${opt.badge}</span>
+                        <span class="diff-chip mono" style="background:${diffBg};">${diffStr}</span>
+                      </div>
+                      <div style="font-weight:800; font-size:0.95rem; margin-bottom:6px;">Option #${idx + 1}: ${opt.title}</div>
+                      ${opt.items.map(it => `
+                        <div class="opt-item-line">
+                          <div>
+                            <div style="font-weight:800;">${it.code} - ${it.name}</div>
+                            <div class="mono" style="font-size:0.75rem; color:#444;">Unit: ৳${it.price.toFixed(2)} (Stock Excess: ${it.maxExcess})</div>
+                          </div>
+                          <div class="mono" style="text-align:right; font-weight:800;">
+                            <div>${it.qty} Pcs</div>
+                            <div style="color:#007a53;">৳${it.amount.toFixed(2)}</div>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+
+                    <div style="border-top:2px dashed #111; padding-top:10px; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <div class="mono" style="font-size:0.88rem; font-weight:800;">
+                        Return Value: <span style="font-size:1.05rem;">৳${opt.totalVal.toFixed(2)}</span>
+                      </div>
+                      <button class="neo-btn green" onclick="openConfirmModal('${prod.code}', ${returnQty}, '${encodedItems}')">
+                        ✅ CONFIRM OPTION
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+
+          <!-- MANUAL CUSTOM EXCESS COMBINATION BUILDER -->
+          <div style="margin-top:22px; border-top:3px solid #111; padding-top:16px;">
+            <div class="box-title">
+              <span>🛠️ CUSTOM EXCESS PRODUCT SELECTOR (NIJER ICCHA MOTO EXCESS ITEM MILAN)</span>
+            </div>
+            <div class="table-wrap" style="max-height:290px; overflow-y:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Excess Product Name</th>
+                    <th>Available Excess</th>
+                    <th>Unit Price</th>
+                    <th>Return Qty Select</th>
+                    <th>Line Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${allExcess.map(ex => {
+                    const cQty = customBuilderCart[ex.code] || 0;
+                    return `
+                      <tr>
+                        <td class="mono"><b>${ex.code}</b></td>
+                        <td><b>${ex.name}</b></td>
+                        <td class="mono"><span class="badge-tag" style="background:var(--excess);">${ex.excess} Pcs</span></td>
+                        <td class="mono">৳${ex.price.toFixed(2)}</td>
+                        <td>
+                          <input type="number" min="0" max="${ex.excess}" value="${cQty}" class="neo-input mono" style="width:85px; padding:5px 8px;" oninput="updateCustomCart('${ex.code}', this.value, ${ex.excess})" />
+                        </td>
+                        <td class="mono" id="custLine-${ex.code}"><b>৳${(cQty * ex.price).toFixed(2)}</b></td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div id="customSummaryFooter" style="margin-top:12px; background:var(--yellow-soft); border:var(--border); padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div class="mono" style="font-weight:800;" id="customCartTotalsText">
+                Selected Excess Total: ৳0.00 | Target Short Value: ৳${targetAmount.toFixed(2)}
+              </div>
+              <button class="neo-btn dark" onclick="confirmCustomCart('${prod.code}', ${returnQty})">
+                ✅ CONFIRM CUSTOM SELECTION
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateCustomCart(code, val, maxEx) {
+      let q = parseInt(val, 10) || 0;
+      q = Math.max(0, Math.min(maxEx, q));
+      if (q === 0) delete customBuilderCart[code];
+      else customBuilderCart[code] = q;
+
+      const exProd = DB.products.find(p => p.code === code);
+      if (exProd) {
+        const cell = document.getElementById('custLine-' + code);
+        if (cell) cell.innerHTML = `<b>৳${(q * exProd.price).toFixed(2)}</b>`;
+      }
+
+      const shortProd = DB.products.find(p => p.code === selectedShortCode);
+      const targetVal = shortProd ? (selectedShortReturnQty * shortProd.price) : 0;
+      let customSum = 0;
+      Object.entries(customBuilderCart).forEach(([c, qty]) => {
+        const p = DB.products.find(x => x.code === c);
+        if (p) customSum += qty * p.price;
+      });
+      const diff = customSum - targetVal;
+      const txtEl = document.getElementById('customCartTotalsText');
+      if (txtEl) {
+        txtEl.innerHTML = `Selected Excess Total: <b>৳${customSum.toFixed(2)}</b> | Target Short: <b>৳${targetVal.toFixed(2)}</b> | Diff: <b>${diff >= 0 ? '+' : ''}৳${diff.toFixed(2)}</b>`;
+      }
+    }
+
+    function confirmCustomCart(shortCode, returnQty) {
+      const items = [];
+      Object.entries(customBuilderCart).forEach(([c, qty]) => {
+        if (qty > 0) {
+          const p = DB.products.find(x => x.code === c);
+          if (p) {
+            items.push({
+              code: p.code,
+              name: p.name,
+              qty,
+              price: p.price,
+              amount: Number((qty * p.price).toFixed(2))
+            });
+          }
+        }
+      });
+      if (items.length === 0) {
+        alert('অনুগ্রহ করে অন্তত ১টি Excess Product-এর Return Qty সিলেক্ট করুন!');
+        return;
+      }
+      openConfirmModal(shortCode, returnQty, encodeURIComponent(JSON.stringify(items)));
+    }
+
+    function openConfirmModal(shortCode, shortQty, encodedItems) {
+      const shortProd = DB.products.find(p => p.code === shortCode);
+      const items = JSON.parse(decodeURIComponent(encodedItems));
+      if (!shortProd || !items.length) return;
+
+      const shortTotal = Number((shortQty * shortProd.price).toFixed(2));
+      const excessTotal = Number(items.reduce((s, i) => s + i.amount, 0).toFixed(2));
+      const diff = Number((excessTotal - shortTotal).toFixed(2));
+
+      const exNamesFormatted = items.map(i => `${i.name} (${i.code}) [${i.qty} Pcs = ৳${i.amount.toFixed(2)}]`).join(' এবং ');
+
+      // EXACT BANGLA CONFIRMATION MESSAGE REQUESTED BY USER
+      const banglaMsg = `"Apnr stock a ${shortProd.name} (${shortProd.code}) - ${shortQty} Pcs (৳${shortTotal.toFixed(2)}) short chilo apni prodct ta boje peyechen jar binimoy a ${exNamesFormatted} retrent dekhaite cacchen"`;
+
+      document.getElementById('confirmBanglaText').textContent = banglaMsg;
+      document.getElementById('confirmBreakdownBox').innerHTML = `
+        <div style="margin-bottom:6px; color:var(--short);">📥 <b>Short Product Received:</b> ${shortProd.name} (${shortQty} Pcs × ৳${shortProd.price}) = <b>৳${shortTotal.toFixed(2)}</b></div>
+        <div style="margin-bottom:6px; color:#007a53;">📤 <b>System Excess Return Shown:</b> ${exNamesFormatted} = <b>৳${excessTotal.toFixed(2)}</b></div>
+        <div class="mono" style="border-top:2px solid #111; padding-top:6px;">⚖️ <b>Net Value Difference:</b> ${diff >= 0 ? '+' : ''}৳${diff.toFixed(2)}</div>
+      `;
+      document.getElementById('confirmNoteInput').value = '';
+
+      pendingConfirmPayload = {
+        shortCode: shortProd.code,
+        shortQty: shortQty,
+        excessItems: items.map(i => ({ code: i.code, qty: i.qty }))
+      };
+
+      document.getElementById('confirmModal').classList.add('open');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.remove('open');
+      pendingConfirmPayload = null;
+    }
+
+    async function executeConfirmAdjustment() {
+      if (!pendingConfirmPayload) return;
+      const note = document.getElementById('confirmNoteInput').value.trim();
+
+      try {
+        const res = await fetch('/api/adjust', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...pendingConfirmPayload, note })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Adjustment korte somossa hoyeche');
+          return;
+        }
+        DB = data.db;
+        closeConfirmModal();
+        customBuilderCart = {};
+        const updatedShort = DB.products.find(p => p.code === selectedShortCode);
+        if (updatedShort && updatedShort.short === 0) {
+          selectedShortCode = null;
+          document.getElementById('homeSearchInput').value = '';
+        }
+        refreshAllViews();
+        alert('✅ Stock Soman Kora Hoyeche! History tab-e log save hoyeche.');
+      } catch (e) {
+        alert('Server error: ' + e.message);
+      }
+    }
+
+    // HISTORY RENDER & CANCEL
+    function renderHistoryList() {
+      const container = document.getElementById('historyListContainer');
+      if (!DB.history || DB.history.length === 0) {
+        container.innerHTML = `<div style="padding:20px; background:var(--bg); border:2px solid #111; font-weight:700;">Kono adjustment history ekhono toiri hoyni.</div>`;
+        return;
+      }
+
+      container.innerHTML = DB.history.map(h => {
+        const isCancelled = h.status === 'CANCELLED';
+        return `
+          <div style="background:${isCancelled ? '#EDEDED' : '#FFF'}; border:3px solid #111; box-shadow:4px 4px 0 #111; padding:14px; margin-bottom:12px; opacity:${isCancelled ? '0.75' : '1'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+              <div>
+                <span class="badge-tag mono" style="background:#111; color:var(--yellow);">${h.id}</span>
+                <span class="mono" style="font-size:0.8rem; font-weight:800; margin-left:6px;">🕒 ${h.timestamp}</span>
+                <span class="badge-tag" style="background:${isCancelled ? 'var(--short)' : 'var(--excess)'}; color:${isCancelled ? '#fff' : '#111'}; margin-left:6px;">
+                  ${h.status}
+                </span>
+              </div>
+              ${!isCancelled ? `
+                <button class="neo-btn red" style="padding:6px 12px; font-size:0.78rem;" onclick="cancelHistoryAdjustment('${h.id}')">
+                  ↩️ CANCEL & RESTORE STOCK
+                </button>
+              ` : `<span class="mono" style="font-size:0.75rem; font-weight:800; color:var(--short);">Cancelled at: ${h.cancelledAt || ''}</span>`}
+            </div>
+
+            <div style="background:var(--yellow-soft); border:2px solid #111; padding:10px; font-weight:800; font-size:0.9rem; margin-bottom:8px;">
+              ${h.message}
+            </div>
+
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:0.82rem; font-weight:700;">
+              <span>Short Balanced: <b>${h.shortItem.code} (${h.shortItem.qty} Pcs = ৳${Number(h.totalShortVal).toFixed(2)})</b></span>
+              <span>Excess Adjusted: <b>৳${Number(h.totalExcessVal).toFixed(2)}</b> (Diff: ৳${Number(h.diffVal).toFixed(2)})</span>
+              ${h.note ? `<span>📝 Note: ${h.note}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function cancelHistoryAdjustment(id) {
+      if (!confirm('Apni ki nishchit ei adjustment-ti Cancel kore Short o Excess stock ager obosthay firie nite chan?')) return;
+      try {
+        const res = await fetch('/api/cancel-adjust', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Cancel korte somossa hoyeche');
+          return;
+        }
+        DB = data.db;
+        refreshAllViews();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // PRODUCTS TABLE & CRUD
+    function renderProductsTable() {
+      const q = (document.getElementById('prodTableSearch')?.value || '').trim().toLowerCase();
+      const filter = document.getElementById('prodFilterType')?.value || 'ALL';
+      const tbody = document.getElementById('productsTableBody');
+
+      const filtered = DB.products.filter(p => {
+        if (q && !p.code.toLowerCase().includes(q) && !p.name.toLowerCase().includes(q)) return false;
+        if (filter === 'SHORT' && !(p.short > 0)) return false;
+        if (filter === 'EXCESS' && !(p.excess > 0)) return false;
+        if (filter === 'ACTIVE' && !(p.short > 0 || p.excess > 0)) return false;
+        return true;
+      });
+
+      tbody.innerHTML = filtered.map(p => {
+        const shAmt = (p.short * p.price).toFixed(2);
+        const exAmt = (p.excess * p.price).toFixed(2);
+        return `
+          <tr>
+            <td class="mono"><b>${p.code}</b></td>
+            <td><b>${p.name}</b></td>
+            <td class="mono">${p.sysStock}</td>
+            <td class="mono">${p.phyStock}</td>
+            <td class="mono" style="background:${p.short > 0 ? 'var(--short-soft)' : 'transparent'}; font-weight:800; color:${p.short > 0 ? '#c00021' : '#111'};">
+              ${p.short}
+            </td>
+            <td class="mono" style="background:${p.excess > 0 ? 'var(--excess-soft)' : 'transparent'}; font-weight:800; color:${p.excess > 0 ? '#006b47' : '#111'};">
+              ${p.excess}
+            </td>
+            <td class="mono"><b>৳${Number(p.price).toFixed(2)}</b></td>
+            <td class="mono">${p.short > 0 ? '৳' + shAmt : '-'}</td>
+            <td class="mono">${p.excess > 0 ? '৳' + exAmt : '-'}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="neo-btn yellow" style="padding:4px 8px; font-size:0.75rem;" onclick="openProductModal('${p.code}')">✏️ Edit / Price</button>
+                <button class="neo-btn red" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteProduct('${p.code}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openProductModal(code = null) {
+      if (code) {
+        const p = DB.products.find(x => x.code === code);
+        if (!p) return;
+        document.getElementById('prodModalTitle').textContent = '✏️ EDIT PRODUCT & PRICE (' + p.code + ')';
+        document.getElementById('editOrigCode').value = p.code;
+        document.getElementById('editCode').value = p.code;
+        document.getElementById('editName').value = p.name;
+        document.getElementById('editPrice').value = p.price;
+        document.getElementById('editShort').value = p.short;
+        document.getElementById('editExcess').value = p.excess;
+        document.getElementById('editSysStock').value = p.sysStock;
+        document.getElementById('editPhyStock').value = p.phyStock;
+      } else {
+        document.getElementById('prodModalTitle').textContent = '➕ ADD NEW PRODUCT';
+        document.getElementById('editOrigCode').value = '';
+        document.getElementById('editCode').value = '';
+        document.getElementById('editName').value = '';
+        document.getElementById('editPrice').value = '';
+        document.getElementById('editShort').value = 0;
+        document.getElementById('editExcess').value = 0;
+        document.getElementById('editSysStock').value = 0;
+        document.getElementById('editPhyStock').value = 0;
+      }
+      document.getElementById('productModal').classList.add('open');
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').classList.remove('open');
+    }
+
+    async function saveProductModal() {
+      const payload = {
+        originalCode: document.getElementById('editOrigCode').value.trim(),
+        code: document.getElementById('editCode').value.trim(),
+        name: document.getElementById('editName').value.trim(),
+        price: parseFloat(document.getElementById('editPrice').value) || 0,
+        short: parseInt(document.getElementById('editShort').value, 10) || 0,
+        excess: parseInt(document.getElementById('editExcess').value, 10) || 0,
+        sysStock: parseInt(document.getElementById('editSysStock').value, 10) || 0,
+        phyStock: parseInt(document.getElementById('editPhyStock').value, 10) || 0
+      };
+      if (!payload.code || !payload.name) {
+        alert('Code ebong Product Name obosshoi dite hobe!');
+        return;
+      }
+      const res = await fetch('/api/product/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        DB = data.db;
+        closeProductModal();
+        refreshAllViews();
+      } else {
+        alert(data.error || 'Save korte somossa hoyeche');
+      }
+    }
+
+    async function deleteProduct(code) {
+      if (!confirm(`Apni ki "${code}" product-ti delete korte chan?`)) return;
+      const res = await fetch('/api/product/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        DB = data.db;
+        refreshAllViews();
+      }
+    }
+
+    // EXCEL UPLOAD PARSER (SUPPORTS BOTH 'Present Short Excess' & 'Price' VLOOKUP SHEET)
+    function processExcelUpload(mode) {
+      const input = document.getElementById('excelFileInput');
+      if (!input.files || !input.files[0]) {
+        alert('Prothome akta Excel (.xlsx) file select korun!');
+        return;
+      }
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+
+          // Build price map if a 'Price' sheet exists
+          const priceMap = {};
+          const priceSheetName = workbook.SheetNames.find(s => s.toLowerCase().includes('price'));
+          if (priceSheetName) {
+            const priceRows = XLSX.utils.sheet_to_json(workbook.Sheets[priceSheetName], { defval: '' });
+            priceRows.forEach(r => {
+              const c = String(r['P.CODE'] || r['Code'] || r['CODE'] || '').trim();
+              const tp = parseFloat(r['Total Price'] || r['Price'] || r['TRADE \nPRICE'] || 0);
+              if (c && tp > 0) priceMap[c.toUpperCase()] = Number(tp.toFixed(2));
+            });
+          }
+
+          const mainSheetName = workbook.SheetNames[0];
+          const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[mainSheetName], { header: 1, defval: '' });
+
+          // Locate header row containing 'Code' and 'Products Name'
+          let headerRowIdx = 0;
+          for (let i = 0; i < Math.min(10, rawRows.length); i++) {
+            const rowStr = rawRows[i].join(' ').toLowerCase();
+            if (rowStr.includes('code') && (rowStr.includes('product') || rowStr.includes('name'))) {
+              headerRowIdx = i;
+              break;
+            }
+          }
+
+          const headers = rawRows[headerRowIdx].map(h => String(h).trim().toLowerCase());
+          const colIdx = {
+            code: headers.findIndex(h => h.includes('code')),
+            name: headers.findIndex(h => h.includes('name') || h.includes('product')),
+            sys: headers.findIndex(h => h.includes('sy')),
+            phy: headers.findIndex(h => h.includes('phy')),
+            short: headers.findIndex(h => h === 'short' || h.startsWith('short')),
+            excess: headers.findIndex(h => h === 'excess' || h.startsWith('excess')),
+            price: headers.findIndex(h => h.includes('price') || h.includes('rate'))
+          };
+
+          const parsedProducts = [];
+          for (let r = headerRowIdx + 1; r < rawRows.length; r++) {
+            const row = rawRows[r];
+            const code = String(row[colIdx.code !== -1 ? colIdx.code : 0] || '').trim();
+            const name = String(row[colIdx.name !== -1 ? colIdx.name : 1] || '').trim();
+            if (!code || !name || code.toLowerCase() === 'code') continue;
+
+            const sysStock = parseInt(row[colIdx.sys !== -1 ? colIdx.sys : 2], 10) || 0;
+            const phyStock = parseInt(row[colIdx.phy !== -1 ? colIdx.phy : 3], 10) || 0;
+            const short = parseInt(row[colIdx.short !== -1 ? colIdx.short : 4], 10) || 0;
+            const excess = parseInt(row[colIdx.excess !== -1 ? colIdx.excess : 5], 10) || 0;
+            let price = parseFloat(row[colIdx.price !== -1 ? colIdx.price : 6]) || 0;
+            if (!price && priceMap[code.toUpperCase()]) {
+              price = priceMap[code.toUpperCase()];
+            }
+
+            parsedProducts.push({
+              code,
+              name,
+              sysStock,
+              phyStock,
+              short: Math.max(0, short),
+              excess: Math.max(0, excess),
+              price: Number(price.toFixed(2))
+            });
+          }
+
+          if (parsedProducts.length === 0) {
+            alert('Excel file theke kono product row pawa jayni!');
+            return;
+          }
+
+          const res = await fetch('/api/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ products: parsedProducts, mode })
+          });
+          const respData = await res.json();
+          if (res.ok) {
+            DB = respData.db;
+            refreshAllViews();
+            alert(`✅ Successfully ${parsedProducts.length} products ${mode === 'merge' ? 'merged' : 'uploaded'} into db.json!`);
+            switchTab('home');
+          }
+        } catch (err) {
+          alert('Excel parse error: ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function exportCurrentStockExcel() {
+      const rows = DB.products.map(p => ({
+        'Code': p.code,
+        'Products Name': p.name,
+        'Sy.Stock': p.sysStock,
+        'Phy.Stock': p.phyStock,
+        'Short': p.short,
+        'Excess': p.excess,
+        'Price': p.price,
+        'Short Amount': Number((p.short * p.price).toFixed(2)),
+        'Excess Amount': Number((p.excess * p.price).toFixed(2))
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Present Short Excess');
+      XLSX.writeFile(wb, 'Updated_Short_Excess_Report.xlsx');
+    }
+
+    function exportHistoryExcel() {
+      if (!DB.history.length) {
+        alert('Kono history nei!');
+        return;
+      }
+      const rows = DB.history.map(h => ({
+        'Adjustment ID': h.id,
+        'Date & Time': h.timestamp,
+        'Status': h.status,
+        'Short Code': h.shortItem.code,
+        'Short Product': h.shortItem.name,
+        'Short Qty': h.shortItem.qty,
+        'Short Value': h.totalShortVal,
+        'Excess Returned Items': h.excessItems.map(x => `${x.code}-${x.name} (${x.qty}x৳${x.price})`).join('; '),
+        'Excess Value': h.totalExcessVal,
+        'Diff Value': h.diffVal,
+        'Confirmation Message': h.message
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Return_History');
+      XLSX.writeFile(wb, 'Return_Balancing_History.xlsx');
+    }
+
+    function triggerJsonRestore() {
+      document.getElementById('jsonRestoreInput').click();
+    }
+
+    function handleJsonRestore(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const prods = Array.isArray(parsed) ? parsed : parsed.products;
+          const hist = parsed.history || [];
+          const res = await fetch('/api/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ products: prods, history: hist, mode: 'replace' })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            DB = data.db;
+            refreshAllViews();
+            alert('✅ db.json restored successfully!');
+          }
+        } catch (err) {
+          alert('Invalid JSON file!');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function resetFactoryDB() {
+      if (!confirm('Apni ki nishchit sob data initial Excel report-er obosthay reset korte chan?')) return;
+      const res = await fetch('/api/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'factory' })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        DB = data.db;
+        selectedShortCode = null;
+        refreshAllViews();
+      }
+    }
+
+    function switchTab(tab) {
+      ['home', 'history', 'products', 'excel'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('active', t === tab);
+        document.getElementById('dtab-' + t)?.classList.toggle('active', t === tab);
+        document.getElementById('mnav-' + t)?.classList.toggle('active', t === tab);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchDatabase);
+  </script>
+</body>
+</html>
